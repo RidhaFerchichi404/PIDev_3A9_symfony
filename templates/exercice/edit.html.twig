@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Exercise{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4 text-lila">Edit Exercise</h1>
+
+        <div class="card shadow-lg border-0 rounded-3">
+            <div class="card-header bg-lila text-white">
+                <h5 class="card-title mb-0">Update Exercise Details</h5>
+            </div>
+
+            <div class="card-body">
+                <!-- Exercise Edit Form -->
+                {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'needs-validation'}}) }}
+
+                <!-- Exercise Name -->
+                <div class="mb-4">
+                    {{ form_label(form.nom_exercice, 'Exercise Name', {'label_attr': {'class': 'form-label text-muted'}}) }}
+                    {{ form_widget(form.nom_exercice, {'attr': {'class': 'form-control form-control-lg shadow-none transition-all ease-in-out duration-300', 'placeholder': 'Enter exercise name'}}) }}
+                    {{ form_errors(form.nom_exercice) }}
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                    {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label text-muted'}}) }}
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control form-control-lg shadow-none transition-all ease-in-out duration-300', 'placeholder': 'Enter exercise description'}}) }}
+                    {{ form_errors(form.description) }}
+                </div>
+
+                <!-- Owner ID -->
+                <div class="mb-4">
+                    {{ form_label(form.id_user, 'Owner ID', {'label_attr': {'class': 'form-label text-muted'}}) }}
+                    {{ form_widget(form.id_user, {'attr': {'class': 'form-control form-control-lg shadow-none transition-all ease-in-out duration-300', 'placeholder': 'Enter owner ID'}}) }}
+                    {{ form_errors(form.id_user) }}
+                </div>
+
+                <!-- Image Upload -->
+                {% if form.image is defined %}
+                    <div class="mb-4">
+                        {{ form_label(form.image, 'Exercise Image', {'label_attr': {'class': 'form-label text-muted'}}) }}
+                        {{ form_widget(form.image, {'attr': {'class': 'form-control form-control-lg shadow-none transition-all ease-in-out duration-300'}}) }}
+                        {{ form_errors(form.image) }}
+                    </div>
+                {% endif %}
+
+                <!-- Equipement -->
+                <div class="mb-4">
+                    {{ form_label(form.equipement, 'Equipement', {'label_attr': {'class': 'form-label text-muted'}}) }}
+                    {{ form_widget(form.equipement, {'attr': {'class': 'form-control form-control-lg shadow-none transition-all ease-in-out duration-300'}}) }}
+                    {{ form_errors(form.equipement) }}
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-success btn-lg shadow-sm transition-all duration-300 ease-in-out transform hover:scale-105">
+                        {{ button_label|default('Update') }}
+                    </button>
+                </div>
+
+                {{ form_end(form) }}
+                <!-- Form End -->
+            </div>
+
+            <div class="card-footer d-flex justify-content-between align-items-center">
+                <!-- Back Button -->
+                <a href="{{ path('app_exercice_index') }}" class="btn btn-outline-secondary btn-sm transition-all duration-300 ease-in-out transform hover:scale-105">
+                    <i class="ri-arrow-left-line"></i> Back to List
+                </a>
+
+                <!-- Delete Button -->
+                {{ include('exercice/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Animation for Input Focus -->
+    <style>
+        .form-control:focus {
+            border-color: #6f42c1; /* Purple for the focus border */
+            box-shadow: 0 0 10px rgba(111, 66, 193, 0.5); /* Light purple shadow */
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn:hover {
+            transform: scale(1.05); /* Subtle scaling effect */
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* Slight shadow on hover */
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card-body {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card-footer {
+            border-top: 1px solid #ddd; /* Subtle divider line */
+        }
+    </style>
+{% endblock %}
