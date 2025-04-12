@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+{% block section %}Admin Panel{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-4">
+        <div class="jumbotron bg-light p-4 mb-4 rounded shadow-sm">
+            <h1 class="display-4">Welcome to Admin Dashboard</h1>
+            <p class="lead">Manage your posts, comments, and monitor your blog's activity from this central hub.</p>
+            <hr class="my-4">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <a href="{{ path('app_admin_post_new') }}" class="btn btn-success btn-lg btn-block w-100">
+                        <i class="fas fa-plus-circle me-2"></i> Create New Post
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a href="{{ path('app_admin_post_index') }}" class="btn btn-primary btn-lg btn-block w-100">
+                        <i class="fas fa-list me-2"></i> Manage Posts
+                    </a>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <a href="{{ path('app_admin_comment_index') }}" class="btn btn-info btn-lg btn-block w-100">
+                        <i class="fas fa-comments me-2"></i> Manage Comments
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <h2 class="section-title mb-4">Blog Statistics</h2>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Posts</h5>
+                        <h2 class="card-text">{{ totalPosts }}</h2>
+                        <a href="{{ path('app_admin_post_index') }}" class="text-white">View all <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Comments</h5>
+                        <h2 class="card-text">{{ totalComments }}</h2>
+                        <a href="{{ path('app_admin_comment_index') }}" class="text-white">View all <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">Posts by Type</h5>
+                        <div class="row">
+                            {% for type in postsByType %}
+                                <div class="col-md-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="mb-1">{{ type.type }}:</p>
+                                        <span class="badge bg-primary">{{ type.count }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title mb-4">Recent Activity</h2>
+        <!-- Recent Posts -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-newspaper me-2"></i>Recent Posts</h5>
+                        <a href="{{ path('app_admin_post_index') }}" class="btn btn-sm btn-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            {% for post in recentPosts %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-1">{{ post.description|slice(0, 50) }}</h6>
+                                        <small class="text-muted">{{ post.dateU|date('Y-m-d H:i') }}</small>
+                                    </div>
+                                    <p class="mb-1 text-muted">{{ post.description|slice(0, 100) }}...</p>
+                                    <div class="mt-2">
+                                        <a href="{{ path('app_admin_post_show', {'id': post.id}) }}" class="btn btn-sm btn-info">View</a>
+                                        <a href="{{ path('app_admin_post_edit', {'id': post.id}) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="list-group-item">No posts found</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Comments -->
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-comments me-2"></i>Recent Comments</h5>
+                        <a href="{{ path('app_admin_comment_index') }}" class="btn btn-sm btn-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            {% for comment in recentComments %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-1">Comment on: {{ comment.idPost.description|slice(0, 50) }}</h6>
+                                        <small class="text-muted">{{ comment.date|date('Y-m-d H:i') }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ comment.comment|slice(0, 100) }}...</p>
+                                    <div class="mt-2">
+                                        <a href="{{ path('app_admin_comment_show', {'id': comment.id}) }}" class="btn btn-sm btn-info">View</a>
+                                        <a href="{{ path('app_admin_comment_edit', {'id': comment.id}) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="list-group-item">No comments found</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 
