@@ -8,57 +8,11 @@
         {% block stylesheets %}
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-            <style>
-                body {
-                    padding-top: 60px;
-                }
-                .navbar-front {
-                    background-color: #f8491f !important;
-                }
-                .navbar-back {
-                    background-color: #343a40 !important;
-                }
-                .navbar-brand span.area {
-                    font-size: 0.8rem;
-                    background-color: rgba(255,255,255,0.2);
-                    padding: 2px 8px;
-                    border-radius: 10px;
-                    margin-left: 5px;
-                }
-                .btn-front {
-                    background-color: #f8491f;
-                    border-color: #f8491f;
-                    color: white;
-                }
-                .btn-front:hover {
-                    background-color: #e33e15;
-                    border-color: #e33e15;
-                    color: white;
-                }
-                .section-title {
-                    position: relative;
-                    margin-bottom: 45px;
-                    padding-bottom: 15px;
-                }
-                .section-title:after {
-                    position: absolute;
-                    content: "";
-                    width: 70px;
-                    height: 3px;
-                    left: 0;
-                    bottom: 0;
-                    background: #f8491f;
-                }
-                .section-title.text-center:after {
-                    left: 50%;
-                    margin-left: -35px;
-                }
-            </style>
+            {{ importmap('app') }}
         {% endblock %}
 
         {% block javascripts %}
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
     <body>

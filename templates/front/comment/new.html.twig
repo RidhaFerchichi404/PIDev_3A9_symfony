@@ -1,38 +1,44 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Add a Comment{% endblock %}
-{% block section %}Front Office{% endblock %}
+{% block title %}New Comment{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/stylefront.css') }}">
+{% endblock %}
 
 {% block body %}
     <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <a href="{{ path('app_front_post_show', {'id': post.id}) }}" class="btn btn-outline-secondary mb-3">
-                    <i class="fas fa-arrow-left"></i> Back to Post
-                </a>
-                
-                <div class="card mb-4 shadow">
-                    <div class="card-header bg-light">
-                        <h1 class="h3 mb-0">Add a Comment</h1>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            <p class="mb-0"><strong>Note:</strong> Your comment will be added automatically with today's date and 0 likes initially.</p>
-                        </div>
-                        
-                        {{ form_start(form) }}
-                            <div class="mb-3">
-                                {{ form_label(form.comment) }}
-                                {{ form_widget(form.comment, {'attr': {'class': 'form-control', 'rows': 5}}) }}
-                                {{ form_errors(form.comment) }}
-                            </div>
-                            <div class="mb-3">
-                                {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
-                            </div>
-                        {{ form_end(form) }}
-                    </div>
-                </div>
-            </div>
-        </div>
+        <h1 class="mb-4">Create new Comment</h1>
+
+        {{ include('front/comment/_form.html.twig') }}
+
+        <a href="{{ path('app_comment_index') }}" class="btn btn-secondary mt-3">Back to list</a>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const emojiPicker = document.querySelector('.emoji-picker');
+            const emojiButtons = document.querySelectorAll('.emoji-button');
+            const commentTextarea = document.querySelector('#comment_content');
+
+            emojiButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const emoji = this.getAttribute('data-emoji');
+                    const start = commentTextarea.selectionStart;
+                    const end = commentTextarea.selectionEnd;
+                    const text = commentTextarea.value;
+                    const before = text.substring(0, start);
+                    const after = text.substring(end);
+                    
+                    commentTextarea.value = before + emoji + after;
+                    commentTextarea.focus();
+                    commentTextarea.selectionStart = commentTextarea.selectionEnd = start + emoji.length;
+                });
+            });
+        });
+    </script>
 {% endblock %} 

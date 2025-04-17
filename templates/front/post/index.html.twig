@@ -8,7 +8,7 @@
         <div class="row">
             <!-- Most Commented Post (Left Sidebar) -->
             <div class="col-md-3">
-                <div class="card mb-4 shadow">
+                <div class="card mb-4 shadow sidebar-card">
                     <div class="card-header bg-light">
                         <h3 class="h5 mb-0">Most Commented Post</h3>
                     </div>
@@ -16,7 +16,7 @@
                         {% set topPost = mostCommentedPosts|first %}
                         <div class="card-body p-0">
                             {% if topPost.image %}
-                                <img src="{{ asset('uploads/posts/' ~ topPost.image) }}" class="card-img-top" alt="{{ topPost.description }}" style="height: 150px; object-fit: cover;">
+                                <img src="{{ asset('uploads/posts/' ~ topPost.image) }}" class="card-img-top sidebar-post-image" alt="{{ topPost.description }}">
                             {% endif %}
                             <div class="p-3">
                                 <h5 class="card-title">{{ topPost.description|length > 50 ? topPost.description|slice(0, 50) ~ '...' : topPost.description }}</h5>
@@ -74,9 +74,9 @@
                         </div>
 
                         {% for post in posts %}
-                            <div class="card mb-3 shadow-sm">
+                            <div class="card mb-3 shadow-sm post-item">
                                 {% if post.image %}
-                                    <img src="{{ asset('uploads/posts/' ~ post.image) }}" class="card-img-top" alt="{{ post.description }}" style="height: 200px; object-fit: cover;">
+                                    <img src="{{ asset('uploads/posts/' ~ post.image) }}" class="card-img-top post-image" alt="{{ post.description }}">
                                 {% endif %}
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -139,7 +139,7 @@
             
             <!-- Most Recent Post (Right Sidebar) -->
             <div class="col-md-3">
-                <div class="card mb-4 shadow">
+                <div class="card mb-4 shadow sidebar-card">
                     <div class="card-header bg-light">
                         <h3 class="h5 mb-0">Most Recent Post</h3>
                     </div>
@@ -147,7 +147,7 @@
                         {% set latestPost = recentPosts|first %}
                         <div class="card-body p-0">
                             {% if latestPost.image %}
-                                <img src="{{ asset('uploads/posts/' ~ latestPost.image) }}" class="card-img-top" alt="{{ latestPost.description }}" style="height: 150px; object-fit: cover;">
+                                <img src="{{ asset('uploads/posts/' ~ latestPost.image) }}" class="card-img-top sidebar-post-image" alt="{{ latestPost.description }}">
                             {% endif %}
                             <div class="p-3">
                                 <h5 class="card-title">{{ latestPost.description|length > 50 ? latestPost.description|slice(0, 50) ~ '...' : latestPost.description }}</h5>

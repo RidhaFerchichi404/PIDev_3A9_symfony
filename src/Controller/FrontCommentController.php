@@ -6,6 +6,7 @@ use App\Entity\Comment;
 use App\Entity\Post;
 use App\Form\CommentType;
 use App\Service\BadWordFilter;
+use App\Service\EmojiService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,15 +19,16 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 final class FrontCommentController extends AbstractController
 {
     public function __construct(
-        private readonly BadWordFilter $badWordFilter
+        private readonly BadWordFilter $badWordFilter,
+        private readonly EmojiService $emojiService
     ) {
     }
 
     #[Route('/new/{id}', name: 'app_front_comment_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, Post $post): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, Post $id): Response
     {
         $comment = new Comment();
-        $comment->setIdPost($post);
+        $comment->setIdPost($id);
         $comment->setDate(new \DateTime());
         $comment->setLikes(0);
         
@@ -35,7 +37,8 @@ final class FrontCommentController extends AbstractController
                 'label' => 'Your Comment',
                 'attr' => [
                     'class' => 'form-control',
-                    'rows' => 5
+                    'rows' => 5,
+                    'placeholder' => 'Enter your comment here. You can use emoji shortcodes like :smile: :heart: :thumbsup:'
                 ]
             ])
             ->add('submit', SubmitType::class, [
@@ -50,7 +53,10 @@ final class FrontCommentController extends AbstractController
             // Filter bad words from the comment
             $commentText = $comment->getComment();
             $filteredComment = $this->badWordFilter->filterBadWords($commentText);
-            $comment->setComment($filteredComment);
+            
+            // Convert emoji shortcodes to actual emojis
+            $emojiComment = $this->emojiService->convertToEmoji($filteredComment);
+            $comment->setComment($emojiComment);
             
             // Generate a unique ID for the comment
             $lastComment = $entityManager->getRepository(Comment::class)
@@ -66,13 +72,14 @@ final class FrontCommentController extends AbstractController
             $entityManager->persist($comment);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_front_post_show', ['id' => $post->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_front_post_show', ['id' => $id->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('front/comment/new.html.twig', [
             'comment' => $comment,
-            'post' => $post,
+            'post' => $id,
             'form' => $form,
+            'emojis' => $this->emojiService->getAvailableEmojis()
         ]);
     }
 
