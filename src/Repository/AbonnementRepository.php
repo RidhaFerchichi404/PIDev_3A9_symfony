@@ -53,13 +53,18 @@ public function findAllWithPromotions()
         ->getQuery()
         ->getResult();
 }
+
 public function __construct(ManagerRegistry $registry)
 {
     parent::__construct($registry, Abonnement::class);
     
-    // Force le mapping correct des colonnes
-    $this->_em->getClassMetadata(Abonnement::class)->fieldMappings = array_filter(
-        $this->_em->getClassMetadata(Abonnement::class)->fieldMappings,
+    // Solution correcte pour accéder à l'EntityManager
+    $entityManager = $registry->getManagerForClass(Abonnement::class);
+    $classMetadata = $entityManager->getClassMetadata(Abonnement::class);
+    
+    // Filtrez les fieldMappings si nécessaire
+    $classMetadata->fieldMappings = array_filter(
+        $classMetadata->fieldMappings,
         fn($field) => $field['fieldName'] !== 'dateCreation'
     );
 }

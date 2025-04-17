@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un nouvel Abonnement{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Créer un nouvel Abonnement</h1>
+
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.nom, {
+                        label: 'Nom',
+                        attr: {class: 'form-control'}
+                    }) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.prix, {
+                        label: 'Prix (€)',
+                        attr: {class: 'form-control'}
+                    }) }}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_row(form.duree, {
+                        label: 'Durée (jours)',
+                        attr: {class: 'form-control'}
+                    }) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.salle, {
+                        label: 'Salle de sport',
+                        attr: {class: 'form-control'}
+                    }) }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_row(form.description, {
+                    label: 'Description',
+                    attr: {class: 'form-control', rows: 4}
+                }) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_row(form.type, {
+                    label: "Type d'abonnement",
+                    attr: {class: 'form-control'}
+                }) }}
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+                <a href="{{ path('app_abonnement_index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Annuler
+                </a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

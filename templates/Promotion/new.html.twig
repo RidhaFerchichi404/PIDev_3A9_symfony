@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Promotion{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Créer une nouvelle promotion</h1>
+        
+        {# Section optionnelle pour l'abonnement associé #}
+        {% if promotion is defined and promotion.abonnement is defined and promotion.abonnement is not null %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="card-title">Abonnement associé</h3>
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <th class="w-25">ID</th>
+                            <td>{{ promotion.abonnement.AbonnementID }}</td>
+                        </tr>
+                        <tr>
+                            <th>Nom</th>
+                            <td>{{ promotion.abonnement.Nom }}</td>
+                        </tr>
+                        {% if promotion.abonnement.Description %}
+                        <tr>
+                            <th>Description</th>
+                            <td>{{ promotion.abonnement.Description }}</td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Formulaire principal avec vérification d'existence #}
+        {% if form is defined %}
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                {{ form_errors(form) }}
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        {{ form_row(form.codePromo, {
+                            'attr': {
+                                'class': 'form-control',
+                                'placeholder': 'Ex: ETE2023'
+                            }
+                        }) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.valeurReduction, {
+                            'attr': {
+                                'class': 'form-control',
+                                'placeholder': 'Ex: 20 pour 20%'
+                            }
+                        }) }}
+                    </div>
+                    
+                    <div class="col-md-6">
+                        {{ form_row(form.dateDebut, {
+                            'attr': {
+                                'class': 'form-control'
+                            }
+                        }) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(form.dateFin, {
+                            'attr': {
+                                'class': 'form-control'
+                            }
+                        }) }}
+                    </div>
+
+                    {# Affiche le champ abonnement seulement si aucun n'est déjà associé #}
+                    {% if not (promotion is defined and promotion.abonnement is not null) and form.abonnement is defined %}
+                    <div class="col-md-12">
+                        {{ form_row(form.abonnement, {
+                            'attr': {
+                                'class': 'form-select'
+                            }
+                        }) }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <a href="{{ path('app_promotion_index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Retour à la liste
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i> Enregistrer
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        {% else %}
+            <div class="alert alert-danger">
+                Le formulaire n'est pas disponible. Veuillez réessayer.
+                <a href="{{ path('app_promotion_new') }}" class="alert-link">Actualiser la page</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

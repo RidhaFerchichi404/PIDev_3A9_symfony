@@ -24,8 +24,8 @@ class Promotion
     #[ORM\Column(name: 'TypeReduction', type: 'string', length: 50)]
     private string $typeReduction;
 
-    #[ORM\Column(name: 'ValeurReduction', type: 'decimal', precision: 10, scale: 2)]
-    private string $valeurReduction;
+    #[ORM\Column(name: 'ValeurReduction', type: 'float', precision: 10, scale: 2)]
+    private ?float $valeurReduction = null;
     #[ORM\Column(name: "DateDebut", type: "date")]
     private \DateTimeInterface $dateDebut;
 

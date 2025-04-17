@@ -3,56 +3,44 @@
 {% block title %}Liste des Abonnements{% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title mb-4">Liste des Abonnements</h4>
-            <div class="table-responsive text-nowrap">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nom</th>
-                            <th>Prix</th>
-                            <th>Durée</th>
-                            <th>Description</th>
-                            <th>Salle</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for abonnement in abonnements %}
-                            <tr>
-                                <td>{{ abonnement.AbonnementID }}</td>
-                                <td>{{ abonnement.nom }}</td>
-                                <td>{{ abonnement.prix|number_format(2, ',', ' ') }} DT</td>
-                                <td>{{ abonnement.duree }} jours</td>
-                                <td>{{ abonnement.description }}</td>
-                                
+    <div class="container mt-4">
+        <h1>Liste des Abonnements</h1>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>NOM</th>
+                    <th>PRIX</th>
+                    <th>DURÉE</th>
+                    <th>DESCRIPTION</th>
+                    <th>SALLE</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for abonnement in abonnements %}
+                    <tr>
+                        <td>{{ abonnement.AbonnementID }}</td>
+                        <td>{{ abonnement.Nom }}</td>
+                        <td>{{ abonnement.Prix|number_format(2, ',', ' ') }} DT</td>
+                        <td>{{ abonnement.Duree }} jours</td>
+                        <td>{{ abonnement.Description }}</td>
+                        <td>{{ abonnement.salleName }}</td>
+                        <td>
+                            <a href="{{ path('app_abonnement_edit', {'AbonnementID': abonnement.AbonnementID}) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            {{ include('abonnement/_delete_form.html.twig') }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
 
-
-                                <td>
-                                        {{ abonnement.salleName }}
-                                    
-                                </td>
-                               
-                                <td>
-                                    <a href="{{ path('app_abonnement_show', {'AbonnementID': abonnement.AbonnementID}) }}" 
-                                       class="btn btn-sm btn-info">suuprimer</a>
-                                    <a href="{{ path('app_abonnement_edit', {'AbonnementID': abonnement.AbonnementID}) }}"
-                                       class="btn btn-sm btn-warning">Modifier</a>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="7" class="text-center">Aucun abonnement trouvé</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <a href="{{ path('app_abonnement_new') }}" class="btn btn-primary mt-3">
-                Créer un nouvel abonnement
+        <div class="mt-4">
+            <a href="{{ path('app_abonnement_new') }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Créer Un Nouvel Abonnement
             </a>
         </div>
     </div>

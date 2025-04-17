@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+ {% extends 'base.html.twig' %}
 
 {% block title %}Détails de l'Abonnement{% endblock %}
 
@@ -6,7 +6,7 @@
     <div class="container mt-4">
         <h1 class="mb-4">Détails de l'Abonnement</h1>
 
-        <div class="card">
+        <div class="card mb-4">
             <div class="card-body">
                 <table class="table table-striped">
                     <tbody>
@@ -30,30 +30,76 @@
                             <th>Prix</th>
                             <td>{{ abonnement.Prix|number_format(2, ',', ' ') }} €</td>
                         </tr>
-                        
                         <tr>
                             <th>Salle de sport</th>
-                            <td>
-                                
-                                    {{ abonnement.salleName}} 
-                                
-                            </td>
+                            <td>{{ abonnement.salleName }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <div class="mt-4">
-            <a href="{{ path('app_abonnement_index') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i> Retour à la liste
-            </a>
+        <h2 class="mb-4">Promotions associées</h2>
+        
+        <div class="card">
+            <div class="card-body">
+                {% if abonnement.promotions is not empty %}
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Pourcentage</th>
+                                <th>Date Début</th>
+                                <th>Date Fin</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for promotion in promotions %}
+                                <tr>
+                                    <td>{{ promotion.id }}</td>
+                                    <td>{{ promotion.valeurReduction }}%</td>
+                                    <td>{{ promotion.DateDebut|date('d/m/Y') }}</td>
+                                    <td>{{ promotion.DateFin|date('d/m/Y') }}</td>
+                                    <td>
+                                        <a href="{{ path('app_promotion_edit', {'id': promotion.id}) }}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i> Modifier
+                                        </a>
+                                        <form method="post" action="{{ path('app_promotion_delete', {'id': promotion.id}) }}" style="display: inline-block;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette promotion?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ promotion.id) }}">
+                                            <button class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i> Supprimer
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-muted">Aucune promotion associée à cet abonnement.</p>
+                {% endif %}
+            </div>
+        </div>
 
-            <a href="{{ path('app_abonnement_edit', {'AbonnementID': abonnement.AbonnementID}) }}" class="btn btn-primary">
-                <i class="fas fa-edit"></i> Modifier
+        <div class="mt-4 d-flex justify-content-between">
+            <div>
+                <div>
+                    <a href="{{ path('app_abonnement_index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour à la liste
+                    </a>
+                    
+                    {% if abonnement.AbonnementID %}
+                        <a href="{{ path('app_abonnement_edit', {'AbonnementID': abonnement.AbonnementID}) }}" 
+                           class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        {{ include('abonnement/_delete_form.html.twig') }}
+                    {% endif %}
+                </div>
+            <a href="{{ path('app_promotion_new', {'abonnement_id': abonnement.AbonnementID}) }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Ajouter une promotion
             </a>
-
-            {{ include('abonnement/_delete_form.html.twig') }}
         </div>
     </div>
 {% endblock %}

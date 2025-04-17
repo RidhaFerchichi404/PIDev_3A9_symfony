@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Promotion{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Modifier la promotion</h1>
+        
+        {% include 'promotion/_form.html.twig' with {
+            'form': form,
+            'button_label': 'Mettre à jour'
+        } %}
+    </div>
+{% endblock %}

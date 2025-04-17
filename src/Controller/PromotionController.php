@@ -18,38 +18,89 @@ class PromotionController extends AbstractController
     #[Route('/', name: 'app_promotion_index', methods: ['GET'])]
     public function index(PromotionRepository $promotionRepository): Response
     {
-        return $this->render('promotion/index.html.twig', [
-            'promotions' => $promotionRepository->findAllWithAbonnement(),
+        return $this->render('promotion/new.html.twig', [
+            $promotions = $promotionRepository->findBy([], ['id' => 'ASC'])
         ]);
-    }#[Route('/new', name: 'app_promotion_new', methods: ['GET', 'POST'])]
+    }
+
+
+    #[Route('/new', name: 'app_promotion_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $promotion = new Promotion(); // DateCreation est déjà initialisée ici
-    
+        $promotion = new Promotion();
         $form = $this->createForm(PromotionType::class, $promotion);
         $form->handleRequest($request);
     
         if ($form->isSubmitted()) {
-            if (!$form->isValid()) {
-                $this->addFlash('error', 'Le formulaire contient des erreurs.');
-            } elseif ($promotion->getAbonnement() === null) {
-                $this->addFlash('error', 'Veuillez sélectionner un abonnement.');
-            } else {
-                $entityManager->persist($promotion);
-                $entityManager->flush();
+            $errors = [];
+            $now = new \DateTime();
     
-                $this->addFlash('success', 'Promotion créée avec succès!');
-                return $this->redirectToRoute('app_promotion_index');
+            // Contrôle de l'abonnement
+            if (!$promotion->getAbonnement()) {
+                $errors[] = 'Veuillez sélectionner un abonnement.';
+            }
+    
+            // Contrôle du code promo
+            if (empty($promotion->getCodePromo())) {
+                $errors[] = 'Le code promo est obligatoire.';
+            } elseif (strlen($promotion->getCodePromo()) < 5) {
+                $errors[] = 'Le code promo doit contenir au moins 5 caractères.';
+            }
+    
+            // Contrôle de la valeur de réduction
+            $valeurReduction = $promotion->getValeurReduction();
+            if ($valeurReduction === null) {
+                $errors[] = 'La valeur de réduction est obligatoire.';
+            } elseif ($valeurReduction <= 0) {
+                $errors[] = 'La valeur de réduction doit être positive.';
+            } elseif ($valeurReduction > 100) {
+                $errors[] = 'La valeur de réduction ne peut pas dépasser 100%.';
+            }
+    
+            // Contrôle des dates
+            $dateDebut = $promotion->getDateDebut();
+            $dateFin = $promotion->getDateFin();
+    
+            if (!$dateDebut) {
+                $errors[] = 'La date de début est obligatoire.';
+            } elseif ($dateDebut < $now) {
+                $errors[] = 'La date de début ne peut pas être dans le passé.';
+            }
+    
+            if (!$dateFin) {
+                $errors[] = 'La date de fin est obligatoire.';
+            } elseif ($dateFin < $now) {
+                $errors[] = 'La date de fin ne peut pas être dans le passé.';
+            } elseif ($dateDebut && $dateFin < $dateDebut) {
+                $errors[] = 'La date de fin doit être après la date de début.';
+            }
+    
+            if (empty($errors)) { // Parenthèse fermante ajoutée ici
+                try {
+                    $entityManager->persist($promotion);
+                    $entityManager->flush();
+    
+                    $this->addFlash('success', 'Promotion créée avec succès!');
+                    return $this->redirectToRoute('app_promotion_index');
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Une erreur est survenue lors de la création de la promotion.');
+                    // Log l'erreur si nécessaire
+                    // $this->logger->error($e->getMessage());
+                }
+            } else {
+                foreach ($errors as $error) {
+                    $this->addFlash('error', $error);
+                }
             }
         }
     
         return $this->render('promotion/new.html.twig', [
-            'promotion' => $promotion,
             'form' => $form->createView(),
+            'promotion' => $promotion
+            
+            
         ]);
     }
-    
-
     #[Route('/{id}', name: 'app_promotion_show', methods: ['GET'])]
     public function show(Promotion $promotion): Response
     {
@@ -59,24 +110,33 @@ class PromotionController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_promotion_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Promotion $promotion, EntityManagerInterface $entityManager): Response
-    {
+    public function edit(
+        Request $request, 
+        $id, 
+        EntityManagerInterface $entityManager,
+        PromotionRepository $promotionRepository
+    ): Response {
+        $promotion = $promotionRepository->find($id);
+        
+        if (!$promotion) {
+            throw $this->createNotFoundException('Promotion non trouvée pour l\'id '.$id);
+        }
+    
         $form = $this->createForm(PromotionType::class, $promotion);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
+    
             $this->addFlash('success', 'Promotion mise à jour avec succès!');
             return $this->redirectToRoute('app_promotion_index');
         }
-
+    
         return $this->render('promotion/edit.html.twig', [
             'promotion' => $promotion,
             'form' => $form->createView(),
         ]);
     }
-
     #[Route('/{id}', name: 'app_promotion_delete', methods: ['POST'])]
     public function delete(Request $request, Promotion $promotion, EntityManagerInterface $entityManager): Response
     {
