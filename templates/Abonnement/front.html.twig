@@ -1,0 +1,301 @@
+{% extends 'front.html.twig' %}
+
+{% block title %} - Gym Memberships{% endblock %}
+
+{% block body %}
+<style>
+    body {
+        background-color: #0d0d0d;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .section-title {
+        text-align: center;
+        color: #fff;
+        margin-bottom: 50px;
+        margin-top: 40px;
+    }
+
+    .section-title h1 {
+        font-size: 32px;
+        font-weight: 800;
+        color: #fff;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+    }
+
+    .section-title span {
+        color: #ff5e13;
+        font-size: 20px;
+        font-weight: 600;
+        display: block;
+        letter-spacing: 1px;
+        margin-top: 10px;
+    }
+
+    .membership-card {
+        background: linear-gradient(145deg, #1f1f1f, #141414);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(255, 94, 13, 0.15);
+        color: #fff;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .membership-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(255, 94, 13, 0.25);
+    }
+
+    .membership-card h5 {
+        font-size: 22px;
+        font-weight: bold;
+        color: #ff5e13;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+    }
+
+    .membership-info {
+        font-size: 14px;
+        color: #ddd;
+        margin-bottom: 10px;
+    }
+
+    .membership-info i {
+        margin-right: 8px;
+        color: #ff5e13;
+    }
+
+    .membership-info span {
+        font-weight: bold;
+        color: #f1f1f1;
+    }
+
+    .price-tag {
+        font-size: 24px;
+        font-weight: bold;
+        color: #ff5e13;
+        margin: 15px 0;
+    }
+
+    .duration-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 13px;
+        background-color: rgba(255, 94, 13, 0.2);
+        color: #ff5e13;
+        margin-bottom: 10px;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-orange {
+        background: linear-gradient(135deg, #ff5e13, #cc4b0d);
+        color: #fff;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 30px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 18px rgba(255, 94, 13, 0.3);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .btn-orange:hover {
+        background: linear-gradient(135deg, #e44d0c, #ff5e13);
+        transform: scale(1.05);
+    }
+
+    .btn-back {
+        color: #ccc;
+        border: 1px solid #555;
+        padding: 10px 24px;
+        border-radius: 30px;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 40px;
+        transition: 0.3s ease;
+    }
+
+    .btn-back:hover {
+        color: #fff;
+        background-color: #ff5e13;
+        border-color: #ff5e13;
+    }
+
+    .row-gap {
+        row-gap: 30px;
+    }
+
+    /* Styles pour les promotions - légèrement modifiés pour l'affichage détaillé */
+    .promo-section {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #333;
+    }
+
+    .promo-title {
+        font-size: 14px;
+        color: #19c976;
+        margin-bottom: 8px;
+        font-weight: bold;
+    }
+
+    .promo-item {
+        margin-bottom: 12px;
+    }
+
+    .promo-badge {
+        display: inline-block;
+        background-color: rgba(25, 135, 84, 0.15);
+        color: #19c976;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .promo-detail {
+        font-size: 12px;
+        color: #ddd;
+        margin-left: 10px;
+        padding-left: 10px;
+        border-left: 2px solid rgba(25, 135, 84, 0.3);
+    }
+
+    .promo-detail-item {
+        margin: 4px 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .promo-detail-item i {
+        margin-right: 6px;
+        width: 16px;
+        text-align: center;
+    }
+
+    .price-comparison {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 5px;
+    }
+
+    .original-price {
+        text-decoration: line-through;
+        color: #999;
+        font-size: 13px;
+    }
+
+    .discounted-price {
+        color: #19c976;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .no-promo {
+        font-size: 12px;
+        color: #666;
+        font-style: italic;
+    }
+</style>
+
+<div class="container">
+    <div class="section-title">
+        <h1>Available Memberships</h1>
+        <span>Choose the perfect plan for your fitness journey</span>
+    </div>
+
+    <div class="row row-gap">
+        {% for abonnement in abonnements %}
+            <div class="col-lg-4 col-md-6 d-flex">
+                <div class="membership-card w-100">
+                    <h5>{{ abonnement.Nom|upper }}</h5>
+                    
+                    <div class="duration-badge">
+                        {{ abonnement.Duree }} DAYS
+                    </div>
+
+                    <div class="price-tag">
+                        {{ abonnement.Prix|number_format(2, '.', ',') }} TND
+                    </div>
+
+                    <p class="membership-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Description:</span> {{ abonnement.Description|slice(0, 100) }}.
+                    </p>
+
+                    <p class="membership-info">
+                        <i class="fas fa-dumbbell"></i>
+                        <span>Gym:</span> {{ abonnement.salleName|default('Not assigned') }}
+                    </p>
+
+                    {# Section des promotions détaillée #}
+                    <div class="promo-section">
+                        <div class="promo-title">
+                            <i class="fas fa-tag"></i> PROMOTIONS ACTIVES
+                        </div>
+                        
+                        {% if abonnement.promotions is defined and abonnement.promotions|length > 0 %}
+                            {% for promotion in abonnement.promotions %}
+                                {% set durationDays = date(promotion.dateFin).diff(date(promotion.dateDebut)).days %}
+                                {% set daysLeft = date(promotion.dateFin).diff(date('now')).days %}
+                                {% set discountedPrice = abonnement.Prix * (1 - promotion.valeurReduction/100) %}
+                                
+                                <div class="promo-item">
+                                    <div class="promo-badge">
+                                        {{ promotion.codePromo }} (-{{ promotion.valeurReduction }}%)
+                                    </div>
+                                    
+                                    <div class="promo-detail">
+                                        <div class="promo-detail-item">
+                                            <i class="far fa-calendar-alt"></i>
+                                            <span>{{ durationDays }} jours ({{ promotion.dateDebut|date('d/m/Y') }} - {{ promotion.dateFin|date('d/m/Y') }})</span>
+                                        </div>
+                                        
+                                        <div class="promo-detail-item">
+                                            <i class="far fa-comment"></i>
+                                            <span>{{ promotion.description }}</span>
+                                        </div>
+                                        
+                                        <div class="price-comparison">
+                                            <span class="original-price">{{ abonnement.Prix|number_format(2, '.', ',') }} TND</span>
+                                            <i class="fas fa-arrow-right" style="color: #666;"></i>
+                                            <span class="discounted-price">{{ discountedPrice|number_format(2, '.', ',') }} TND</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="no-promo">
+                                Aucune promotion active
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <a href="{{ path('app_abonnement_show', {'AbonnementID': abonnement.AbonnementID}) }}" class="btn-orange mt-3">
+                        <i class="fas fa-eye"></i>&nbsp;Voir promotion
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center text-light">
+                <p>No memberships available.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center">
+        <a href="/salle/de/sport" class="btn-back">
+            ← Back to Gyms
+        </a>
+    </div>
+</div>
+{% endblock %}
