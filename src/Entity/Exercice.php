@@ -2,89 +2,102 @@
 
 namespace App\Entity;
 
+use App\Repository\ExerciceRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use App\Entity\Equipement;
 
-
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: ExerciceRepository::class)]
 class Exercice
 {
-
     #[ORM\Id]
-    #[ORM\Column(type: "bigint")]
-    private string $id;
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-    #[ORM\Column(type: "text")]
-    private string $description;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "La description est requise.")]
+    #[Assert\Length(min: 5, max: 255, minMessage: "La description est trop courte.")]
+    private ?string $description = null;
 
-    #[ORM\Column(type: "string", length: 255)]
-    private string $image;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "L'image est requise.")]
+    // Si c’est une URL d’image :
+    #[Assert\Url(message: "Le format de l'image doit être une URL valide.")]
+    private ?string $image = null;
 
-    #[ORM\Column(type: "bigint")]
-    private string $id_user;
+    #[ORM\Column]
+    #[Assert\NotNull(message: "L'utilisateur est requis.")]
+    #[Assert\Positive(message: "L'identifiant utilisateur doit être un entier positif.")]
+    private ?int $id_user = null;
 
-    #[ORM\Column(type: "bigint")]
-    private string $id_equipement;
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom de l'exercice est requis.")]
+    #[Assert\Length(min: 2, max: 255, minMessage: "Le nom de l'exercice est trop court.")]
+    private ?string $nom_exercice = null;
 
-    #[ORM\Column(type: "string", length: 100)]
-    private string $nom_exercice;
-
-    public function getId()
+    #[ORM\ManyToOne(targetEntity: Equipement::class, inversedBy: 'exercices')]
+    #[ORM\JoinColumn(name: 'id_equipement', referencedColumnName: 'id', nullable: false)]
+    #[Assert\NotNull(message: "L'équipement est obligatoire.")]
+    private ?Equipement $equipement = null;
+    
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId($value)
-    {
-        $this->id = $value;
-    }
-
-    public function getDescription()
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription($value)
+    public function setDescription(string $description): static
     {
-        $this->description = $value;
+        $this->description = $description;
+        return $this;
     }
 
-    public function getImage()
+    public function getImage(): ?string
     {
         return $this->image;
     }
 
-    public function setImage($value)
+    public function setImage(string $image): static
     {
-        $this->image = $value;
+        $this->image = $image;
+        return $this;
     }
 
-    public function getId_user()
+    public function getIdUser(): ?int
     {
         return $this->id_user;
     }
 
-    public function setId_user($value)
+    public function setIdUser(int $id_user): static
     {
-        $this->id_user = $value;
+        $this->id_user = $id_user;
+        return $this;
     }
 
-    public function getId_equipement()
-    {
-        return $this->id_equipement;
-    }
-
-    public function setId_equipement($value)
-    {
-        $this->id_equipement = $value;
-    }
-
-    public function getNom_exercice()
+    public function getNomExercice(): ?string
     {
         return $this->nom_exercice;
     }
 
-    public function setNom_exercice($value)
+    public function setNomExercice(string $nom_exercice): static
     {
-        $this->nom_exercice = $value;
+        $this->nom_exercice = $nom_exercice;
+        return $this;
+    }
+
+    public function getEquipement(): ?Equipement
+    {
+        return $this->equipement;
+    }
+    
+    public function setEquipement(?Equipement $equipement): static
+    {
+        $this->equipement = $equipement;
+        return $this;
     }
 }

@@ -1,0 +1,231 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}Gyms{% endblock %}
+
+{% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet" />
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
+
+<style>
+    body {
+        background-color: #0d0d0d;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .gym-card {
+        background: linear-gradient(160deg, #181818, #0f0f0f);
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border: 1px solid #2a2a2a;
+        position: relative;
+    }
+
+    .gym-card:hover {
+        transform: translateY(-6px) scale(1.02);
+        box-shadow: 0 15px 50px rgba(255, 94, 13, 0.4);
+    }
+
+    .gym-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        filter: brightness(0.95);
+    }
+
+    .gym-card .content {
+        padding: 22px;
+        flex-grow: 1;
+        color: #fff;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .badge-zone {
+        background-color: #2c3e50;
+        color: #ff5e13;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+        margin-bottom: 14px;
+        letter-spacing: 1px;
+        box-shadow: 0 3px 8px rgba(44, 62, 80, 0.4);
+    }
+
+    .gym-card h5 {
+        font-size: 21px;
+        color: #f7f7f7;
+        font-weight: 700;
+        margin-bottom: 15px;
+        letter-spacing: 1px;
+    }
+
+    .btn-orange {
+        background: linear-gradient(135deg, #ff5e13, #cc4b0d);
+        border: none;
+        padding: 12px 28px;
+        color: #fff;
+        font-weight: bold;
+        border-radius: 30px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(255, 94, 13, 0.35);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+    }
+
+    .btn-orange i {
+        margin-right: 8px;
+    }
+
+    .btn-orange:hover {
+        background: linear-gradient(135deg, #e44d0c, #ff5e13);
+        transform: scale(1.06);
+    }
+
+    .section-title {
+        margin-bottom: 50px;
+    }
+
+    .section-title span {
+        color: #ff5e13;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: block;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+    }
+
+    .section-title h2 {
+        color: #fff;
+        font-size: 38px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .tag-new {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background-color: #f39c12;
+        color: #111;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: bold;
+        border-radius: 12px;
+        text-transform: uppercase;
+        box-shadow: 0 2px 8px rgba(243, 156, 18, 0.4);
+    }
+
+    .map-container {
+        width: 100%;
+        height: 300px;
+        border-radius: 8px;
+        margin-top: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        background-color: #000; /* Ajoutez une couleur de fond par défaut */
+    }
+</style>
+
+<section id="gyms" class="classes-section spad">
+    <div class="container">
+        <div class="section-title text-center">
+            <span>Our Gyms</span>
+            <h2>Explore the Available Gyms</h2>
+        </div>
+        <div class="row">
+            {% for salle_de_sport in salle_de_sports %}
+                <div class="col-lg-4 col-md-6 mb-4 d-flex">
+                    <div class="gym-card w-100">
+                        {% if salle_de_sport.image is not empty %}
+                            {% set imagePath = salle_de_sport.image starts with '/' ? salle_de_sport.image : 'images/' ~ salle_de_sport.image %}
+                            <img src="{{ asset(imagePath) }}" alt="{{ salle_de_sport.nom }}" onerror="this.onerror=null;this.src='{{ asset('images/default.jpg') }}';">
+                        {% else %}
+                            <img src="{{ asset('images/default.jpg') }}" alt="No image">
+                        {% endif %}
+                        <div class="content">
+                            <div class="badge-zone">
+                                <i class="fas fa-map-marker-alt"></i> {{ salle_de_sport.zone }}
+                            </div>
+                            <h5><i class="fas fa-dumbbell"></i> {{ salle_de_sport.nom|title }}</h5>
+                            <a href="javascript:void(0);" class="btn-orange mt-3" onclick="showPlace('{{ salle_de_sport.zone }}', 'map{{ salle_de_sport.id }}')">
+                                <i class="fas fa-map-marker-alt"></i> Show Place
+                            </a>
+                            <a href="{{ path('app_salle_de_sport_equipementsf', { 'id': salle_de_sport.id }) }}" class="btn-orange mt-3">
+                                <i class="fas fa-tools"></i> View Equipment
+                            </a>
+                        </div>
+
+                        <!-- Map container -->
+                        <div id="map{{ salle_de_sport.id }}" class="map-container"></div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 text-center text-white">
+                    <p>No gym found.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYXJpamNoYWFvdXJpIiwiYSI6ImNtN3FyZTN2cDEyeGcya3MzYjJzYWw3dGgifQ.PDmXhuINWST2Uer-SzPTVw';
+
+    function showPlace(zone, mapId) {
+        // Ajouter une bounding box pour limiter la recherche à la Tunisie
+        const bbox = '7.5248,30.2304,11.5802,37.5438'; // Bounding box pour la Tunisie
+
+        // Utiliser l'API de géocodage de Mapbox pour obtenir les coordonnées de la zone
+        fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(zone)}.json?bbox=${bbox}&access_token=${mapboxgl.accessToken}`)
+            .then(response => response.json())
+            .then(data => {
+                let coordinates;
+
+                if (data.features && data.features.length > 0) {
+                    coordinates = data.features[0].center; // Obtenir les coordonnées du premier résultat
+                } else {
+                    alert('Aucun emplacement trouvé pour la zone : ' + zone + '. Affichage des coordonnées par défaut.');
+                    coordinates = [10.1647, 36.8665]; // Coordonnées par défaut (exemple : Ariana, Tunisie)
+                }
+
+                // Initialiser la carte dans le conteneur correspondant
+                var map = new mapboxgl.Map({
+                    container: mapId, // ID du conteneur de la carte
+                    style: 'mapbox://styles/mapbox/streets-v11',
+                    center: coordinates, // Centrer la carte sur les coordonnées
+                    zoom: 14
+                });
+
+                // Ajouter un marqueur sur les coordonnées
+                new mapboxgl.Marker()
+                    .setLngLat(coordinates)
+                    .addTo(map);
+
+                // Redimensionner la carte après un court délai pour s'assurer qu'elle s'affiche correctement
+                setTimeout(() => {
+                    map.resize();
+                }, 200);
+            })
+            .catch(error => {
+                console.error('Erreur lors de la récupération des coordonnées :', error);
+                alert('Impossible de charger la carte pour cette zone.');
+            });
+    }
+</script>
+
+{% endblock %}

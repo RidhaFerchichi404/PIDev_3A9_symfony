@@ -9,3 +9,6 @@ import './styles/front.css';
 import './styles/back.css';
 
 console.log('Application styles loaded successfully!');
+import './styles/app.css';
+
+console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
