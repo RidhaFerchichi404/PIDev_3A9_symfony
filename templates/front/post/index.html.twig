@@ -1,169 +1,148 @@
-{% extends 'base.html.twig' %}
+{% extends 'front.html.twig' %}
 
 {% block title %}Blog Posts{% endblock %}
-{% block section %}Front Office{% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-        <div class="row">
-            <!-- Most Commented Post (Left Sidebar) -->
-            <div class="col-md-3">
-                <div class="card mb-4 shadow sidebar-card">
-                    <div class="card-header bg-light">
-                        <h3 class="h5 mb-0">Most Commented Post</h3>
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-section set-bg" data-setbg="{{ asset('img/breadcrumb-bg.jpg') }}">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="breadcrumb-text">
+                        <h2>Blog Posts</h2>
+                        <div class="bt-option">
+                            <a href="{{ path('app_front_post_index') }}">Home</a>
+                            <span>Blog</span>
+                        </div>
                     </div>
-                    {% if mostCommentedPosts|length > 0 %}
-                        {% set topPost = mostCommentedPosts|first %}
-                        <div class="card-body p-0">
-                            {% if topPost.image %}
-                                <img src="{{ asset('uploads/posts/' ~ topPost.image) }}" class="card-img-top sidebar-post-image" alt="{{ topPost.description }}">
-                            {% endif %}
-                            <div class="p-3">
-                                <h5 class="card-title">{{ topPost.description|length > 50 ? topPost.description|slice(0, 50) ~ '...' : topPost.description }}</h5>
-                                <p class="card-text">
-                                    <i class="fas fa-comments"></i> {{ topPost.comments|length }} comments<br>
-                                    <small class="text-muted"><i class="fas fa-calendar-alt"></i> {{ topPost.dateU|date('M d, Y') }}</small>
-                                </p>
-                                <a href="{{ path('app_front_post_show', {'id': topPost.id}) }}" class="btn btn-primary btn-sm w-100">Read More</a>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="card-body">
-                            <p class="text-center mb-0">No posts found</p>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
-            
-            <!-- Main Content -->
-            <div class="col-md-6">
-                <div class="card mb-4 shadow">
-                    <div class="card-header bg-light">
-                        <h1 class="h3 mb-0">Blog Posts</h1>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Blog Section Begin -->
+    <section class="blog-section spad">
+        <div class="container">
+            <div class="row">
+                <!-- Most Commented Post (Left Sidebar) -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="sidebar-option">
+                        <div class="so-categories">
+                            <h5 class="title">Most Commented Post</h5>
+                            {% if mostCommentedPosts|length > 0 %}
+                                {% set topPost = mostCommentedPosts|first %}
+                                <div class="blog-item">
+                                    {% if topPost.image %}
+                                        <div class="bi-pic">
+                                            <img src="{{ asset('uploads/posts/' ~ topPost.image) }}" alt="{{ topPost.description }}">
+                                        </div>
+                                    {% endif %}
+                                    <div class="bi-text">
+                                        <h5><a href="{{ path('app_front_post_show', {'id': topPost.id}) }}">
+                                            {{ topPost.description|length > 50 ? topPost.description|slice(0, 50) ~ '...' : topPost.description }}
+                                        </a></h5>
+                                        <span><i class="fa fa-calendar"></i> {{ topPost.dateU|date('M d, Y') }}</span>
+                                        <span><i class="fa fa-comments"></i> {{ topPost.comments|length }}</span>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p>No posts found</p>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="btn-group" role="group">
-                                    <a href="{{ path('app_front_post_index') }}" 
-                                       class="btn btn-outline-primary {{ not currentType and not currentSort ? 'active' }}">
-                                        All Posts
-                                    </a>
-                                    <a href="{{ path('app_front_post_index', {'sort': 'most_commented'}) }}" 
-                                       class="btn btn-outline-primary {{ currentSort == 'most_commented' ? 'active' }}">
-                                        Most Commented
-                                    </a>
-                                </div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <div class="blog-option">
+                        <div class="blog-filter">
+                            <div class="btn-group">
+                                <a href="{{ path('app_front_post_index') }}" 
+                                   class="primary-btn {{ not currentType and not currentSort ? 'active' }}">
+                                    All Posts
+                                </a>
+                                <a href="{{ path('app_front_post_index', {'sort': 'most_commented'}) }}" 
+                                   class="primary-btn {{ currentSort == 'most_commented' ? 'active' }}">
+                                    Most Commented
+                                </a>
                             </div>
-                            <div class="col-md-6">
-                                <div class="btn-group" role="group">
-                                    <a href="{{ path('app_front_post_index', {'type': 'Marathon'}) }}" 
-                                       class="btn btn-outline-secondary {{ currentType == 'Marathon' ? 'active' }}">
-                                        Marathon
-                                    </a>
-                                    <a href="{{ path('app_front_post_index', {'type': 'Promotion'}) }}" 
-                                       class="btn btn-outline-secondary {{ currentType == 'Promotion' ? 'active' }}">
-                                        Promotion
-                                    </a>
-                                    <a href="{{ path('app_front_post_index', {'type': 'Diet'}) }}" 
-                                       class="btn btn-outline-secondary {{ currentType == 'Diet' ? 'active' }}">
-                                        Diet
-                                    </a>
-                                </div>
+                            <div class="btn-group">
+                                <a href="{{ path('app_front_post_index', {'type': 'Marathon'}) }}" 
+                                   class="primary-btn {{ currentType == 'Marathon' ? 'active' }}">
+                                    Marathon
+                                </a>
+                                <a href="{{ path('app_front_post_index', {'type': 'Promotion'}) }}" 
+                                   class="primary-btn {{ currentType == 'Promotion' ? 'active' }}">
+                                    Promotion
+                                </a>
+                                <a href="{{ path('app_front_post_index', {'type': 'Diet'}) }}" 
+                                   class="primary-btn {{ currentType == 'Diet' ? 'active' }}">
+                                    Diet
+                                </a>
                             </div>
                         </div>
+                    </div>
 
+                    <div class="row">
                         {% for post in posts %}
-                            <div class="card mb-3 shadow-sm post-item">
-                                {% if post.image %}
-                                    <img src="{{ asset('uploads/posts/' ~ post.image) }}" class="card-img-top post-image" alt="{{ post.description }}">
-                                {% endif %}
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <h2 class="h5 mb-0">{{ post.description }}</h2>
-                                        <span class="badge bg-primary">{{ post.type }}</span>
+                            <div class="col-lg-6">
+                                <div class="blog-item">
+                                    {% if post.image %}
+                                        <div class="bi-pic">
+                                            <img src="{{ asset('uploads/posts/' ~ post.image) }}" alt="{{ post.description }}">
+                                        </div>
+                                    {% endif %}
+                                    <div class="bi-text">
+                                        <h5><a href="{{ path('app_front_post_show', {'id': post.id}) }}">{{ post.description }}</a></h5>
+                                        <ul>
+                                            <li><i class="fa fa-calendar"></i> {{ post.dateU|date('M d, Y') }}</li>
+                                            <li><i class="fa fa-comments"></i> {{ post.comments|length }}</li>
+                                        </ul>
+                                        <span class="blog-tag">{{ post.type }}</span>
+                                        <a href="{{ path('app_front_post_show', {'id': post.id}) }}" class="primary-btn">Read More</a>
                                     </div>
-                                    <p class="text-muted">
-                                        <i class="fas fa-calendar-alt"></i> {{ post.dateU|date('F d, Y') }} |
-                                        <i class="fas fa-comments"></i> {{ post.comments|length }} comments
-                                    </p>
-                                    <a href="{{ path('app_front_post_show', {'id': post.id}) }}" class="btn btn-outline-primary btn-sm">
-                                        Read More
-                                    </a>
                                 </div>
                             </div>
                         {% else %}
-                            <div class="alert alert-info">
-                                No posts found.
+                            <div class="col-lg-12">
+                                <p class="no-posts">No posts found.</p>
                             </div>
                         {% endfor %}
+                    </div>
 
-                        {% if totalPages > 1 %}
-                            <nav aria-label="Page navigation" class="mt-4">
-                                <ul class="pagination justify-content-center">
-                                    <li class="page-item {{ currentPage == 1 ? 'disabled' }}">
-                                        <a class="page-link" href="{{ path('app_front_post_index', {
-                                            'page': currentPage - 1,
-                                            'type': currentType,
-                                            'sort': currentSort
-                                        }) }}" aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
-                                    </li>
-                                    
-                                    {% for i in 1..totalPages %}
-                                        <li class="page-item {{ currentPage == i ? 'active' }}">
-                                            <a class="page-link" href="{{ path('app_front_post_index', {
-                                                'page': i,
-                                                'type': currentType,
-                                                'sort': currentSort
-                                            }) }}">{{ i }}</a>
-                                        </li>
-                                    {% endfor %}
-                                    
-                                    <li class="page-item {{ currentPage == totalPages ? 'disabled' }}">
-                                        <a class="page-link" href="{{ path('app_front_post_index', {
-                                            'page': currentPage + 1,
-                                            'type': currentType,
-                                            'sort': currentSort
-                                        }) }}" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Most Recent Post (Right Sidebar) -->
-            <div class="col-md-3">
-                <div class="card mb-4 shadow sidebar-card">
-                    <div class="card-header bg-light">
-                        <h3 class="h5 mb-0">Most Recent Post</h3>
-                    </div>
-                    {% if recentPosts|length > 0 %}
-                        {% set latestPost = recentPosts|first %}
-                        <div class="card-body p-0">
-                            {% if latestPost.image %}
-                                <img src="{{ asset('uploads/posts/' ~ latestPost.image) }}" class="card-img-top sidebar-post-image" alt="{{ latestPost.description }}">
-                            {% endif %}
-                            <div class="p-3">
-                                <h5 class="card-title">{{ latestPost.description|length > 50 ? latestPost.description|slice(0, 50) ~ '...' : latestPost.description }}</h5>
-                                <p class="card-text">
-                                    <small class="text-muted"><i class="fas fa-calendar-alt"></i> {{ latestPost.dateU|date('M d, Y') }}</small>
-                                </p>
-                                <a href="{{ path('app_front_post_show', {'id': latestPost.id}) }}" class="btn btn-success btn-sm w-100">Read More</a>
+                    {% if totalPages > 1 %}
+                        <div class="pagination-wrapper">
+                            <div class="pagination">
+                                {% if currentPage > 1 %}
+                                    <a href="{{ path('app_front_post_index', {
+                                        'page': currentPage - 1,
+                                        'type': currentType,
+                                        'sort': currentSort
+                                    }) }}" class="prev-arrow"><i class="fa fa-angle-left"></i></a>
+                                {% endif %}
+                                
+                                {% for i in 1..totalPages %}
+                                    <a href="{{ path('app_front_post_index', {
+                                        'page': i,
+                                        'type': currentType,
+                                        'sort': currentSort
+                                    }) }}" {{ currentPage == i ? 'class="active"' }}>{{ i }}</a>
+                                {% endfor %}
+                                
+                                {% if currentPage < totalPages %}
+                                    <a href="{{ path('app_front_post_index', {
+                                        'page': currentPage + 1,
+                                        'type': currentType,
+                                        'sort': currentSort
+                                    }) }}" class="next-arrow"><i class="fa fa-angle-right"></i></a>
+                                {% endif %}
                             </div>
-                        </div>
-                    {% else %}
-                        <div class="card-body">
-                            <p class="text-center mb-0">No posts found</p>
                         </div>
                     {% endif %}
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+    <!-- Blog Section End -->
 {% endblock %} 
