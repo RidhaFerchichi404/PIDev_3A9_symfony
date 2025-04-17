@@ -158,11 +158,9 @@ final class SalleDeSportController extends AbstractController
     #[Route('/{id}/equipements', name: 'app_salle_de_sport_equipements', methods: ['GET'])]
     public function equipements(SalleDeSport $salleDeSport): Response
     {
-        $equipements = $salleDeSport->getEquipements();
-
         return $this->render('equipement/index.html.twig', [
-            'salle_de_sport' => $salleDeSport, // Transmet la salle de sport à la vue
-            'equipements' => $equipements,
+            'equipements' => $salleDeSport->getEquipements(),
+            'salle_de_sport' => $salleDeSport,
         ]);
     }
 
@@ -188,11 +186,21 @@ final class SalleDeSportController extends AbstractController
         $data_values = [];
 
         foreach ($salleDeSports as $salleDeSport) {
-            $data[] = $salleDeSport->getNom();  // The name of the gym
-            $data_values[] = $salleDeSport->getEquipements()->count();  // The number of equipment in the gym
+            // Vérifier que la salle a un nom avant de l'ajouter
+            if ($salleDeSport->getNom()) {
+                $data[] = $salleDeSport->getNom();  // The name of the gym
+                $data_values[] = $salleDeSport->getEquipements()->count();  // The number of equipment in the gym
+            }
+        }
+
+        // S'assurer qu'il y a des données à afficher
+        if (empty($data)) {
+            $data = ['Aucune salle'];
+            $data_values = [0];
         }
 
         return $this->render('salle_de_sport/statistics.html.twig', [
+            'salle_de_sports' => $salleDeSports,
             'data' => $data,             // Pass the labels
             'data_values' => $data_values // Pass the values
         ]);

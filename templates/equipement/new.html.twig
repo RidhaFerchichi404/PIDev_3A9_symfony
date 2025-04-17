@@ -1,71 +1,89 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Create New Equipement{% endblock %}
+{% block title %}Create New Equipment{% endblock %}
 
 {% block body %}
     <div class="container mt-5">
-        <h1 class="text-center mb-4 text-lila">Create New Equipement</h1>
+        {% if salle_nom is defined %}
+            <h1 class="text-center mb-4 text-lila">Add Equipment to {{ salle_nom }}</h1>
+        {% else %}
+            <h1 class="text-center mb-4 text-lila">Create New Equipment</h1>
+        {% endif %}
 
         <div class="card shadow-lg border-0 rounded-3">
             <div class="card-header bg-lila text-white">
-                <h5 class="card-title mb-0">Enter Equipement Details</h5>
+                {% if salle_nom is defined %}
+                    <h5 class="card-title mb-0">Equipment Information</h5>
+                {% else %}
+                    <h5 class="card-title mb-0">Enter Equipment Details</h5>
+                {% endif %}
             </div>
 
             <div class="card-body">
                 <!-- Start of the form -->
                 {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'needs-validation'}}) }}
 
-                <!-- Equipement Name -->
+                <!-- Equipment Name -->
                 <div class="mb-4">
-                    <label for="equipementName" class="form-label">Equipement Name</label>
-                    {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg input-color', 'placeholder': 'Enter equipement name', 'id': 'equipementName'}}) }}
+                    <label for="equipementName" class="form-label">Equipment Name</label>
+                    {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg input-color', 'placeholder': 'Enter equipment name', 'id': 'equipementName'}}) }}
                     {{ form_errors(form.nom) }}
                 </div>
 
-                <!-- Fonctionnement -->
+                <!-- Functionality -->
                 <div class="mb-4">
-                    <label for="fonctionnement" class="form-label">Fonctionnement</label>
+                    <label for="fonctionnement" class="form-label">Functionality</label>
                     <div class="form-check">
                         {{ form_widget(form.fonctionnement, {'attr': {'class': 'form-check-input', 'id': 'fonctionnement'}}) }}
                         <label class="form-check-label" for="fonctionnement">
-                            Is the equipement working?
+                            Is the equipment working?
                         </label>
                     </div>
                     {{ form_errors(form.fonctionnement) }}
                 </div>
 
-                <!-- Prochaine Vérification -->
+                <!-- Next Verification -->
                 <div class="mb-4">
-                    <label for="prochaineVerification" class="form-label">Prochaine Vérification</label>
+                    <label for="prochaineVerification" class="form-label">Next Verification</label>
                     {{ form_widget(form.prochaine_verification, {'attr': {'class': 'form-control form-control-lg input-color', 'id': 'prochaineVerification', 'type': 'date'}}) }}
                     {{ form_errors(form.prochaine_verification) }}
                 </div>
 
-                <!-- Dernière Vérification -->
+                <!-- Last Verification -->
                 <div class="mb-4">
-                    <label for="derniereVerification" class="form-label">Dernière Vérification</label>
+                    <label for="derniereVerification" class="form-label">Last Verification</label>
                     {{ form_widget(form.derniere_verification, {'attr': {'class': 'form-control form-control-lg input-color', 'id': 'derniereVerification', 'type': 'date'}}) }}
                     {{ form_errors(form.derniere_verification) }}
                 </div>
 
-                <!-- Salle -->
+                <!-- Gym - display only if the field exists in the form -->
+                {% if form.salle is defined %}
                 <div class="mb-4">
-                    <label for="salle" class="form-label">Salle</label>
+                    <label for="salle" class="form-label">Gym</label>
                     {{ form_widget(form.salle, {'attr': {'class': 'form-control form-control-lg input-color', 'id': 'salle'}}) }}
                     {{ form_errors(form.salle) }}
                 </div>
-
-                <!-- Id User -->
+                {% elseif salle_nom is defined %}
                 <div class="mb-4">
-                    <label for="id_user" class="form-label">Id User</label>
+                    <label class="form-label">Gym</label>
+                    <div class="form-control form-control-lg input-color disabled">{{ salle_nom }}</div>
+                    <small class="text-muted">This equipment will be associated with the gym "{{ salle_nom }}"</small>
+                </div>
+                {% endif %}
+
+                <!-- User ID - display only if the field exists in the form -->
+                {% if form.id_user is defined %}
+                <div class="mb-4">
+                    <label for="id_user" class="form-label">User ID</label>
                     {{ form_widget(form.id_user, {'attr': {'class': 'form-control form-control-lg input-color', 'id': 'id_user'}}) }}
                     {{ form_errors(form.id_user) }}
                 </div>
+                {% endif %}
 
                 <!-- Submit Button -->
                 <div class="d-grid gap-2 mt-4">
                     <button type="submit" class="btn btn-success btn-lg">
-                        <span role="img" aria-label="save">💾</span> Create Equipement
+                        <span role="img" aria-label="save">💾</span> Create Equipment
                     </button>
                 </div>
 
@@ -75,9 +93,15 @@
 
             <div class="card-footer d-flex justify-content-between align-items-center">
                 <!-- Back Button -->
+                {% if salle_id is defined %}
+                <a href="{{ path('app_salle_de_sport_equipements', {'id': salle_id}) }}" class="btn btn-outline-secondary btn-sm">
+                    <i class="ri-arrow-left-line"></i> Back to Gym Equipment
+                </a>
+                {% else %}
                 <a href="{{ path('app_equipement_index') }}" class="btn btn-outline-secondary btn-sm">
                     <i class="ri-arrow-left-line"></i> Back to List
                 </a>
+                {% endif %}
             </div>
         </div>
     </div>

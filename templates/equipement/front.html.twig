@@ -1,104 +1,215 @@
 {% extends 'front.html.twig' %}
 
-{% block title %} - Available Gym Equipment{% endblock %}
+{% block title %} - Pro Fitness Equipment{% endblock %}
 
 {% block body %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+
 <style>
     body {
         background-color: #0d0d0d;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .section-title {
-        text-align: center;
-        color: #fff;
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('{{ asset('images/equipment-hero.jpg') }}');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 0;
+        position: relative;
         margin-bottom: 50px;
-        margin-top: 40px;
+        border-radius: 0 0 50px 50px;
+        overflow: hidden;
     }
 
-    .section-title h1 {
-        font-size: 32px;
-        font-weight: 800;
-        color: #fff;
-        text-transform: uppercase;
-        margin-bottom: 15px;
+    .hero-content {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
     }
 
-    .section-title span {
+    .hero-subtitle {
+        font-size: 16px;
         color: #ff5e13;
-        font-size: 20px;
+        text-transform: uppercase;
         font-weight: 600;
-        display: block;
+        letter-spacing: 2px;
+        margin-bottom: 15px;
+        display: inline-block;
+        background: rgba(255, 94, 19, 0.1);
+        padding: 5px 15px;
+        border-radius: 20px;
+        animation: fadeIn 1s both;
+    }
+
+    .hero-title {
+        font-size: 48px;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 20px;
+        text-transform: capitalize;
         letter-spacing: 1px;
-        margin-top: 10px;
+        animation: fadeInDown 1s both;
+    }
+
+    .hero-description {
+        color: #e0e0e0;
+        font-size: 16px;
+        margin-bottom: 30px;
+        font-weight: 300;
+        line-height: 1.6;
+        animation: fadeIn 1.5s both;
+    }
+
+    /* Equipment Grid */
+    .category-filters {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 40px;
+    }
+
+    .category-filter {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .category-filter:hover, .category-filter.active {
+        background: rgba(255, 94, 19, 0.2);
+        border-color: #ff5e13;
+        color: #ff5e13;
+    }
+
+    .equipment-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
     }
 
     .equipment-card {
         background: linear-gradient(145deg, #1f1f1f, #141414);
         border-radius: 20px;
-        padding: 25px;
-        box-shadow: 0 10px 30px rgba(255, 94, 13, 0.15);
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         color: #fff;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
         height: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        flex-direction: column;
+        transform: translateY(0);
+        opacity: 0;
+        animation: fadeInUp 0.6s forwards;
+        animation-delay: calc(var(--i) * 0.1s);
     }
 
     .equipment-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 20px 40px rgba(255, 94, 13, 0.25);
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(255, 94, 19, 0.25);
+        border-color: rgba(255, 94, 19, 0.3);
     }
 
-    .equipment-card h5 {
-        font-size: 22px;
-        font-weight: bold;
+    .equipment-card h3 {
+        font-size: 24px;
+        font-weight: 700;
         color: #ff5e13;
         margin-bottom: 20px;
-        text-transform: uppercase;
+        position: relative;
+        padding-bottom: 15px;
+        letter-spacing: 0.5px;
     }
 
-    .equipment-info {
-        font-size: 14px;
-        color: #ddd;
-        margin-bottom: 10px;
-    }
-
-    .equipment-info i {
-        margin-right: 8px;
-        color: #ff5e13;
-    }
-
-    .equipment-info span {
-        font-weight: bold;
-        color: #f1f1f1;
+    .equipment-card h3::after {
+        content: '';
+        position: absolute;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(to right, #ff5e13, transparent);
+        bottom: 0;
+        left: 0;
     }
 
     .status-badge {
-        display: inline-block;
+        position: absolute;
+        top: 20px;
+        right: 20px;
         padding: 6px 14px;
-        border-radius: 20px;
+        border-radius: 50px;
         font-weight: 600;
         font-size: 13px;
         text-transform: uppercase;
-        margin-bottom: 10px;
         letter-spacing: 0.5px;
     }
 
     .status-ok {
-        background-color: #2ecc71;
-        color: #fff;
+        background-color: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+        border: 1px solid rgba(46, 204, 113, 0.3);
     }
 
     .status-ko {
-        background-color: #e74c3c;
-        color: #fff;
+        background-color: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+        border: 1px solid rgba(231, 76, 60, 0.3);
     }
 
-    .btn-orange {
-        background: linear-gradient(135deg, #ff5e13, #cc4b0d);
+    .info-group {
+        margin-bottom: 20px;
+        flex-grow: 1;
+    }
+
+    .equipment-info {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #ddd;
+    }
+
+    .info-icon {
+        font-size: 16px;
+        color: #ff5e13;
+        min-width: 20px;
+    }
+
+    .info-content {
+        flex-grow: 1;
+    }
+
+    .info-label {
+        display: block;
+        color: #aaa;
+        margin-bottom: 5px;
+        font-size: 12px;
+    }
+
+    .info-value {
+        font-weight: 600;
+        color: #f1f1f1;
+    }
+
+    .btn-view {
+        background: linear-gradient(135deg, #ff5e13, #ff8c00);
         color: #fff;
         border: none;
-        padding: 10px 22px;
-        border-radius: 30px;
+        padding: 14px 24px;
+        border-radius: 12px;
         font-weight: 600;
         text-decoration: none;
         transition: all 0.3s ease;
@@ -106,79 +217,259 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        gap: 10px;
+        text-transform: uppercase;
+        font-size: 13px;
+        letter-spacing: 1px;
+        margin-top: auto;
     }
 
-    .btn-orange:hover {
-        background: linear-gradient(135deg, #e44d0c, #ff5e13);
-        transform: scale(1.05);
+    .btn-view:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(255, 94, 13, 0.4);
+        color: #fff;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+    .section-title h2 {
+        font-size: 36px;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 20px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-title h2::after {
+        content: '';
+        position: absolute;
+        width: 60%;
+        height: 4px;
+        background: linear-gradient(to right, #ff5e13, transparent);
+        bottom: -15px;
+        left: 20%;
+    }
+
+    .section-title p {
+        color: #aaa;
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
     }
 
     .btn-back {
-        color: #ccc;
-        border: 1px solid #555;
-        padding: 10px 24px;
-        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 14px;
         text-decoration: none;
-        display: inline-block;
-        margin-top: 40px;
-        transition: 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        margin-top: 20px;
     }
 
     .btn-back:hover {
-        color: #fff;
-        background-color: #ff5e13;
+        background: rgba(255, 255, 255, 0.15);
         border-color: #ff5e13;
+        color: #ff5e13;
+        transform: translateX(-5px);
     }
 
-    .row-gap {
-        row-gap: 30px;
+    .no-equipment {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 50px 30px;
+        text-align: center;
+        max-width: 800px;
+        margin: 50px auto;
+    }
+
+    .no-equipment i {
+        font-size: 50px;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .no-equipment h3 {
+        font-size: 24px;
+        color: white;
+        margin-bottom: 15px;
+    }
+
+    .no-equipment p {
+        color: #aaa;
+        margin-bottom: 25px;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 32px;
+        }
+        
+        .equipment-grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <span class="hero-subtitle">Professional Fitness Equipment</span>
+        <h1 class="hero-title">State-of-the-Art Training Gear</h1>
+        <p class="hero-description">
+            Discover our collection of premium fitness equipment designed to maximize your workout efficiency and results
+        </p>
+    </div>
+</section>
+
 <div class="container">
     <div class="section-title">
-        <h1>Available Equipment</h1>
-        
+        <h2>Available Equipment</h2>
+        <p>Each piece of equipment is regularly maintained and verified to ensure optimal performance and safety for all users</p>
     </div>
 
-    <div class="row row-gap">
+    <!-- Category Filters -->
+    <div class="category-filters">
+        <div class="category-filter active" data-filter="all">
+            <i class="fas fa-th-large"></i> All Equipment
+        </div>
+        <div class="category-filter" data-filter="operational">
+            <i class="fas fa-check-circle"></i> Operational
+        </div>
+        <div class="category-filter" data-filter="maintenance">
+            <i class="fas fa-tools"></i> Under Maintenance
+        </div>
+    </div>
+
+    <!-- Equipment Grid -->
+    <div class="equipment-grid" id="equipment-grid">
         {% for equipement in equipements %}
-            <div class="col-lg-4 col-md-6 d-flex">
-                <div class="equipment-card w-100">
-                    <h5>{{ equipement.nom|upper }}</h5>
-
-                    {% if equipement.fonctionnement %}
-                        <div class="status-badge status-ok">Operational</div>
-                    {% else %}
-                        <div class="status-badge status-ko">Out of Order</div>
-                    {% endif %}
-
-                    <p class="equipment-info">
-                        <i class="fas fa-calendar-plus"></i>
-                        <span>Next Check:</span> {{ equipement.prochaineVerification ? equipement.prochaineVerification|date('Y-m-d') : '—' }}
-                    </p>
-
-                    <p class="equipment-info">
-                        <i class="fas fa-calendar-check"></i>
-                        <span>Last Check:</span> {{ equipement.derniereVerification ? equipement.derniereVerification|date('Y-m-d') : '—' }}
-                    </p>
-
-                    <a href="{{ path('app_equipement_exercicesf', {'id': equipement.id}) }}" class="btn-orange mt-3">
-                        <i class="fas fa-dumbbell"></i>&nbsp;View Exercises
-                    </a>
+            <div class="equipment-card" style="--i: {{ loop.index }}" data-status="{{ equipement.fonctionnement ? 'operational' : 'maintenance' }}">
+                <div class="status-badge {{ equipement.fonctionnement ? 'status-ok' : 'status-ko' }}">
+                    {{ equipement.fonctionnement ? 'Operational' : 'Under Maintenance' }}
                 </div>
+                
+                <h3>{{ equipement.nom|title }}</h3>
+                
+                <div class="info-group">
+                    <div class="equipment-info">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Last Verification</span>
+                            <span class="info-value">{{ equipement.derniereVerification ? equipement.derniereVerification|date('d M Y') : 'Not Available' }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="equipment-info">
+                        <div class="info-icon">
+                            <i class="fas fa-calendar-plus"></i>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Next Scheduled Check</span>
+                            <span class="info-value">{{ equipement.prochaineVerification ? equipement.prochaineVerification|date('d M Y') : 'Not Scheduled' }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="equipment-info">
+                        <div class="info-icon">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="info-content">
+                            <span class="info-label">Located At</span>
+                            <span class="info-value">{{ equipement.salle.nom|title }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="{{ path('app_equipement_exercicesf', {'id': equipement.id}) }}" class="btn-view">
+                    <i class="fas fa-dumbbell"></i> View Exercises
+                </a>
             </div>
         {% else %}
-            <div class="col-12 text-center text-light">
-                <p>No equipment found.</p>
+            <div class="no-equipment">
+                <i class="fas fa-dumbbell"></i>
+                <h3>No Equipment Available</h3>
+                <p>There are currently no fitness equipment items registered in our system.</p>
             </div>
         {% endfor %}
     </div>
 
     <div class="text-center">
         <a href="{{ path('app_salle_de_sport_index1') }}" class="btn-back">
-            ← Back to Gyms
+            <i class="fas fa-arrow-left"></i> Back to Gyms
         </a>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Filter functionality
+        const equipmentCards = document.querySelectorAll('.equipment-card');
+        const filterButtons = document.querySelectorAll('.category-filter');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Update active state
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                const filterValue = this.getAttribute('data-filter');
+                
+                // Show/hide cards based on filter
+                equipmentCards.forEach(card => {
+                    if (filterValue === 'all' || card.getAttribute('data-status') === filterValue) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\SalleDeSportRepository;
+use App\Validator\ZoneInRegion;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -20,20 +21,53 @@ class SalleDeSport
     
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le nom ne doit pas être vide.")]
-    #[Assert\Length(min: 2, max: 255, minMessage: "Le nom est trop court.")]
+    #[Assert\Length(
+        min: 2, 
+        max: 100, 
+        minMessage: "Le nom doit contenir au moins {{ limit }} caractères.", 
+        maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères."
+    )]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-ZÀ-ÿ0-9\s\-']+$/", 
+        message: "Le nom ne peut contenir que des lettres, chiffres, espaces, tirets et apostrophes."
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "La zone ne doit pas être vide.")]
+   
+    #[ZoneInRegion]
     private ?string $zone = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "L'image est requise.")]
+    #[Assert\NotBlank(message: "La région est requise.")]
+  
+    private ?string $region = null;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le nom de l'image est requis.")]
+    #[Assert\Regex(
+        pattern: "/^.+\.(jpg|jpeg|png|gif|webp)$/i",
+        message: "Le fichier doit être une image (jpg, jpeg, png, gif ou webp)."
+    )]
+    #[Assert\Length(
+        max: 255, 
+        maxMessage: "Le nom de l'image ne peut pas dépasser {{ limit }} caractères."
+    )]
     private ?string $image = null;
 
     #[ORM\Column]
     #[Assert\NotNull(message: "L'identifiant utilisateur est requis.")]
     #[Assert\Positive(message: "L'identifiant utilisateur doit être un entier positif.")]
+    #[Assert\Type(
+        type: "integer", 
+        message: "L'identifiant utilisateur doit être un nombre entier."
+    )]
+    #[Assert\Range(
+        min: 1, 
+        max: 999999, 
+        notInRangeMessage: "L'identifiant utilisateur doit être compris entre {{ min }} et {{ max }}."
+    )]
     private ?int $id_user = null;
 
     public function __construct()
@@ -70,6 +104,18 @@ class SalleDeSport
         return $this;
     }
 
+    public function getRegion(): ?string
+    {
+        return $this->region;
+    }
+
+    public function setRegion(string $region): static
+    {
+        $this->region = $region;
+
+        return $this;
+    }
+
     public function getImage(): ?string
     {
         return $this->image;
@@ -94,7 +140,7 @@ class SalleDeSport
         return $this;
     }
     public function getEquipements(): Collection
-{
-    return $this->equipements;
-}
+    {
+        return $this->equipements;
+    }
 }

@@ -37,6 +37,14 @@
                             <th>Exercise Name</th>
                             <td>{{ exercice.nomExercice }}</td>
                         </tr>
+                        <tr>
+                            <th>Muscle</th>
+                            <td>{{ exercice.muscle ? exercice.muscle : 'Non spécifié' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Conseils</th>
+                            <td>{{ exercice.conseils ? exercice.conseils : 'Aucun conseil disponible' }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

@@ -33,21 +33,39 @@ class Equipement
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le nom est requis.")]
-    #[Assert\Length(min: 2, max: 255, minMessage: "Le nom est trop court.")]
+    #[Assert\Length(
+        min: 3, 
+        max: 50, 
+        minMessage: "Le nom doit contenir au moins {{ limit }} caractères.",
+        maxMessage: "Le nom ne peut pas dépasser {{ limit }} caractères."
+    )]
+    #[Assert\Regex(
+        pattern: "/^[a-zA-Z0-9àáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆŠŽ ,.'-]+$/",
+        message: "Le nom ne doit contenir que des lettres, chiffres et certains caractères spéciaux."
+    )]
     private ?string $nom = null;
 
     #[ORM\Column]
     #[Assert\NotNull(message: "Le champ fonctionnement est requis.")]
+    #[Assert\Type(type: "bool", message: "La valeur doit être un booléen (vrai/faux).")]
     private ?bool $fonctionnement = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull(message: "La date de prochaine vérification est requise.")]
     #[Assert\Type(type: \DateTimeInterface::class, message: "La date n'est pas valide.")]
+    #[Assert\GreaterThanOrEqual(
+        value: "today",
+        message: "La date de prochaine vérification doit être aujourd'hui ou dans le futur."
+    )]
     private ?\DateTimeInterface $prochaine_verification = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotNull(message: "La date de dernière vérification est requise.")]
     #[Assert\Type(type: \DateTimeInterface::class, message: "La date n'est pas valide.")]
+    #[Assert\LessThanOrEqual(
+        value: "today",
+        message: "La date de dernière vérification doit être aujourd'hui ou dans le passé."
+    )]
     private ?\DateTimeInterface $derniere_verification = null;
 
     #[ORM\OneToMany(mappedBy: 'equipement', targetEntity: Exercice::class, cascade: ['persist', 'remove'])]

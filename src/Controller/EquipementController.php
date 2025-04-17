@@ -50,6 +50,48 @@ final class EquipementController extends AbstractController
         ]);
     }
 
+    #[Route('/new/salle/{id}', name: 'app_equipement_new_for_salle', methods: ['GET', 'POST'])]
+    public function newForSalle(Request $request, EntityManagerInterface $entityManager, $id): Response
+    {
+        // Créer un nouvel équipement
+        $equipement = new Equipement();
+        
+        // Récupérer la salle de sport
+        $salle = $entityManager->getRepository('App\Entity\SalleDeSport')->find($id);
+        
+        if (!$salle) {
+            throw $this->createNotFoundException('La salle n\'existe pas');
+        }
+        
+        // Préremplir la salle
+        $equipement->setSalle($salle);
+        
+        // Préremplir l'ID utilisateur avec celui de la salle
+        $equipement->setIdUser($salle->getIdUser());
+        
+        // Créer le formulaire avec les options pour masquer les champs déjà définis
+        $form = $this->createForm(EquipementType::class, $equipement, [
+            'hide_salle' => true,
+            'hide_user' => true,
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($equipement);
+            $entityManager->flush();
+
+            // Rediriger vers la liste des équipements de cette salle
+            return $this->redirectToRoute('app_salle_de_sport_equipements', ['id' => $id], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('equipement/new.html.twig', [
+            'equipement' => $equipement,
+            'form' => $form,
+            'salle_id' => $id,
+            'salle_nom' => $salle->getNom(),
+        ]);
+    }
+
     #[Route('/{id}', name: 'app_equipement_show', methods: ['GET'])]
     public function show(Equipement $equipement): Response
     {
@@ -67,7 +109,10 @@ final class EquipementController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_equipement_index', [], Response::HTTP_SEE_OTHER);
+            // Rediriger vers les équipements de la salle correspondante
+            return $this->redirectToRoute('app_salle_de_sport_equipements', [
+                'id' => $equipement->getSalle()->getId(),
+            ], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('equipement/edit.html.twig', [
@@ -86,16 +131,17 @@ final class EquipementController extends AbstractController
 
         return $this->redirectToRoute('app_equipement_index', [], Response::HTTP_SEE_OTHER);
     }
+
     #[Route('/{id}/exercices', name: 'app_equipement_exercices', methods: ['GET'])]
     public function exercices(Equipement $equipement): Response
     {
-        $exercices = $equipement->getExercices();
-    
         return $this->render('exercice/index.html.twig', [
+            'exercices' => $equipement->getExercices(),
             'equipement' => $equipement,
-            'exercices' => $exercices,
         ]);
-    }#[Route('/{id}/exercicesf', name: 'app_equipement_exercicesf', methods: ['GET'])]
+    }
+
+    #[Route('/{id}/exercicesf', name: 'app_equipement_exercicesf', methods: ['GET'])]
     public function exercices1(Equipement $equipement): Response
     {
         $exercices = $equipement->getExercices();
@@ -105,6 +151,4 @@ final class EquipementController extends AbstractController
             'exercices' => $exercices,
         ]);
     }
-    
-
 }

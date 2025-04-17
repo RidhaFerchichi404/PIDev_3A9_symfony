@@ -50,6 +50,14 @@ final class ExerciceController extends AbstractController
         ]);
     }
 
+    #[Route('/exercice/{id}', name: 'app_exercice_showf', methods: ['GET'])]
+    public function showf(Exercice $exercice): Response
+    {
+        return $this->render('exercice/show.html.twig', [
+            'exercice' => $exercice,
+        ]);
+    }
+
     #[Route('/{id}/edit', name: 'app_exercice_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Exercice $exercice, EntityManagerInterface $entityManager): Response
     {
@@ -59,7 +67,10 @@ final class ExerciceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_exercice_index', [], Response::HTTP_SEE_OTHER);
+            // Rediriger vers les exercices de l'équipement associé
+            return $this->redirectToRoute('app_equipement_exercices', [
+                'id' => $exercice->getEquipement()->getId(),
+            ], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('exercice/edit.html.twig', [
@@ -77,5 +88,47 @@ final class ExerciceController extends AbstractController
         }
 
         return $this->redirectToRoute('app_exercice_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/new/equipement/{id}', name: 'app_exercice_new_for_equipement', methods: ['GET', 'POST'])]
+    public function newForEquipement(Request $request, EntityManagerInterface $entityManager, $id): Response
+    {
+        // Créer un nouvel exercice
+        $exercice = new Exercice();
+        
+        // Récupérer l'équipement
+        $equipement = $entityManager->getRepository('App\Entity\Equipement')->find($id);
+        
+        if (!$equipement) {
+            throw $this->createNotFoundException('L\'équipement n\'existe pas');
+        }
+        
+        // Préremplir l'équipement
+        $exercice->setEquipement($equipement);
+        
+        // Préremplir l'ID utilisateur avec celui de l'équipement
+        $exercice->setIdUser($equipement->getIdUser());
+        
+        // Créer le formulaire avec les options pour masquer les champs déjà définis
+        $form = $this->createForm(ExerciceType::class, $exercice, [
+            'hide_equipement' => true,
+            'hide_user' => true,
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($exercice);
+            $entityManager->flush();
+
+            // Rediriger vers la liste des exercices de cet équipement
+            return $this->redirectToRoute('app_equipement_exercices', ['id' => $id], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('exercice/new.html.twig', [
+            'exercice' => $exercice,
+            'form' => $form,
+            'equipement_id' => $id,
+            'equipement_nom' => $equipement->getNom(),
+        ]);
     }
 }

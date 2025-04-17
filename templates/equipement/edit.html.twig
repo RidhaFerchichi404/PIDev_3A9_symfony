@@ -1,62 +1,62 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Equipement{% endblock %}
+{% block title %}Edit Equipment{% endblock %}
 
 {% block body %}
     <div class="container mt-5">
-        <h1 class="text-center mb-4 text-lila">Edit Equipement</h1>
+        <h1 class="text-center mb-4 text-lila">Edit Equipment</h1>
 
         <div class="card shadow-lg border-0 rounded-3 p-4">
             <div class="card-header bg-lila text-white">
-                <h5 class="card-title mb-0">Update Equipement Details <span role="img" aria-label="tools">🛠️</span></h5>
+                <h5 class="card-title mb-0">Update Equipment Details <span role="img" aria-label="tools">🛠️</span></h5>
             </div>
 
             <div class="card-body">
                 {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'class': 'needs-validation'}}) }}
 
                 <div class="row">
-                    <!-- Equipement Name -->
+                    <!-- Equipment Name -->
                     <div class="col-md-6 mb-4">
-                        <label for="equipementName" class="form-label">Equipement Name <span role="img" aria-label="name">📝</span></label>
-                        {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Enter equipement name', 'id': 'equipementName'}}) }}
+                        <label for="equipementName" class="form-label">Equipment Name <span role="img" aria-label="name">📝</span></label>
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Enter equipment name', 'id': 'equipementName'}}) }}
                         {{ form_errors(form.nom) }}
                     </div>
 
-                    <!-- Fonctionnement -->
+                    <!-- Functionality -->
                     <div class="col-md-6 mb-4">
-                        <label for="fonctionnement" class="form-label">Fonctionnement <span role="img" aria-label="check">✔️</span></label>
-                        {{ form_widget(form.fonctionnement, {'attr': {'class': 'form-control form-control-lg', 'id': 'fonctionnement'}}) }}
+                        <label for="fonctionnement" class="form-label">Functionality <span role="img" aria-label="check">✔️</span></label>
+                        {{ form_widget(form.fonctionnement, {'attr': {'class': 'form-check-input', 'id': 'fonctionnement'}, 'type': 'checkbox'}) }}
                         {{ form_errors(form.fonctionnement) }}
                     </div>
                 </div>
 
                 <div class="row">
-                    <!-- Prochaine Vérification -->
+                    <!-- Next Verification -->
                     <div class="col-md-6 mb-4">
-                        <label for="prochaineVerification" class="form-label">Prochaine Vérification <span role="img" aria-label="calendar">📅</span></label>
+                        <label for="prochaineVerification" class="form-label">Next Verification <span role="img" aria-label="calendar">📅</span></label>
                         {{ form_widget(form.prochaine_verification, {'attr': {'class': 'form-control form-control-lg', 'id': 'prochaineVerification'}}) }}
                         {{ form_errors(form.prochaine_verification) }}
                     </div>
 
-                    <!-- Dernière Vérification -->
+                    <!-- Last Verification -->
                     <div class="col-md-6 mb-4">
-                        <label for="derniereVerification" class="form-label">Dernière Vérification <span role="img" aria-label="checklist">✅</span></label>
+                        <label for="derniereVerification" class="form-label">Last Verification <span role="img" aria-label="checklist">✅</span></label>
                         {{ form_widget(form.derniere_verification, {'attr': {'class': 'form-control form-control-lg', 'id': 'derniereVerification'}}) }}
                         {{ form_errors(form.derniere_verification) }}
                     </div>
                 </div>
 
                 <div class="row">
-                    <!-- Salle -->
+                    <!-- Gym -->
                     <div class="col-md-6 mb-4">
-                        <label for="salle" class="form-label">Salle <span role="img" aria-label="building"></span></label>
+                        <label for="salle" class="form-label">Gym <span role="img" aria-label="building">🏢</span></label>
                         {{ form_widget(form.salle, {'attr': {'class': 'form-control form-control-lg', 'id': 'salle'}}) }}
                         {{ form_errors(form.salle) }}
                     </div>
 
-                    <!-- Id User -->
+                    <!-- User ID -->
                     <div class="col-md-6 mb-4">
-                        <label for="id_user" class="form-label">Id User <span role="img" aria-label="user">👤</span></label>
+                        <label for="id_user" class="form-label">User ID <span role="img" aria-label="user">👤</span></label>
                         {{ form_widget(form.id_user, {'attr': {'class': 'form-control form-control-lg', 'id': 'id_user'}}) }}
                         {{ form_errors(form.id_user) }}
                     </div>
@@ -65,7 +65,7 @@
                 <!-- Submit Button -->
                 <div class="d-grid gap-2 mt-4">
                     <button type="submit" class="btn btn-success btn-lg">
-                        <span role="img" aria-label="save">💾</span> Update Equipement
+                        <span role="img" aria-label="save">💾</span> Update Equipment
                     </button>
                 </div>
 
