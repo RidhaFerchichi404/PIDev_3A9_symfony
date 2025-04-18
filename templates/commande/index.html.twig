@@ -1,0 +1,131 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Orders - Sportify{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchInput" class="form-control" placeholder="Search orders...">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-filter"></i></span>
+                <select id="statusFilter" class="form-select">
+                    <option value="">All Status</option>
+                    <option value="En attente">Pending</option>
+                    <option value="En cours">Processing</option>
+                    <option value="Livrée">Delivered</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Orders List</h5>
+                    <a href="{{ path('app_commande_new') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> New Order
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Date</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for commande in commandes %}
+                                    <tr>
+                                        <td>{{ commande.id }}</td>
+                                        <td>{{ commande.dateCommande|date('Y-m-d H:i') }}</td>
+                                        <td>{{ commande.produit.nom }}</td>
+                                        <td>{{ commande.quantite }}</td>
+                                        <td>
+                                            {% if commande.statutCommande == 'En attente' %}
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="fas fa-clock"></i> Pending
+                                                </span>
+                                            {% elseif commande.statutCommande == 'En cours' %}
+                                                <span class="badge bg-info">
+                                                    <i class="fas fa-spinner fa-spin"></i> Processing
+                                                </span>
+                                            {% elseif commande.statutCommande == 'Livrée' %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check"></i> Delivered
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a href="{{ path('app_commande_show', {'id': commande.id}) }}" 
+                                                   class="btn btn-sm btn-info" 
+                                                   title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                {% if commande.statutCommande == 'En attente' %}
+                                                    <a href="{{ path('app_commande_edit', {'id': commande.id}) }}" 
+                                                       class="btn btn-sm btn-warning" 
+                                                       title="Edit Order">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                            <i class="fas fa-box-open fa-2x mb-2"></i>
+                                            <p class="mb-0">No orders found</p>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    $(document).ready(function() {
+        // Search functionality
+        $("#searchInput").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("table tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+
+        // Status filter functionality
+        $("#statusFilter").on("change", function() {
+            var value = $(this).val().toLowerCase();
+            $("table tbody tr").filter(function() {
+                if (value === "") {
+                    $(this).show();
+                } else {
+                    $(this).toggle($(this).find("td:eq(4)").text().toLowerCase().indexOf(value) > -1)
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} 

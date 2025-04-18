@@ -1,0 +1,22 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block page_title %}New Order{% endblock %}
+
+{% block admin_content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Create New Order</h5>
+                    <a href="{{ path('app_admin_commande_index') }}" class="btn btn-secondary">
+                        <i class="bx bx-arrow-back me-1"></i> Back to list
+                    </a>
+                </div>
+
+                <div class="card-body">
+                    {{ include('admin/commande/_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

@@ -1,0 +1,24 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Home - Sportify{% endblock %}
+
+{% block body %}
+<section class="hero-section">
+    <div class="hs-slider owl-carousel">
+        <div class="hs-item set-bg" data-setbg="{{ asset('img/hero/hero-1.jpg') }}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 offset-lg-6">
+                        <div class="hi-text">
+                            <span>Welcome to Sportify</span>
+                            <h1>Manage <strong>Products</strong> and <strong>Orders</strong></h1>
+                            <a href="{{ path('app_produit_index') }}" class="primary-btn">View Products</a>
+                            <a href="{{ path('app_commande_index') }}" class="primary-btn">View Orders</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

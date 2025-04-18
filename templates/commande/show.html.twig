@@ -1,0 +1,83 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Order Details #{{ commande.id }} - Sportify{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-shopping-cart"></i> Order Details #{{ commande.id }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-info-circle"></i> Order Information</h6>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th><i class="fas fa-calendar-alt"></i> Order Date</th>
+                                    <td>{{ commande.dateCommande|date('Y-m-d H:i') }}</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fas fa-tasks"></i> Status</th>
+                                    <td>
+                                        {% if commande.statutCommande == 'En attente' %}
+                                            <span class="badge bg-warning text-dark">
+                                                <i class="fas fa-clock"></i> Pending
+                                            </span>
+                                        {% elseif commande.statutCommande == 'En cours' %}
+                                            <span class="badge bg-info">
+                                                <i class="fas fa-spinner fa-spin"></i> Processing
+                                            </span>
+                                        {% elseif commande.statutCommande == 'Livrée' %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check"></i> Delivered
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fas fa-box"></i> Quantity</th>
+                                    <td>{{ commande.quantite }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="fas fa-cube"></i> Product Information</h6>
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th><i class="fas fa-tag"></i> Product Name</th>
+                                    <td>{{ commande.produit.nom }}</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fas fa-dollar-sign"></i> Price</th>
+                                    <td>{{ commande.produit.prix|number_format(2, '.', ',') }} DT</td>
+                                </tr>
+                                <tr>
+                                    <th><i class="fas fa-calculator"></i> Total</th>
+                                    <td>{{ (commande.produit.prix * commande.quantite)|number_format(2, '.', ',') }} DT</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group">
+                        <a href="{{ path('app_commande_index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Back to list
+                        </a>
+                        {% if commande.statutCommande == 'En attente' %}
+                            <a href="{{ path('app_commande_edit', {'id': commande.id}) }}" class="btn btn-warning">
+                                <i class="fas fa-edit me-1"></i> Edit
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

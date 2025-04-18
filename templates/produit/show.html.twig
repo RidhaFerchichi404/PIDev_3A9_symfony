@@ -1,0 +1,88 @@
+{% extends 'front/base.html.twig' %}
+
+{% block title %}Product Details - {{ produit.nom }} - Sportify{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Product Image</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if produit.imagePath %}
+                        <img src="{{ asset('uploads/images/' ~ produit.imagePath) }}" class="img-fluid" alt="{{ produit.nom }}" style="max-height: 400px;">
+                    {% else %}
+                        <div class="py-5 bg-light">
+                            <i class="fas fa-image fa-4x text-secondary"></i>
+                            <p class="mt-3 text-muted">No image available</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Product Details</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Name</th>
+                            <td>{{ produit.nom }}</td>
+                        </tr>
+                        <tr>
+                            <th>Description</th>
+                            <td>{{ produit.description }}</td>
+                        </tr>
+                        <tr>
+                            <th>Category</th>
+                            <td>{{ produit.categorie ?? 'Uncategorized' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Price</th>
+                            <td>{{ produit.prix|number_format(2, '.', ',') }} DT</td>
+                        </tr>
+                        <tr>
+                            <th>Stock</th>
+                            <td>
+                                {% if produit.quantiteStock == 0 %}
+                                    <span class="badge bg-danger">Out of stock</span>
+                                {% elseif produit.quantiteStock < 10 %}
+                                    <span class="badge bg-warning text-dark">{{ produit.quantiteStock }}</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ produit.quantiteStock }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Status</th>
+                            <td>
+                                {% if produit.disponible %}
+                                    <span class="badge bg-success">Available</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Unavailable</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group">
+                        <a href="{{ path('app_produit_index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Back to list
+                        </a>
+                        {% if produit.disponible and produit.quantiteStock > 0 %}
+                            <a href="{{ path('app_commande_new', {'produit': produit.id}) }}" class="btn btn-primary">
+                                <i class="fas fa-shopping-cart me-1"></i>Order Now
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
