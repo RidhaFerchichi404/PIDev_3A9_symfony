@@ -13,32 +13,17 @@
 
         {{ include('front/comment/_form.html.twig') }}
 
-        <a href="{{ path('app_comment_index') }}" class="btn btn-secondary mt-3">Back to list</a>
+        <a href="{{ path('app_front_post_show', {'id': post.id}) }}" class="btn btn-secondary mt-3">Back to Post</a>
     </div>
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const emojiPicker = document.querySelector('.emoji-picker');
-            const emojiButtons = document.querySelectorAll('.emoji-button');
-            const commentTextarea = document.querySelector('#comment_content');
-
-            emojiButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const emoji = this.getAttribute('data-emoji');
-                    const start = commentTextarea.selectionStart;
-                    const end = commentTextarea.selectionEnd;
-                    const text = commentTextarea.value;
-                    const before = text.substring(0, start);
-                    const after = text.substring(end);
-                    
-                    commentTextarea.value = before + emoji + after;
-                    commentTextarea.focus();
-                    commentTextarea.selectionStart = commentTextarea.selectionEnd = start + emoji.length;
-                });
-            });
-        });
+        console.log('Loading emoji picker script...');
+    </script>
+    <script src="{{ asset('js/emoji-picker.js') }}"></script>
+    <script>
+        console.log('Emoji picker script loaded');
     </script>
 {% endblock %} 

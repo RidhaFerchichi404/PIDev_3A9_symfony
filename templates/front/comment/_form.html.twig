@@ -9,55 +9,37 @@
                     <p class="mb-0"><strong>Note:</strong> Your comment will be added automatically with today's date and 0 likes initially.</p>
                 </div>
                 
-                <div class="accordion mb-4" id="emojiAccordion">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                <i class="fas fa-smile me-2"></i> Emoji Picker
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#emojiAccordion">
-                            <div class="accordion-body">
-                                <div class="emoji-picker">
-                                    {% for shortcode, emoji in emojis %}
-                                        <button 
-                                            type="button" 
-                                            class="emoji-button"
-                                            data-emoji="{{ emoji }}"
-                                        >
-                                            {{ emoji }}
-                                        </button>
-                                    {% endfor %}
-                                </div>
-                                <div class="text-muted mb-2">Click on an emoji to add it to your comment</div>
-                                <div>
-                                    <span class="emoji-label">Available shortcodes:</span>
-                                    <div class="mt-2">
-                                        {% for shortcode, emoji in emojis %}
-                                            <span 
-                                                class="emoji-shortcode"
-                                                data-emoji="{{ emoji }}"
-                                            >
-                                                {{ shortcode }}
-                                            </span>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
                 {{ form_start(form) }}
                     <div class="mb-3">
                         {{ form_label(form.comment) }}
+                        
+                        <div class="emoji-picker mb-3">
+                            {% for shortcode, emoji in emojis %}
+                                <button 
+                                    type="button"
+                                    class="emoji-button btn btn-light"
+                                    data-emoji="{{ emoji }}"
+                                    title="{{ shortcode }}"
+                                    style="font-size: 1.5rem; padding: 0.5rem; margin: 0.25rem;"
+                                >
+                                    {{ emoji }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                        
                         {{ form_widget(form.comment, {'attr': {
                             'class': 'form-control',
                             'rows': 5,
-                            'id': 'comment_content'
+                            'id': 'comment_comment',
+                            'placeholder': 'Enter your comment here. You can use emoji shortcodes like :smile: :heart: :thumbsup:'
                         }}) }}
                         {{ form_errors(form.comment) }}
+                        
+                        <small class="text-muted">
+                            Click on an emoji above to insert it, or type shortcodes like :smile: :heart: :thumbsup:
+                        </small>
                     </div>
+                    
                     <div class="mb-3">
                         {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
                     </div>
@@ -65,4 +47,45 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+<style>
+.emoji-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.emoji-button {
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.emoji-button:hover {
+    transform: scale(1.1);
+    background-color: #e9ecef;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const emojiShortcodes = document.querySelectorAll('.emoji-shortcode');
+    const commentTextarea = document.querySelector('#comment_comment');
+    
+    emojiShortcodes.forEach(emoji => {
+        emoji.addEventListener('click', function() {
+            const emojiText = this.textContent;
+            const start = commentTextarea.selectionStart;
+            const end = commentTextarea.selectionEnd;
+            const text = commentTextarea.value;
+            
+            commentTextarea.value = text.substring(0, start) + emojiText + text.substring(end);
+            commentTextarea.focus();
+            commentTextarea.selectionStart = commentTextarea.selectionEnd = start + emojiText.length;
+        });
+    });
+});
+</script> 

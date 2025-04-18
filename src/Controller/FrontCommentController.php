@@ -50,13 +50,17 @@ final class FrontCommentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Filter bad words from the comment
+            // Get the raw comment text
             $commentText = $comment->getComment();
-            $filteredComment = $this->badWordFilter->filterBadWords($commentText);
             
-            // Convert emoji shortcodes to actual emojis
-            $emojiComment = $this->emojiService->convertToEmoji($filteredComment);
-            $comment->setComment($emojiComment);
+            // First convert any emoji shortcodes to actual emojis
+            $emojiComment = $this->emojiService->convertToEmoji($commentText);
+            
+            // Then filter bad words from the emoji-converted text
+            $filteredComment = $this->badWordFilter->filterBadWords($emojiComment);
+            
+            // Set the processed comment
+            $comment->setComment($filteredComment);
             
             // Generate a unique ID for the comment
             $lastComment = $entityManager->getRepository(Comment::class)
