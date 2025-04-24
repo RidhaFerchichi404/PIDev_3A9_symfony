@@ -11,7 +11,7 @@ class StaticSession
     public function __construct()
     {
         // Default role for testing
-        $this->role = self::ROLE_ADMIN;
+        $this->role = self::ROLE_CLIENT;
     }
 
     public function getRole(): string

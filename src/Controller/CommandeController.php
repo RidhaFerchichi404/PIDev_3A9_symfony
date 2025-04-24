@@ -23,11 +23,16 @@ class CommandeController extends AbstractController
         $this->staticSession = $staticSession;
     }
 
+    /**
+     * READ Operation - List all orders
+     * This method displays all orders for admins, but only shows orders for the current user if they're a client
+     */
     #[Route('/', name: 'app_commande_index', methods: ['GET'])]
     public function index(CommandeRepository $commandeRepository): Response
     {
         $role = $this->staticSession->getRole();
-        $commandes = $role === 'admin' ? $commandeRepository->findAll() : $commandeRepository->findBy(['userId' => 1]); // Example user ID
+        // If user is admin, show all orders. If client, only show their orders (using example user ID 1)
+        $commandes = $role === 'admin' ? $commandeRepository->findAll() : $commandeRepository->findBy(['userId' => 1]);
 
         return $this->render('commande/index.html.twig', [
             'commandes' => $commandes,
@@ -35,17 +40,22 @@ class CommandeController extends AbstractController
         ]);
     }
 
+    /**
+     * CREATE Operation - Create a new order
+     * This method handles both GET (display form) and POST (process form submission) requests
+     * It includes stock validation and automatic status setting
+     */
     #[Route('/new/{produit}', name: 'app_commande_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, ?Produit $produit = null): Response
     {
-        // Allow access to clients and admins
+        // Security check: Only clients and admins can create orders
         if (!$this->staticSession->isAdmin() && !$this->staticSession->isClient()) {
             throw $this->createAccessDeniedException('Access denied.');
         }
 
         $commande = new Commande();
         
-        // If a product is provided, pre-select it
+        // If a product is provided in the URL, pre-select it in the form
         if ($produit) {
             $commande->setProduit($produit);
         }
@@ -58,7 +68,7 @@ class CommandeController extends AbstractController
             $requestedQuantity = $commande->getQuantite();
             $currentStock = $produit->getQuantiteStock();
 
-            // Check if there's enough stock
+            // Stock validation: Check if there's enough stock available
             if ($currentStock < $requestedQuantity) {
                 $this->addFlash('error', 'Stock insuffisant. Il ne reste que ' . $currentStock . ' unités en stock.');
                 return $this->render('commande/new.html.twig', [
@@ -67,13 +77,15 @@ class CommandeController extends AbstractController
                 ]);
             }
 
+            // Set order details
             $commande->setDateCommande(new \DateTime());
             $commande->setStatutCommande(Commande::STATUS_PENDING);
             $commande->setUserId(1); // Example user ID
 
-            // Update stock
+            // Update product stock
             $produit->setQuantiteStock($currentStock - $requestedQuantity);
 
+            // Save the new order
             $entityManager->persist($commande);
             $entityManager->flush();
 
@@ -86,6 +98,10 @@ class CommandeController extends AbstractController
         ]);
     }
 
+    /**
+     * READ Operation - Show order details
+     * This method displays the details of a specific order
+     */
     #[Route('/{id}', name: 'app_commande_show', methods: ['GET'])]
     public function show(Commande $commande): Response
     {
@@ -94,10 +110,15 @@ class CommandeController extends AbstractController
         ]);
     }
 
+    /**
+     * UPDATE Operation - Edit an existing order
+     * This method handles both GET (display edit form) and POST (process form submission) requests
+     * It includes stock validation and handles quantity changes
+     */
     #[Route('/{id}/edit', name: 'app_commande_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Commande $commande, EntityManagerInterface $entityManager): Response
     {
-        // Allow access to admins and clients (only for their own orders)
+        // Security check: Only admins and the order owner (client) can edit orders
         if (!$this->staticSession->isAdmin() && 
             (!$this->staticSession->isClient() || $commande->getUserId() !== 1)) {
             throw $this->createAccessDeniedException('Access denied.');
@@ -114,7 +135,7 @@ class CommandeController extends AbstractController
             $newQuantity = $commande->getQuantite();
             $quantityDifference = $newQuantity - $originalQuantity;
 
-            // Check if there's enough stock for the increased quantity
+            // Stock validation: Check if there's enough stock for increased quantity
             if ($quantityDifference > 0 && $currentStock < $quantityDifference) {
                 $this->addFlash('error', 'Stock insuffisant. Il ne reste que ' . $currentStock . ' unités en stock.');
                 return $this->render('commande/edit.html.twig', [
@@ -124,7 +145,7 @@ class CommandeController extends AbstractController
                 ]);
             }
 
-            // Update stock
+            // Update product stock based on quantity change
             $produit->setQuantiteStock($currentStock - $quantityDifference);
 
             $entityManager->flush();
@@ -139,24 +160,31 @@ class CommandeController extends AbstractController
         ]);
     }
 
+    /**
+     * DELETE Operation - Remove an order
+     * This method handles the deletion of an order and restores product stock
+     * It includes security checks and CSRF protection
+     */
     #[Route('/{id}', name: 'app_commande_delete', methods: ['POST'])]
     public function delete(Request $request, Commande $commande, EntityManagerInterface $entityManager): Response
     {
-        // Allow access to admins and clients (only for their own orders)
+        // Security check: Only admins and the order owner (client) can delete orders
         if (!$this->staticSession->isAdmin() && 
             (!$this->staticSession->isClient() || $commande->getUserId() !== 1)) {
             throw $this->createAccessDeniedException('Access denied.');
         }
 
+        // CSRF protection check
         if ($this->isCsrfTokenValid('delete'.$commande->getId(), $request->request->get('_token'))) {
             $produit = $commande->getProduit();
             $quantity = $commande->getQuantite();
             
-            // Only restore stock if the order was not cancelled
+            // Restore product stock if the order wasn't already cancelled
             if ($commande->getStatutCommande() !== Commande::STATUS_CANCELLED) {
                 $produit->setQuantiteStock($produit->getQuantiteStock() + $quantity);
             }
 
+            // Remove the order from database
             $entityManager->remove($commande);
             $entityManager->flush();
         }
@@ -164,15 +192,22 @@ class CommandeController extends AbstractController
         return $this->redirectToRoute('app_commande_index', [], Response::HTTP_SEE_OTHER);
     }
     
+    /**
+     * Additional Operation - Change order status
+     * This method allows admins to change the status of an order
+     * It includes status validation and security checks
+     */
     #[Route('/{id}/change-status/{status}', name: 'app_commande_change_status', methods: ['GET', 'POST'])]
     public function changeStatus(Request $request, Commande $commande, string $status, EntityManagerInterface $entityManager): Response
     {
+        // Security check: Only admins can change order status
         if ($this->staticSession->getRole() !== 'admin') {
             throw $this->createAccessDeniedException('Access denied.');
         }
 
         $availableStatuses = Commande::getAvailableStatuses();
         
+        // Validate the new status
         if (in_array($status, $availableStatuses)) {
             $commande->setStatutCommande($status);
             $entityManager->flush();
