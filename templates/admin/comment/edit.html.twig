@@ -30,13 +30,41 @@
                     </div>
                 </div>
                 
-                <div class="card">
+                <div class="card mb-4 shadow">
+                    <div class="card-header bg-light">
+                        <h2 class="h4 mb-0">Edit Comment</h2>
+                    </div>
                     <div class="card-body">
                         {{ form_start(form) }}
                             <div class="mb-3">
-                                {{ form_label(form.comment, 'Comment') }}
-                                {{ form_widget(form.comment, {'attr': {'class': 'form-control', 'rows': 5}}) }}
+                                {{ form_label(form.comment) }}
+                                
+                                <div class="emoji-picker mb-3">
+                                    {% for shortcode, emoji in emojis %}
+                                        <button 
+                                            type="button"
+                                            class="emoji-button btn btn-light"
+                                            data-emoji="{{ emoji }}"
+                                            title="{{ shortcode }}"
+                                            style="font-size: 1.5rem; padding: 0.5rem; margin: 0.25rem;"
+                                        >
+                                            {{ emoji }}
+                                        </button>
+                                    {% endfor %}
+                                </div>
+                                
+                                {{ form_widget(form.comment, {'attr': {
+                                    'class': 'form-control',
+                                    'rows': 5,
+                                    'id': 'form_comment',
+                                    'name': 'form[comment]',
+                                    'placeholder': 'Enter your comment here. You can use emoji shortcodes like :smile: :heart: :thumbsup:'
+                                }}) }}
                                 {{ form_errors(form.comment) }}
+                                
+                                <small class="text-muted">
+                                    Click on an emoji above to insert it, or type shortcodes like :smile: :heart: :thumbsup:
+                                </small>
                             </div>
                             
                             <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -55,4 +83,30 @@
             </div>
         </div>
     </div>
+
+    <style>
+    .emoji-picker {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+    }
+
+    .emoji-button {
+        transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .emoji-button:hover {
+        transform: scale(1.1);
+        background-color: #e9ecef;
+    }
+    </style>
+
+    {% block javascripts %}
+        {{ parent() }}
+        <script src="{{ asset('js/emoji-picker.js') }}"></script>
+    {% endblock %}
 {% endblock %} 

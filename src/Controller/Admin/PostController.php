@@ -61,7 +61,7 @@ final class PostController extends AbstractController
             
             // Generate a unique ID for the post if needed
             $lastPost = $entityManager->getRepository(Post::class)
-                ->findOneBy([], ['id' => 'DESC']);
+                ->findOneBy([], ['idp' => 'DESC']);
             
             $newId = 1;
             if ($lastPost) {
@@ -118,7 +118,7 @@ final class PostController extends AbstractController
     #[Route('/{id}', name: 'app_admin_post_delete', methods: ['POST'])]
     public function delete(Request $request, Post $post, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$post->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$post->getId(), $request->request->get('_token'))) {
             $entityManager->remove($post);
             $entityManager->flush();
         }

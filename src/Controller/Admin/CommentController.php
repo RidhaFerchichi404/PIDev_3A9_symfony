@@ -11,10 +11,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\CommentRepository;
+use App\Service\EmojiService;
 
 #[Route('/admin/comment')]
 final class CommentController extends AbstractController
 {
+    private $emojiService;
+
+    public function __construct(EmojiService $emojiService)
+    {
+        $this->emojiService = $emojiService;
+    }
+
     #[Route('/', name: 'app_admin_comment_index', methods: ['GET'])]
     public function index(Request $request, CommentRepository $commentRepository): Response
     {
@@ -90,12 +98,13 @@ final class CommentController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_admin_post_comments', ['id' => $comment->getIdPost()->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_admin_comment_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('admin/comment/edit.html.twig', [
             'comment' => $comment,
             'form' => $form,
+            'emojis' => $this->emojiService->getAvailableEmojis()
         ]);
     }
 

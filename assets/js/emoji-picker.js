@@ -4,9 +4,9 @@ class EmojiPicker {
     constructor() {
         console.log('Creating EmojiPicker instance...');
         this.emojiButtons = document.querySelectorAll('.emoji-button');
-        // Try different possible selectors for the textarea
-        this.commentTextarea = document.querySelector('textarea[name="form[comment]"]') || 
-                              document.querySelector('#form_comment') ||
+        // Try multiple selectors to find the textarea
+        this.commentTextarea = document.querySelector('#form_comment') || 
+                              document.querySelector('textarea[name="form[comment]"]') ||
                               document.querySelector('textarea.form-control');
         
         console.log('Found emoji buttons:', this.emojiButtons.length);
