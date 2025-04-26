@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "27e6cc3fa0caa4d633f7c5582fa47217",
+    "content-hash": "a4a955160e18fd08109dec6d759a44f8",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1555,6 +1555,140 @@
                 }
             ],
             "time": "2025-04-02T07:06:35+00:00"
+        },
+        {
+            "name": "google/recaptcha",
+            "version": "1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/google/recaptcha.git",
+                "reference": "3875d025d0465f36f32452f614e7ffc1462c889f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/google/recaptcha/zipball/3875d025d0465f36f32452f614e7ffc1462c889f",
+                "reference": "3875d025d0465f36f32452f614e7ffc1462c889f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.2.20|^2.12",
+                "php-coveralls/php-coveralls": "^2.1",
+                "phpunit/phpunit": "^4.8.36|^5.7.27|^6.59|^7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ReCaptcha\\": "src/ReCaptcha"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Client library for reCAPTCHA, a free service that protects websites from spam and abuse.",
+            "homepage": "https://www.google.com/recaptcha/",
+            "keywords": [
+                "Abuse",
+                "captcha",
+                "recaptcha",
+                "spam"
+            ],
+            "support": {
+                "forum": "https://groups.google.com/forum/#!forum/recaptcha",
+                "issues": "https://github.com/google/recaptcha/issues",
+                "source": "https://github.com/google/recaptcha"
+            },
+            "time": "2018-08-01T11:58:31+00:00"
+        },
+        {
+            "name": "karser/karser-recaptcha3-bundle",
+            "version": "v0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/karser/KarserRecaptcha3Bundle.git",
+                "reference": "1a2f3694d23caed9de76a770352065e0cc7df83a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/karser/KarserRecaptcha3Bundle/zipball/1a2f3694d23caed9de76a770352065e0cc7df83a",
+                "reference": "1a2f3694d23caed9de76a770352065e0cc7df83a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=7.4",
+                "symfony/expression-language": "^3.4|^4.0|^5.0|^6.0|^7.0",
+                "symfony/form": "^3.4|^4.0|^5.0|^6.0|^7.0",
+                "symfony/framework-bundle": "^3.4.26|^4.2.7|^5.0|^6.0|^7.0",
+                "symfony/twig-bundle": "^3.4|^4.0|^5.0|^6.0|^7.0",
+                "symfony/validator": "^3.4|^4.0|^5.0|^6.0|^7.0",
+                "symfony/yaml": "^3.4|^4.0|^5.0|^6.0|^7.0",
+                "twig/twig": "^2.9|^3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7|^8|^9|^10",
+                "symfony/http-client": "^4.3|^5.0|^6.0|^7.0"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Karser\\Recaptcha3Bundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitrii Poddubnyi",
+                    "homepage": "https://github.com/karser"
+                }
+            ],
+            "description": "Google ReCAPTCHA v3 for Symfony",
+            "homepage": "http://github.com/karser/KarserRecaptcha3Bundle",
+            "keywords": [
+                "Forms",
+                "Google ReCaptcha",
+                "GoogleReCaptcha",
+                "Symfony Google ReCaptcha",
+                "anti-bot",
+                "anti-bots",
+                "anti-spam",
+                "captcha",
+                "contact",
+                "google",
+                "google recaptcha v3",
+                "no-captcha",
+                "recaptcha",
+                "recaptcha v3",
+                "recaptcha v3 symfony",
+                "security",
+                "spam",
+                "symfony",
+                "symfony google recaptcha v3",
+                "symfony recaptcha",
+                "symfony recaptcha v3",
+                "validation"
+            ],
+            "support": {
+                "issues": "https://github.com/karser/KarserRecaptcha3Bundle/issues",
+                "source": "https://github.com/karser/KarserRecaptcha3Bundle/tree/v0.2.1"
+            },
+            "time": "2025-03-03T11:11:30+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -6183,6 +6317,76 @@
             "time": "2024-09-25T14:18:03+00:00"
         },
         {
+            "name": "symfony/sendgrid-mailer",
+            "version": "v6.4.18",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/sendgrid-mailer.git",
+                "reference": "18dca2e8fc8e449e2dacdd40a9bbd544b3a10e90"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/sendgrid-mailer/zipball/18dca2e8fc8e449e2dacdd40a9bbd544b3a10e90",
+                "reference": "18dca2e8fc8e449e2dacdd40a9bbd544b3a10e90",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/mailer": "^5.4.21|^6.2.7|^7.0"
+            },
+            "conflict": {
+                "symfony/http-foundation": "<6.2",
+                "symfony/mime": "<6.2"
+            },
+            "require-dev": {
+                "symfony/http-client": "^5.4|^6.0|^7.0",
+                "symfony/webhook": "^6.3|^7.0"
+            },
+            "type": "symfony-mailer-bridge",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Mailer\\Bridge\\Sendgrid\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Sendgrid Mailer Bridge",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/sendgrid-mailer/tree/v6.4.18"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2025-01-07T11:11:15+00:00"
+        },
+        {
             "name": "symfony/serializer",
             "version": "v6.4.13",
             "source": {
@@ -7610,6 +7814,59 @@
                 }
             ],
             "time": "2024-09-09T17:55:12+00:00"
+        },
+        {
+            "name": "twilio/sdk",
+            "version": "8.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twilio/twilio-php.git",
+                "reference": "a68a13ed8ddc720d5adb580cbc22b4fd80dc6b38"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twilio/twilio-php/zipball/a68a13ed8ddc720d5adb580cbc22b4fd80dc6b38",
+                "reference": "a68a13ed8ddc720d5adb580cbc22b4fd80dc6b38",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^6.3 || ^7.0",
+                "phpunit/phpunit": ">=7.0 < 10"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "An HTTP client to execute the API requests"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Twilio\\": "src/Twilio/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Twilio API Team",
+                    "email": "api@twilio.com"
+                }
+            ],
+            "description": "A PHP wrapper for Twilio's API",
+            "homepage": "https://github.com/twilio/twilio-php",
+            "keywords": [
+                "api",
+                "sms",
+                "twilio"
+            ],
+            "support": {
+                "issues": "https://github.com/twilio/twilio-php/issues",
+                "source": "https://github.com/twilio/twilio-php/tree/8.5.0"
+            },
+            "time": "2025-04-07T15:34:07+00:00"
         },
         {
             "name": "webmozart/assert",

@@ -1,0 +1,146 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container">
+        <h1>Welcome to Sportify, {{ user.firstName }}!</h1>
+        <p>Your journey to fitness excellence starts here. Access world-class training, personalized programs, and a community of fitness enthusiasts.</p>
+        <a href="#" class="btn btn-light btn-lg">Explore Classes</a>
+    </div>
+</section>
+
+<div class="container mt-5">
+    <!-- Stats Section -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card text-center p-4">
+                <div class="display-4 text-primary mb-3">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>Your Subscription</h3>
+                <p class="text-muted">Active until: {{ user.subscriptionEndDate ? user.subscriptionEndDate|date('d M, Y') : 'Not set' }}</p>
+                <a href="#" class="btn btn-outline-primary mt-2">Manage Subscription</a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center p-4">
+                <div class="display-4 text-success mb-3">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <h3>Fitness Classes</h3>
+                <p class="text-muted">Explore our range of classes designed for all fitness levels</p>
+                <a href="#" class="btn btn-outline-success mt-2">Browse Classes</a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card text-center p-4">
+                <div class="display-4 text-warning mb-3">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                <h3>Personal Trainers</h3>
+                <p class="text-muted">Book sessions with our certified fitness professionals</p>
+                <a href="#" class="btn btn-outline-warning mt-2">Find a Trainer</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Classes -->
+    <h2 class="text-center mb-4">Featured Classes</h2>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="https://source.unsplash.com/random/300x200/?yoga" class="card-img-top" alt="Yoga">
+                <div class="card-body">
+                    <h5 class="card-title">Yoga Flow</h5>
+                    <p class="card-text">A dynamic practice that connects breath with movement through a sequence of postures.</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-success">Beginner Friendly</span>
+                        <small class="text-muted">60 min</small>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a href="#" class="btn btn-primary btn-sm w-100">Book Class</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="https://source.unsplash.com/random/300x200/?crossfit" class="card-img-top" alt="CrossFit">
+                <div class="card-body">
+                    <h5 class="card-title">CrossFit Challenge</h5>
+                    <p class="card-text">High-intensity functional movements that improve overall fitness and performance.</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-danger">Advanced</span>
+                        <small class="text-muted">45 min</small>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a href="#" class="btn btn-primary btn-sm w-100">Book Class</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="https://source.unsplash.com/random/300x200/?spinning" class="card-img-top" alt="Spinning">
+                <div class="card-body">
+                    <h5 class="card-title">Spin Cycle</h5>
+                    <p class="card-text">A high-energy indoor cycling workout that strengthens legs and improves cardio.</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">Intermediate</span>
+                        <small class="text-muted">45 min</small>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <a href="#" class="btn btn-primary btn-sm w-100">Book Class</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events -->
+    <h2 class="text-center mb-4 mt-5">Upcoming Events</h2>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">Summer Fitness Challenge</h5>
+                            <p class="card-text">Join our 30-day fitness challenge with daily workouts and prizes.</p>
+                            <button class="btn btn-primary btn-sm">Register Now</button>
+                        </div>
+                        <div class="text-center">
+                            <div class="display-4 text-danger mb-1">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <p class="mb-0 fw-bold">Jun 15</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">Nutrition Workshop</h5>
+                            <p class="card-text">Learn about proper nutrition for athletic performance and recovery.</p>
+                            <button class="btn btn-primary btn-sm">Register Now</button>
+                        </div>
+                        <div class="text-center">
+                            <div class="display-4 text-success mb-1">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <p class="mb-0 fw-bold">Jun 22</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

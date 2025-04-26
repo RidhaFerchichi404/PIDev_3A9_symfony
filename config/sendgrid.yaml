@@ -1,0 +1,24 @@
+parameters:
+    # Configuration Twilio et SendGrid
+   
+    app.env: '%env(APP_ENV)%'
+    
+    # NOTE IMPORTANTE:
+    # Configuration mise à jour pour fonctionner en mode simulation en environnement de développement
+    # Le service SMS a été amélioré pour fonctionner même sans identifiants Twilio valides
+    # 
+    # En mode développement, les SMS sont simulés et affichés dans les logs
+    # Pour activer l'envoi réel de SMS, vous devez:
+    # 1. Créer un compte Twilio (https://www.twilio.com/)
+    # 2. Obtenir vos identifiants Account SID et Auth Token
+    # 3. Acheter un numéro Twilio
+    # 4. Mettre à jour ce fichier avec vos identifiants
+    #
+    # Note: En production, mettez ces valeurs dans les variables d'environnement
+    #
+    # IMPORTANT: Pour la production
+    # - Vous devez créer un compte SendGrid ou un autre service d'email
+    # - Générer une nouvelle clé API
+    # - Remplacer les valeurs ci-dessus par vos vraies informations d'identification
+    #
+    # Note: La clé API précédente (SG.13a4dd75b9becde9c1227d0616939ee9) a expiré 

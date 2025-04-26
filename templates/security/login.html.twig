@@ -1,0 +1,323 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}Log in!{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    :root {
+        --dark-color: #0a0a0a;
+        --dark-secondary: #111111;
+        --dark-tertiary: #1c1c1c;
+        --accent-color: #FFA500;
+        --accent-hover: #FFD700;
+        --accent-transparent: rgba(255, 165, 0, 0.1);
+        --text-color: #e0e0e0;
+        --text-muted: #909090;
+        --error-color: #FF0000;
+    }
+    
+    body {
+        background-color: var(--dark-color);
+        color: var(--text-color);
+    }
+    
+    .login-container {
+        min-height: 85vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 0;
+    }
+    
+    .login-form-container {
+        background-color: var(--dark-tertiary);
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        width: 100%;
+        max-width: 480px;
+        transform: translateY(0);
+        transition: all 0.3s ease;
+        border: 1px solid #2a2a2a;
+        animation: fadeIn 0.8s ease;
+    }
+    
+    .login-form-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+        border-color: var(--accent-transparent);
+    }
+    
+    .login-form-header {
+        padding: 30px;
+        background: linear-gradient(45deg, #151515, #1c1c1c);
+        border-bottom: 1px solid #2a2a2a;
+        text-align: center;
+        position: relative;
+    }
+    
+    .login-form-header:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 4px;
+        width: 100%;
+        background: linear-gradient(90deg, var(--accent-color), #FF0000);
+    }
+    
+    .login-form-header h1 {
+        color: var(--accent-color);
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+    
+    .login-form-body {
+        padding: 40px 30px;
+    }
+    
+    .form-label {
+        color: var(--text-color);
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-label i {
+        margin-right: 8px;
+        color: var(--accent-color);
+    }
+    
+    .form-control {
+        background-color: #181818;
+        border: 1px solid #2a2a2a;
+        color: var(--text-color);
+        padding: 15px;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: none !important;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+    
+    .form-control:focus {
+        background-color: #1d1d1d;
+        border-color: var(--accent-color);
+        color: var(--text-color);
+        box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.15) !important;
+    }
+    
+    .form-control::placeholder {
+        color: var(--text-muted);
+        opacity: 0.7;
+    }
+    
+    .input-group-text {
+        background: linear-gradient(45deg, #FF8C00, var(--accent-color)) !important;
+        border-color: var(--accent-color) !important;
+        color: #fff !important;
+        border-radius: 10px 0 0 10px;
+        width: 50px;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+    
+    .form-check-input {
+        width: 18px;
+        height: 18px;
+        background-color: #181818;
+        border-color: #333;
+        border-radius: 4px;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+    }
+    
+    .form-check-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        padding-left: 5px;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(45deg, #FF0000, var(--accent-color)) !important;
+        border: none !important;
+        color: #fff !important;
+        padding: 15px !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        border-radius: 50px !important;
+        letter-spacing: 1px !important;
+        text-transform: uppercase !important;
+        box-shadow: 0 5px 15px rgba(255, 165, 0, 0.3) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(45deg, var(--accent-color), #FFD700) !important;
+        transform: translateY(-3px) !important;
+        box-shadow: 0 8px 20px rgba(255, 165, 0, 0.4) !important;
+    }
+    
+    .alert-danger {
+        background-color: rgba(255, 59, 48, 0.15);
+        border-color: rgba(255, 59, 48, 0.3);
+        color: var(--error-color);
+        border-radius: 10px;
+        padding: 15px;
+        position: relative;
+        border-left: 4px solid var(--error-color);
+    }
+    
+    .alert-info {
+        background-color: rgba(255, 119, 0, 0.15);
+        border-color: rgba(255, 119, 0, 0.3);
+        color: var(--text-color);
+        border-radius: 10px;
+        padding: 15px;
+        position: relative;
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .text-primary, a {
+        color: var(--accent-color) !important;
+        transition: all 0.3s ease;
+    }
+    
+    a:hover {
+        color: var(--accent-hover) !important;
+        text-decoration: none;
+    }
+    
+    .login-divider {
+        display: flex;
+        align-items: center;
+        margin: 25px 0;
+    }
+    
+    .login-divider::before,
+    .login-divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #333;
+    }
+    
+    .login-divider span {
+        padding: 0 15px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+    
+    .login-footer {
+        text-align: center;
+        color: var(--text-muted);
+        margin-top: 25px;
+        font-size: 0.95rem;
+    }
+    
+    .login-footer a {
+        font-weight: 600;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="login-container">
+    <div class="login-form-container">
+        <div class="login-form-header">
+            <h1>Sign In</h1>
+        </div>
+        <div class="login-form-body">
+            <form method="post" action="{{ path('app_login') }}">
+                {% if error %}
+                    <div class="alert alert-danger mb-4">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                    </div>
+                {% endif %}
+
+                {% if app.user %}
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}" class="fw-bold">Logout</a>
+                    </div>
+                {% endif %}
+
+                <div class="mb-4">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-at"></i> Email Address
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                        <input type="email" value="{{ last_username }}" name="email" id="email" class="form-control" placeholder="Enter your email" autocomplete="email" required autofocus>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-key"></i> Password
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" autocomplete="current-password" required>
+                    </div>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input type="checkbox" name="_remember_me" id="remember_me" class="form-check-input">
+                        <label class="form-check-label" for="remember_me">Remember me</label>
+                    </div>
+                    <a href="{{ path('app_forgot_password') }}" class="text-primary">Forgot password?</a>
+                </div>
+
+                <div class="mb-4">
+                    <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+                </div>
+
+                <button class="btn btn-primary w-100 py-3 mb-3" type="submit">
+                    <i class="fas fa-sign-in-alt me-2"></i> Sign in
+                </button>
+                
+                <div class="login-divider">
+                    <span>OR</span>
+                </div>
+                
+                <div class="login-footer">
+                    <p class="mb-0">Don't have an account? <a href="{{ path('app_register') }}" class="fw-bold">Register now</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

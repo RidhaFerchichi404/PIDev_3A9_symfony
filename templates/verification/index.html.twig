@@ -1,0 +1,249 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Test de vérification{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .verification-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: #fff;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        
+        h2 {
+            color: #8A2BE2;
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="text"], 
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        button {
+            background-color: #8A2BE2;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #6A1CB7;
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="verification-container">
+        <h1>Tests de vérification</h1>
+        
+        <div class="section">
+            <h2>Test d'envoi d'email</h2>
+            <form id="emailTestForm">
+                <div>
+                    <label for="testEmail">Adresse email:</label>
+                    <input type="email" id="testEmail" required placeholder="votre@email.com">
+                </div>
+                <button type="submit">Envoyer un email de test</button>
+                <div id="emailTestResult" class="result"></div>
+            </form>
+        </div>
+        
+        <div class="section">
+            <h2>Vérification par SMS</h2>
+            <form id="smsForm">
+                <div>
+                    <label for="phoneNumber">Numéro de téléphone:</label>
+                    <input type="text" id="phoneNumber" required placeholder="+33612345678">
+                </div>
+                <button type="submit">Envoyer code SMS</button>
+                <div id="smsResult" class="result"></div>
+            </form>
+        </div>
+        
+        <div class="section">
+            <h2>Vérification par Email</h2>
+            <form id="emailVerificationForm">
+                <div>
+                    <label for="email">Adresse email:</label>
+                    <input type="email" id="email" required placeholder="votre@email.com">
+                </div>
+                <button type="submit">Envoyer code email</button>
+                <div id="emailVerificationResult" class="result"></div>
+            </form>
+        </div>
+        
+        <div class="section">
+            <h2>Vérification de code</h2>
+            <form id="verifyForm">
+                <div>
+                    <label for="to">Email ou téléphone:</label>
+                    <input type="text" id="to" required placeholder="votre@email.com ou +33612345678">
+                </div>
+                <div>
+                    <label for="code">Code reçu:</label>
+                    <input type="text" id="code" required placeholder="123456">
+                </div>
+                <button type="submit">Vérifier le code</button>
+                <div id="verifyResult" class="result"></div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Test d'envoi d'email
+            document.getElementById('emailTestForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('testEmail').value;
+                const resultDiv = document.getElementById('emailTestResult');
+                
+                resultDiv.textContent = 'Envoi en cours...';
+                resultDiv.className = 'result';
+                resultDiv.style.display = 'block';
+                
+                fetch(`/verification/test-email?email=${encodeURIComponent(email)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        resultDiv.textContent = data.message;
+                        resultDiv.className = data.success ? 'result success' : 'result error';
+                    })
+                    .catch(error => {
+                        resultDiv.textContent = 'Erreur: ' + error.message;
+                        resultDiv.className = 'result error';
+                    });
+            });
+            
+            // Envoi SMS
+            document.getElementById('smsForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const phoneNumber = document.getElementById('phoneNumber').value;
+                const resultDiv = document.getElementById('smsResult');
+                
+                resultDiv.textContent = 'Envoi en cours...';
+                resultDiv.className = 'result';
+                resultDiv.style.display = 'block';
+                
+                fetch('/verification/send-sms', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ phone_number: phoneNumber })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        resultDiv.textContent = data.message;
+                        resultDiv.className = data.success ? 'result success' : 'result error';
+                    })
+                    .catch(error => {
+                        resultDiv.textContent = 'Erreur: ' + error.message;
+                        resultDiv.className = 'result error';
+                    });
+            });
+            
+            // Envoi vérification email
+            document.getElementById('emailVerificationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const resultDiv = document.getElementById('emailVerificationResult');
+                
+                resultDiv.textContent = 'Envoi en cours...';
+                resultDiv.className = 'result';
+                resultDiv.style.display = 'block';
+                
+                fetch('/verification/send-email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email: email })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        resultDiv.textContent = data.message;
+                        resultDiv.className = data.success ? 'result success' : 'result error';
+                    })
+                    .catch(error => {
+                        resultDiv.textContent = 'Erreur: ' + error.message;
+                        resultDiv.className = 'result error';
+                    });
+            });
+            
+            // Vérification de code
+            document.getElementById('verifyForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const to = document.getElementById('to').value;
+                const code = document.getElementById('code').value;
+                const resultDiv = document.getElementById('verifyResult');
+                
+                resultDiv.textContent = 'Vérification en cours...';
+                resultDiv.className = 'result';
+                resultDiv.style.display = 'block';
+                
+                fetch('/verification/check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ to: to, code: code })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        resultDiv.textContent = data.message;
+                        resultDiv.className = data.success ? 'result success' : 'result error';
+                    })
+                    .catch(error => {
+                        resultDiv.textContent = 'Erreur: ' + error.message;
+                        resultDiv.className = 'result error';
+                    });
+            });
+        });
+    </script>
+{% endblock %} 
