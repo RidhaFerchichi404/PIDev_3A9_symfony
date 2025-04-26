@@ -1,0 +1,3 @@
+# This file is auto-generated during the composer install
+# Any routes here will be added automatically to the application
+# No need for custom logout route as we define it in the SecurityController

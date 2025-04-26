@@ -1,0 +1,523 @@
+/* Common Variables */
+:root {
+    --primary-color: #8A2BE2; /* Vibrant purple */
+    --primary-light: #9370DB; /* Medium purple */
+    --secondary-color: #FF0000; /* Bright red */
+    --accent-green: #00C853; /* Vibrant green */
+    --accent-blue: #2979FF; /* Vibrant blue */
+    --success-color: #00C853; /* Same as accent-green */
+    --warning-color: #FF9800; /* Orange */
+    --danger-color: #FF0000; /* Bright red */
+    --light-color: #f8f9fa;
+    --dark-color: #1a1a1a;
+    --border-color: #e9ecef;
+}
+
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f7fb;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Form Styles */
+.form-control, .form-select {
+    border-radius: 5px;
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 0.25rem rgba(255, 204, 0, 0.25);
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.form-floating > label {
+    opacity: 0.65;
+}
+
+.form-floating .form-control:focus ~ label,
+.form-floating .form-control:not(:placeholder-shown) ~ label {
+    opacity: 1;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #7126c1; /* Darker purple */
+    border-color: #7126c1;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-secondary:hover {
+    background-color: #D50000; /* Darker red */
+    border-color: #D50000;
+}
+
+.btn-success {
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+}
+
+.btn-success:hover {
+    background-color: #00A040; /* Darker green */
+    border-color: #00A040;
+}
+
+.btn-info {
+    background-color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #1E5EC1; /* Darker blue */
+    border-color: #1E5EC1;
+    color: white;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+}
+
+.card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 20px;
+    font-weight: 600;
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* User Management */
+.user-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.user-card .card-header {
+    background: linear-gradient(to right, var(--primary-color), var(--accent-blue));
+    color: white;
+    border-bottom: none;
+    padding: 1.5rem 1.5rem;
+}
+
+.user-card .card-body {
+    padding: 2rem;
+}
+
+/* Dashboard Stats */
+.dashboard-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.12);
+}
+
+.stats-card {
+    border-radius: 15px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 160px;
+    transition: transform 0.3s;
+    border: none;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-card i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.stats-card h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stats-card p {
+    font-size: 1rem;
+    margin-bottom: 0;
+    opacity: 0.7;
+}
+
+.stats-card .stats-icon-bg {
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    font-size: 5rem;
+    opacity: 0.1;
+    transform: rotate(-15deg);
+}
+
+/* Table Styles */
+.table-responsive {
+    border-radius: 0 0 15px 15px;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 600;
+    background-color: rgba(138, 43, 226, 0.1); /* Light purple */
+    border-bottom: none;
+    padding: 15px;
+    color: #555;
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 15px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.table tbody tr {
+    transition: all 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(138, 43, 226, 0.05); /* Light purple */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Badge Styles */
+.badge {
+    padding: 0.5em 0.75em;
+    font-weight: 500;
+}
+
+.badge.bg-primary {
+    background-color: var(--primary-color) !important;
+    color: #333;
+}
+
+.badge.bg-secondary {
+    background-color: var(--secondary-color) !important;
+}
+
+.badge.bg-info {
+    background-color: #17a2b8 !important;
+}
+
+/* User Avatar */
+.user-avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Action Buttons */
+.action-btn {
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.3s;
+    margin: 0 2px;
+}
+
+.action-btn:hover {
+    background-color: var(--primary-color);
+    color: #333;
+    transform: translateY(-2px);
+}
+
+.action-btn i.text-danger:hover {
+    color: white !important;
+}
+
+/* Search Box */
+.filters-bar {
+    background-color: rgba(255, 204, 0, 0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--primary-color);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.alert-danger {
+    background-color: #fff5f5;
+    border-left: 4px solid var(--secondary-color);
+    color: #d63031;
+}
+
+.alert-success {
+    background-color: #f0fff4;
+    border-left: 4px solid var(--success-color);
+    color: #00b894;
+}
+
+/* Password Strength Meter */
+.password-strength-meter {
+    height: 5px;
+    margin-top: 5px;
+    background-color: #eee;
+    border-radius: 3px;
+}
+
+.password-strength-meter div {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease-in-out;
+}
+
+.password-strength-text {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Login Page */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f5f7fb;
+}
+
+/* Login Form Custom */
+.login-form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    background: var(--secondary-color);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-form-header {
+    background: var(--primary-color);
+    color: #333;
+    padding: 20px;
+    text-align: center;
+}
+
+.login-form-body {
+    padding: 25px;
+    background: white;
+}
+
+/* Header Navigation */
+.nav-menu ul li a {
+    color: var(--secondary-color);
+    transition: all 0.3s;
+}
+
+.nav-menu ul li a:hover {
+    color: var(--primary-color);
+}
+
+.user-auth-links ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.user-auth-links ul li a {
+    display: inline-block;
+    padding: 8px 15px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.user-auth-links ul li a.login-btn {
+    background-color: var(--secondary-color);
+}
+
+.user-auth-links ul li a.register-btn {
+    background-color: var(--primary-color);
+    color: #333;
+}
+
+.user-auth-links ul li a:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+/* Profile & Logout links */
+.user-profile-links {
+    display: inline-flex;
+    align-items: center;
+    background: var(--secondary-color);
+    border-radius: 5px;
+    padding: 0 5px;
+}
+
+.user-profile-links a {
+    color: white;
+    padding: 8px 15px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.user-profile-links a:hover {
+    color: var(--primary-color);
+}
+
+.user-profile-links .divider {
+    height: 20px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+.stat-card-1 { animation-delay: 0.1s; }
+.stat-card-2 { animation-delay: 0.2s; }
+.stat-card-3 { animation-delay: 0.3s; }
+.stat-card-4 { animation-delay: 0.4s; }
+
+/* Modal Styling */
+.modal-content {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.modal-header {
+    background: var(--secondary-color);
+    color: white;
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+    padding: 15px 20px;
+}
+
+/* Striped table effect */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 204, 0, 0.03);
+}
+
+/* Navbar Styles */
+.navbar {
+    padding: 15px 0;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.navbar .nav-link {
+    color: #333;
+    font-weight: 500;
+    padding: 8px 15px;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.navbar .nav-link:hover {
+    color: var(--primary-color);
+}
+
+.navbar .nav-link.active {
+    color: var(--primary-color);
+}
+
+.navbar .nav-link.active:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 15px;
+    right: 15px;
+    height: 3px;
+    background-color: var(--primary-color);
+}
+
+/* User authentication buttons */
+.auth-buttons .btn-login {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.auth-buttons .btn-register {
+    background-color: var(--secondary-color);
+    color: white;
+    font-weight: 600;
+}

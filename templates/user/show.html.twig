@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Details{% endblock %}
+
+{% block body %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <div>
+        <h1>User Details</h1>
+        <p class="text-muted">View detailed information about {{ user.firstName }} {{ user.lastName }}</p>
+    </div>
+    <div>
+        <a href="{{ path('app_user_index') }}" class="btn btn-outline-secondary me-2">
+            <i class="fas fa-arrow-left me-2"></i>Back to List
+        </a>
+        <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-warning">
+            <i class="fas fa-edit me-2"></i>Edit
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- User Profile Card -->
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body text-center p-4">
+                <img src="https://ui-avatars.com/api/?name={{ user.firstName }}+{{ user.lastName }}&background=6c5ce7&color=fff&size=150" 
+                     alt="{{ user.firstName }}" class="rounded-circle mb-3" width="150" height="150">
+                <h3 class="mb-1">{{ user.firstName }} {{ user.lastName }}</h3>
+                <p class="text-muted mb-3">{{ user.email }}</p>
+                
+                <div class="d-flex justify-content-center mb-3">
+                    <span class="badge bg-{{ user.role == 'ROLE_ADMIN' ? 'danger' : (user.role == 'ROLE_COACH' ? 'warning' : 'info') }} px-3 py-2">
+                        {{ user.role|replace({'ROLE_': ''}) }}
+                    </span>
+                    <span class="badge {{ user.isActive ? 'bg-success' : 'bg-secondary' }} px-3 py-2 ms-2">
+                        {{ user.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                </div>
+                
+                {% if user.phoneNumber %}
+                <div class="d-flex justify-content-center align-items-center mb-3">
+                    <i class="fas fa-phone me-2"></i>
+                    <span>{{ user.phoneNumber }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="mt-4">
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
+                        <i class="fas fa-trash me-2"></i>Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Details Card -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Account Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small">ID</label>
+                        <div class="fw-bold">{{ user.id }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small">CIN</label>
+                        <div class="fw-bold">{{ user.cin ?: 'Not set' }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small">Location</label>
+                        <div class="fw-bold">{{ user.location ?: 'Not specified' }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small">Age</label>
+                        <div class="fw-bold">{{ user.age ?: 'Not specified' }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small">Subscription End Date</label>
+                        <div class="fw-bold">{{ user.subscriptionEndDate ? user.subscriptionEndDate|date('Y-m-d') : 'Not set' }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small">Violation Count</label>
+                        <div class="fw-bold">{{ user.violationCount }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Activity Info Card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Activity Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small">Created At</label>
+                        <div class="fw-bold">{{ user.createdAt ? user.createdAt|date('Y-m-d H:i:s') : 'Not set' }}</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label text-muted small">Last Updated</label>
+                        <div class="fw-bold">{{ user.updatedAt ? user.updatedAt|date('Y-m-d H:i:s') : 'Not set' }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete User Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteUserModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete <strong>{{ user.firstName }} {{ user.lastName }}</strong>? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                {{ include('user/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

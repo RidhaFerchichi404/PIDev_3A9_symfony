@@ -1,0 +1,356 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .profile-container {
+        background-color: #fff;
+        border-radius: 15px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        overflow: hidden;
+    }
+    
+    .profile-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-blue));
+        color: white;
+        padding: 2rem;
+        position: relative;
+    }
+    
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 5px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .profile-stats {
+        display: flex;
+        margin-top: 1.5rem;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 0 1.5rem;
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .stat-item:last-child {
+        border-right: none;
+    }
+    
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        display: block;
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+    
+    .profile-nav {
+        display: flex;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .profile-nav-item {
+        padding: 1rem 1.5rem;
+        font-weight: 600;
+        color: #555;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s;
+    }
+    
+    .profile-nav-item:hover, .profile-nav-item.active {
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+    }
+    
+    .btn-edit-profile {
+        background: linear-gradient(to right, var(--primary-color), var(--accent-blue));
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 8px 20px;
+        border-radius: 50px;
+        transition: all 0.3s;
+    }
+    
+    .btn-edit-profile:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-change-password {
+        background: linear-gradient(to right, var(--accent-green), #4CAF50);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 8px 20px;
+        border-radius: 50px;
+        transition: all 0.3s;
+    }
+    
+    .btn-change-password:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .profile-section {
+        padding: 1.5rem;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .profile-section:last-child {
+        border-bottom: none;
+    }
+    
+    .profile-section-title {
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    .info-item {
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .info-label {
+        width: 120px;
+        font-weight: 600;
+        color: #555;
+    }
+    
+    .info-value {
+        flex: 1;
+        color: #333;
+    }
+    
+    .badge-role {
+        background: linear-gradient(to right, var(--primary-color), var(--accent-blue));
+        color: white;
+        font-weight: 500;
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+    }
+    
+    .badge-active {
+        background-color: var(--accent-green);
+        color: white;
+        font-weight: 500;
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+    }
+    
+    .badge-inactive {
+        background-color: #757575;
+        color: white;
+        font-weight: 500;
+        padding: 5px 15px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+    }
+    
+    .subscription-info {
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .subscription-info i.bg-icon {
+        position: absolute;
+        right: -15px;
+        bottom: -15px;
+        font-size: 8rem;
+        opacity: 0.05;
+        transform: rotate(-15deg);
+    }
+    
+    .subscription-status {
+        font-weight: 600;
+        color: var(--accent-green);
+        margin-bottom: 0.5rem;
+    }
+    
+    .subscription-expires {
+        color: #666;
+    }
+    
+    .btn-renew {
+        background: linear-gradient(to right, var(--accent-green), #4CAF50);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 8px 15px;
+        border-radius: 50px;
+        font-size: 0.9rem;
+        transition: all 0.3s;
+    }
+    
+    .btn-renew:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="row align-items-center">
+                <div class="col-md-auto text-center">
+                    <img src="https://ui-avatars.com/api/?name={{ user.firstname }}+{{ user.lastname }}&background=8A2BE2&color=fff&size=150" 
+                         alt="{{ user.firstname }}" class="profile-avatar">
+                </div>
+                <div class="col-md">
+                    <h1 class="mb-0">{{ user.firstname }} {{ user.lastname }}</h1>
+                    <p class="mb-3"><i class="fas fa-envelope me-2"></i>{{ user.email }}</p>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="badge-role me-2">
+                            <i class="fas fa-user-tag me-1"></i>{{ user.role|replace({'ROLE_': ''}) }}
+                        </span>
+                        <span class="badge-{{ user.isactive ? 'active' : 'inactive' }}">
+                            <i class="fas fa-{{ user.isactive ? 'check-circle' : 'times-circle' }} me-1"></i>
+                            {{ user.isactive ? 'Active' : 'Inactive' }}
+                        </span>
+                    </div>
+                    
+                    <div class="d-flex">
+                        <a href="{{ path('app_profile_edit') }}" class="btn btn-edit-profile me-2">
+                            <i class="fas fa-user-edit me-2"></i>Edit Profile
+                        </a>
+                        <a href="{{ path('app_profile_change_password') }}" class="btn btn-change-password">
+                            <i class="fas fa-key me-2"></i>Change Password
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container p-4">
+            <div class="profile-nav">
+                <a href="{{ path('app_profile_index') }}" class="profile-nav-item active">
+                    <i class="fas fa-user me-2"></i>Profile
+                </a>
+                <a href="{{ path('app_profile_edit') }}" class="profile-nav-item">
+                    <i class="fas fa-edit me-2"></i>Edit Profile
+                </a>
+                <a href="{{ path('app_profile_change_password') }}" class="profile-nav-item">
+                    <i class="fas fa-key me-2"></i>Change Password
+                </a>
+            </div>
+            
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+            
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="profile-section">
+                        <h4 class="profile-section-title">Personal Information</h4>
+                        <div class="info-item">
+                            <div class="info-label">Full Name:</div>
+                            <div class="info-value">{{ user.firstname }} {{ user.lastname }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Email:</div>
+                            <div class="info-value">{{ user.email }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Phone:</div>
+                            <div class="info-value">{{ user.phonenumber ?: 'Not provided' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Age:</div>
+                            <div class="info-value">{{ user.age ?: 'Not provided' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">CIN:</div>
+                            <div class="info-value">{{ user.cin ?: 'Not provided' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Location:</div>
+                            <div class="info-value">{{ user.location ?: 'Not provided' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h4 class="profile-section-title">Account Information</h4>
+                        <div class="info-item">
+                            <div class="info-label">Member Since:</div>
+                            <div class="info-value">{{ user.createdat|date('F d, Y') }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Last Updated:</div>
+                            <div class="info-value">{{ user.updatedat|date('F d, Y') }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Status:</div>
+                            <div class="info-value">
+                                <span class="badge bg-{{ user.isactive ? 'success' : 'secondary' }}">
+                                    {{ user.isactive ? 'Active' : 'Inactive' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div class="subscription-info mb-4">
+                        <i class="fas fa-calendar-alt bg-icon"></i>
+                        <h5 class="mb-3">Subscription Status</h5>
+                        <div class="subscription-status">
+                            <i class="fas fa-check-circle me-1"></i>Active
+                        </div>
+                        <div class="subscription-expires mb-3">
+                            Expires: {{ user.subscriptionenddate|date('F d, Y') }}
+                        </div>
+                        <a href="#" class="btn btn-renew">
+                            <i class="fas fa-sync-alt me-1"></i>Renew Subscription
+                        </a>
+                    </div>
+                    
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">Quick Links</h5>
+                            <div class="list-group list-group-flush">
+                                <a href="#" class="list-group-item list-group-item-action border-0 ps-0">
+                                    <i class="fas fa-dumbbell me-2 text-primary"></i>My Workouts
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action border-0 ps-0">
+                                    <i class="fas fa-calendar-check me-2 text-success"></i>Appointments
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action border-0 ps-0">
+                                    <i class="fas fa-credit-card me-2 text-info"></i>Billing History
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action border-0 ps-0">
+                                    <i class="fas fa-cog me-2 text-secondary"></i>Account Settings
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
