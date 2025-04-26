@@ -1,0 +1,598 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}Calendrier d'Entraînement{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .calendar-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            position: relative;
+        }
+        
+        .calendar-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f5f5f5;
+        }
+        
+        .calendar-header h1 {
+            color: #FF5722;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .user-stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .user-stat-item {
+            background: #f9f9f9;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 5px;
+            min-width: 180px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .user-stat-item strong {
+            display: block;
+            color: #FF5722;
+            margin-bottom: 5px;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: #FF5722;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .workout-section, .meal-section {
+            flex: 1;
+            min-width: 300px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .workout-section {
+            border-left: 4px solid #FF5722;
+        }
+        
+        .meal-section {
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section-header i {
+            margin-right: 10px;
+            font-size: 24px;
+        }
+        
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .exercise-card, .meal-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .exercise-card {
+            border-left: 3px solid #FF5722;
+        }
+        
+        .exercise-card.completed {
+            border-left: 3px solid #4CAF50;
+        }
+        
+        .meal-card {
+            border-left: 3px solid #4CAF50;
+        }
+        
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .card-detail {
+            color: #666;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #FF5722;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .completed .progress-fill {
+            width: 100%;
+            background: #4CAF50;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background: #FF5722;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: #E64A19;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .btn-diet {
+            background: #4CAF50;
+        }
+        
+        .btn-diet:hover {
+            background: #388E3C;
+        }
+        
+        @media (max-width: 768px) {
+            .tab-content.active {
+                flex-direction: column;
+            }
+            
+            .user-stats {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .user-stat-item {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <h1>Votre Calendrier d'Entraînement et Nutrition</h1>
+            <p>Suivez votre programme hebdomadaire de fitness et d'alimentation</p>
+            
+            <div class="user-stats">
+                <div class="user-stat-item">
+                    <strong>Niveau de Fitness</strong>
+                    <span id="userFitnessLevel">Chargement...</span>
+                </div>
+                <div class="user-stat-item">
+                    <strong>Objectif</strong>
+                    <span id="userGoal">Chargement...</span>
+                </div>
+                <div class="user-stat-item">
+                    <strong>Progression Hebdomadaire</strong>
+                    <span id="weeklyProgress">0%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-container" id="dayTabs">
+            <!-- Les onglets des jours seront ajoutés par JavaScript -->
+        </div>
+        
+        <div id="tabContents">
+            <!-- Le contenu des onglets sera ajouté par JavaScript -->
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn" id="printCalendarBtn">
+                <i class="fas fa-print"></i> Imprimer le Calendrier
+            </button>
+            <button class="btn btn-diet" id="dietPlanBtn">
+                <i class="fas fa-utensils"></i> Voir Détails du Régime
+            </button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Données d'exemple si localStorage est vide
+            if (!localStorage.getItem('userData')) {
+                const sampleUserData = {
+                    fitnessLevel: 'Intermédiaire',
+                    goal: 'Prise de Muscle',
+                    height: 175,
+                    weight: 70
+                };
+                localStorage.setItem('userData', JSON.stringify(sampleUserData));
+                
+                const sampleWorkoutPlan = {
+                    monday: {
+                        exercises: [
+                            {name: 'Développé Couché', sets: 4, reps: 10, equipment: 'Barre', completed: true},
+                            {name: 'Développé Incliné', sets: 3, reps: 12, equipment: 'Haltères', completed: false},
+                            {name: 'Écartés', sets: 3, reps: 15, equipment: 'Machine à Câbles', completed: false}
+                        ]
+                    },
+                    wednesday: {
+                        exercises: [
+                            {name: 'Squats', sets: 4, reps: 8, equipment: 'Barre', completed: false},
+                            {name: 'Presse à Cuisses', sets: 3, reps: 12, equipment: 'Machine', completed: false}
+                        ]
+                    },
+                    friday: {
+                        exercises: [
+                            {name: 'Tractions', sets: 4, reps: 8, equipment: 'Poids du Corps', completed: false},
+                            {name: 'Rowing Barre', sets: 3, reps: 10, equipment: 'Barre', completed: false}
+                        ]
+                    }
+                };
+                localStorage.setItem('workoutPlan', JSON.stringify(sampleWorkoutPlan));
+                
+                const sampleMealPlan = {
+                    monday: {
+                        breakfast: {name: 'Flocons d\'Avoine Protéinés', description: 'Flocons d\'avoine avec protéine en poudre, baies et noix', calories: 450},
+                        lunch: {name: 'Salade de Poulet', description: 'Blanc de poulet grillé avec légumes et vinaigrette à l\'huile d\'olive', calories: 550},
+                        dinner: {name: 'Saumon aux Légumes', description: 'Saumon cuit au four avec légumes rôtis et quinoa', calories: 650},
+                        snacks: {name: 'Yaourt Grec', description: 'Yaourt grec nature avec miel et baies', calories: 250}
+                    },
+                    tuesday: {
+                        breakfast: {name: 'Smoothie Protéiné', description: 'Banane, protéine en poudre, lait d\'amande et épinards', calories: 400},
+                        lunch: {name: 'Wrap de Dinde', description: 'Wrap complet avec dinde, avocat et légumes', calories: 500},
+                        dinner: {name: 'Sauté de Bœuf', description: 'Bœuf maigre avec légumes variés et riz brun', calories: 600},
+                        snacks: {name: 'Barre Protéinée', description: 'Barre protéinée faible en sucre', calories: 200}
+                    }
+                };
+                localStorage.setItem('mealPlan', JSON.stringify(sampleMealPlan));
+            }
+            
+            // Charger les données depuis localStorage
+            const userData = JSON.parse(localStorage.getItem('userData')) || {};
+            const workoutPlan = JSON.parse(localStorage.getItem('workoutPlan')) || {};
+            const mealPlan = JSON.parse(localStorage.getItem('mealPlan')) || {};
+            const language = localStorage.getItem('language') || 'fr';
+            
+            // Mettre à jour les stats utilisateur
+            document.getElementById('userFitnessLevel').textContent = userData.fitnessLevel || 'Non défini';
+            document.getElementById('userGoal').textContent = userData.goal || 'Non défini';
+            
+            // Calculer et afficher la progression hebdomadaire
+            function calculateProgress() {
+                let totalExercises = 0;
+                let completedExercises = 0;
+                
+                Object.keys(workoutPlan).forEach(day => {
+                    if (workoutPlan[day] && workoutPlan[day].exercises) {
+                        workoutPlan[day].exercises.forEach(exercise => {
+                            totalExercises++;
+                            if (exercise.completed) {
+                                completedExercises++;
+                            }
+                        });
+                    }
+                });
+                
+                const progressPercentage = totalExercises > 0 
+                    ? Math.round((completedExercises / totalExercises) * 100) 
+                    : 0;
+                    
+                document.getElementById('weeklyProgress').textContent = `${progressPercentage}%`;
+            }
+            
+            calculateProgress();
+            
+            // Traduction des jours et termes
+            const translations = {
+                fr: {
+                    monday: 'Lundi',
+                    tuesday: 'Mardi',
+                    wednesday: 'Mercredi',
+                    thursday: 'Jeudi',
+                    friday: 'Vendredi',
+                    saturday: 'Samedi',
+                    sunday: 'Dimanche',
+                    breakfast: 'Petit-déjeuner',
+                    lunch: 'Déjeuner',
+                    dinner: 'Dîner',
+                    snacks: 'Collations',
+                    workout: 'Entraînement',
+                    meals: 'Repas',
+                    sets: 'séries',
+                    reps: 'répétitions',
+                    calories: 'calories',
+                    equipment: 'Équipement',
+                    noExercises: 'Pas d\'exercices prévus pour ce jour.',
+                    noMeals: 'Pas de repas prévus pour ce jour.',
+                    completed: 'Terminé',
+                    notCompleted: 'Non terminé'
+                },
+                en: {
+                    monday: 'Monday',
+                    tuesday: 'Tuesday',
+                    wednesday: 'Wednesday',
+                    thursday: 'Thursday',
+                    friday: 'Friday',
+                    saturday: 'Saturday',
+                    sunday: 'Sunday',
+                    breakfast: 'Breakfast',
+                    lunch: 'Lunch',
+                    dinner: 'Dinner',
+                    snacks: 'Snacks',
+                    workout: 'Workout',
+                    meals: 'Meals',
+                    sets: 'sets',
+                    reps: 'reps',
+                    calories: 'calories',
+                    equipment: 'Equipment',
+                    noExercises: 'No exercises planned for this day.',
+                    noMeals: 'No meals planned for this day.',
+                    completed: 'Completed',
+                    notCompleted: 'Not completed'
+                }
+            };
+            
+            const t = translations[language] || translations.fr;
+            
+            // Créer les onglets des jours
+            const dayTabs = document.getElementById('dayTabs');
+            const tabContents = document.getElementById('tabContents');
+            const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            
+            days.forEach((day, index) => {
+                // Créer l'onglet
+                const tab = document.createElement('div');
+                tab.classList.add('tab');
+                tab.setAttribute('data-day', day);
+                tab.textContent = t[day];
+                if (index === 0) tab.classList.add('active');
+                dayTabs.appendChild(tab);
+                
+                // Créer le contenu de l'onglet
+                const tabContent = document.createElement('div');
+                tabContent.classList.add('tab-content');
+                tabContent.id = `${day}Content`;
+                if (index === 0) tabContent.classList.add('active');
+                
+                // Section d'entraînement
+                const workoutSection = document.createElement('div');
+                workoutSection.classList.add('workout-section');
+                
+                const workoutHeader = document.createElement('div');
+                workoutHeader.classList.add('section-header');
+                workoutHeader.innerHTML = `<i class="fas fa-dumbbell"></i><h2>${t[day]} ${t.workout}</h2>`;
+                workoutSection.appendChild(workoutHeader);
+                
+                // Ajouter les exercices
+                if (workoutPlan[day] && workoutPlan[day].exercises && workoutPlan[day].exercises.length > 0) {
+                    workoutPlan[day].exercises.forEach((exercise, exIndex) => {
+                        const exerciseCard = document.createElement('div');
+                        exerciseCard.classList.add('exercise-card');
+                        exerciseCard.setAttribute('data-day', day);
+                        exerciseCard.setAttribute('data-index', exIndex);
+                        
+                        if (exercise.completed) {
+                            exerciseCard.classList.add('completed');
+                        }
+                        
+                        const title = document.createElement('div');
+                        title.classList.add('card-title');
+                        title.textContent = exercise.name;
+                        exerciseCard.appendChild(title);
+                        
+                        const sets = document.createElement('div');
+                        sets.classList.add('card-detail');
+                        sets.textContent = `${exercise.sets} ${t.sets} × ${exercise.reps} ${t.reps}`;
+                        exerciseCard.appendChild(sets);
+                        
+                        if (exercise.equipment) {
+                            const equipment = document.createElement('div');
+                            equipment.classList.add('card-detail');
+                            equipment.textContent = `${t.equipment}: ${exercise.equipment}`;
+                            exerciseCard.appendChild(equipment);
+                        }
+                        
+                        const status = document.createElement('div');
+                        status.classList.add('card-detail', 'status-text');
+                        status.textContent = exercise.completed ? t.completed : t.notCompleted;
+                        exerciseCard.appendChild(status);
+                        
+                        const progress = document.createElement('div');
+                        progress.classList.add('progress-bar');
+                        const progressFill = document.createElement('div');
+                        progressFill.classList.add('progress-fill');
+                        progress.appendChild(progressFill);
+                        exerciseCard.appendChild(progress);
+                        
+                        workoutSection.appendChild(exerciseCard);
+                    });
+                } else {
+                    const noExercises = document.createElement('p');
+                    noExercises.textContent = t.noExercises;
+                    workoutSection.appendChild(noExercises);
+                }
+                
+                tabContent.appendChild(workoutSection);
+                
+                // Section des repas
+                const mealSection = document.createElement('div');
+                mealSection.classList.add('meal-section');
+                
+                const mealHeader = document.createElement('div');
+                mealHeader.classList.add('section-header');
+                mealHeader.innerHTML = `<i class="fas fa-utensils"></i><h2>${t[day]} ${t.meals}</h2>`;
+                mealSection.appendChild(mealHeader);
+                
+                // Ajouter les repas
+                if (mealPlan[day]) {
+                    const mealTypes = ['breakfast', 'lunch', 'dinner', 'snacks'];
+                    
+                    mealTypes.forEach(mealType => {
+                        if (mealPlan[day][mealType]) {
+                            const mealCard = document.createElement('div');
+                            mealCard.classList.add('meal-card');
+                            
+                            const mealTitle = document.createElement('div');
+                            mealTitle.classList.add('card-title');
+                            mealTitle.textContent = `${t[mealType]}: ${mealPlan[day][mealType].name}`;
+                            mealCard.appendChild(mealTitle);
+                            
+                            const mealDesc = document.createElement('div');
+                            mealDesc.classList.add('card-detail');
+                            mealDesc.textContent = mealPlan[day][mealType].description;
+                            mealCard.appendChild(mealDesc);
+                            
+                            if (mealPlan[day][mealType].calories) {
+                                const mealCal = document.createElement('div');
+                                mealCal.classList.add('card-detail');
+                                mealCal.textContent = `${mealPlan[day][mealType].calories} ${t.calories}`;
+                                mealCard.appendChild(mealCal);
+                            }
+                            
+                            mealSection.appendChild(mealCard);
+                        }
+                    });
+                } else {
+                    const noMeals = document.createElement('p');
+                    noMeals.textContent = t.noMeals;
+                    mealSection.appendChild(noMeals);
+                }
+                
+                tabContent.appendChild(mealSection);
+                tabContents.appendChild(tabContent);
+            });
+            
+            // Ajouter les fonctionnalités des onglets
+            dayTabs.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    dayTabs.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tabContents.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    const day = this.getAttribute('data-day');
+                    document.getElementById(`${day}Content`).classList.add('active');
+                });
+            });
+            
+            // Fonctionnalité des boutons
+            document.getElementById('printCalendarBtn').addEventListener('click', function() {
+                window.print();
+            });
+            
+            document.getElementById('dietPlanBtn').addEventListener('click', function() {
+                alert('Détails du régime alimentaire');
+            });
+            
+            // Marquer les exercices comme terminés
+            document.querySelectorAll('.exercise-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('completed');
+                    
+                    const day = this.getAttribute('data-day');
+                    const index = parseInt(this.getAttribute('data-index'));
+                    const isCompleted = this.classList.contains('completed');
+                    
+                    // Mettre à jour le texte de statut
+                    const statusText = this.querySelector('.status-text');
+                    statusText.textContent = isCompleted ? t.completed : t.notCompleted;
+                    
+                    // Mettre à jour localStorage
+                    if (workoutPlan[day] && workoutPlan[day].exercises && workoutPlan[day].exercises[index]) {
+                        workoutPlan[day].exercises[index].completed = isCompleted;
+                        localStorage.setItem('workoutPlan', JSON.stringify(workoutPlan));
+                    }
+                    
+                    // Recalculer la progression
+                    calculateProgress();
+                });
+            });
+        });
+    </script>
+{% endblock %} 
