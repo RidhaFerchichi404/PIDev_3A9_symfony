@@ -116,7 +116,7 @@ public function setSalle(?Salledesport $salle): self
     return $this;
 }
 
-    // ✅ Getter/Setter pour la propriété "type"
+    
     public function getType(): ?string
     {
         return $this->type;

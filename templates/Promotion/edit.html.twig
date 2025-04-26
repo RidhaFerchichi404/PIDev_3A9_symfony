@@ -4,11 +4,19 @@
 
 {% block body %}
     <div class="container mt-4">
-        <h1 class="mb-4">Modifier la promotion</h1>
+        <h1>Modifier Promotion #{{ promotion.id }}</h1>
         
-        {% include 'promotion/_form.html.twig' with {
-            'form': form,
-            'button_label': 'Mettre à jour'
-        } %}
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+            
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+                <a href="{{ path('app_promotion_index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Annuler
+                </a>
+            </div>
+        {{ form_end(form) }}
     </div>
 {% endblock %}

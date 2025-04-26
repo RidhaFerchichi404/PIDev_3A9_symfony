@@ -21,8 +21,8 @@ class Promotion
     #[ORM\Column(type: 'text')]
     private string $description;
 
-    #[ORM\Column(name: 'TypeReduction', type: 'string', length: 50)]
-    private string $typeReduction;
+    #[ORM\Column(name: 'TypeReduction', type: 'string', length: 50, nullable: true)]
+    private ?string $typeReduction = null;
 
     #[ORM\Column(name: 'ValeurReduction', type: 'float', precision: 10, scale: 2)]
     private ?float $valeurReduction = null;
@@ -89,16 +89,17 @@ public function setTypeReduction(string $typeReduction): self
     return $this;
 }
 
-public function getValeurReduction(): string
+public function getValeurReduction(): ?float
 {
     return $this->valeurReduction;
 }
 
-public function setValeurReduction(string $valeurReduction): self
+public function setValeurReduction(?float $valeurReduction): self
 {
     $this->valeurReduction = $valeurReduction;
     return $this;
 }
+
 
 public function getDateDebut(): \DateTimeInterface
 {

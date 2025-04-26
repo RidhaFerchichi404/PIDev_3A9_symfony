@@ -81,8 +81,17 @@ class AbonnementController extends AbstractController
                     $this->addFlash('error', $error->getMessage());
                 }
             } else {
+                $existingAbonnement = $entityManager->getRepository(Abonnement::class)->findOneBy([
+                    'nom' => $abonnement->getNom(),
+                    'salle' => $abonnement->getSalle()
+                ]);
+        
+                if ($existingAbonnement) {
+                    $this->addFlash('error', 'Un abonnement avec ce nom existe déjà pour cette salle');
+                    return $this->redirectToRoute('app_abonnement_new');
+                }
                 // Validation personnalisée supplémentaire
-                if ($abonnement->getDuree() <= 0) {
+                if ($abonnement->getDuree() <= 0 or $abonnement->getDuree() > 12)  {
                     $this->addFlash('error', 'La durée doit être supérieure à zéro');
                     return $this->redirectToRoute('app_abonnement_new');
                 }
@@ -156,19 +165,60 @@ class AbonnementController extends AbstractController
         $form = $this->createForm(AbonnementType::class, $abonnement);
         $form->handleRequest($request);
     
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Synchronisez le nom de la salle
-            $abonnement->setSalleName($abonnement->getSalle()?->getNom());
-            
-            $entityManager->flush();
-            $this->addFlash('success', 'Abonnement mis à jour avec succès');
-            return $this->redirectToRoute('app_abonnement_index', [], Response::HTTP_SEE_OTHER);
+        if ($form->isSubmitted()) {
+            if (!$form->isValid()) {
+                foreach ($form->getErrors(true) as $error) {
+                    $this->addFlash('error', $error->getMessage());
+                }
+            } else {
+                // Validation personnalisée
+                if ($abonnement->getDuree() <= 0 || $abonnement->getDuree() > 12) {
+                    $this->addFlash('error', 'La durée doit être comprise entre 1 et 12 mois');
+                    return $this->redirectToRoute('app_abonnement_edit', ['AbonnementID' => $abonnement->getAbonnementID()]);
+                }
+    
+                if ($abonnement->getPrix() <= 0) {
+                    $this->addFlash('error', 'Le prix doit être supérieur à zéro');
+                    return $this->redirectToRoute('app_abonnement_edit', ['AbonnementID' => $abonnement->getAbonnementID()]);
+                }
+    
+                if (!$abonnement->getSalle()) {
+                    $this->addFlash('error', 'Veuillez sélectionner une salle de sport');
+                    return $this->redirectToRoute('app_abonnement_edit', ['AbonnementID' => $abonnement->getAbonnementID()]);
+                }
+    
+                // Vérification des doublons (en excluant l'abonnement actuel)
+                $existingAbonnement = $entityManager->getRepository(Abonnement::class)->findOneBy([
+                    'nom' => $abonnement->getNom(),
+                    'salle' => $abonnement->getSalle()
+                ]);
+    
+                if ($existingAbonnement && $existingAbonnement->getAbonnementID() !== $abonnement->getAbonnementID()) {
+                    $this->addFlash('error', 'Un abonnement avec ce nom existe déjà pour cette salle');
+                    return $this->redirectToRoute('app_abonnement_edit', ['AbonnementID' => $abonnement->getAbonnementID()]);
+                }
+    
+                // Tout est valide, on met à jour
+                $abonnement->setSalleName($abonnement->getSalle()->getNom());
+                $entityManager->flush();
+    
+                $this->addFlash('success', 'Abonnement mis à jour avec succès!');
+                return $this->redirectToRoute('app_abonnement_index');
+            }
         }
     
         return $this->render('abonnement/edit.html.twig', [
             'abonnement' => $abonnement,
             'form' => $form->createView(),
             'salles' => $salleRepository->findAll(),
+        ]);
+    }
+    #[Route('/{id}/promotions', name: 'app_abonnement_promotions', methods: ['GET'])]
+    public function showPromotions(Abonnement $abonnement): Response
+    {
+        return $this->render('abonnement/promotions.html.twig', [
+            'abonnement' => $abonnement,
+            'promotions' => $abonnement->getPromotions(),
         ]);
     }
     #[Route('/{AbonnementID}', name: 'app_abonnement_delete', methods: ['POST'])]

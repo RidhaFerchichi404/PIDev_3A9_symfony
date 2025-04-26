@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Entity\Abonnement;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -91,10 +92,14 @@ class PromotionType extends AbstractType
                 'required' => false,
                 'attr' => ['placeholder' => 'Description de la promotion']
             ])
-            ->add('typeReduction', TextType::class, [
+            ->add('typeReduction', ChoiceType::class, [
                 'label' => 'Type de réduction',
-                'required' => false,
-                'attr' => ['placeholder' => 'Ex: Pourcentage ou Montant']
+                'choices' => [
+                    'Pourcentage' => 'pourcentage',
+                    'Montant fixe' => 'montant_fixe',
+                ],
+                'placeholder' => 'Optionnel',
+                'required' => false // Permet la valeur null
             ]);
     }
 
