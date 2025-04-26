@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace {{ salle_de_sport.nom }}{% endblock %}
+
+{% block body %}
+    <div class="container py-4">
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="display-5 fw-bold">Espace {{ salle_de_sport.nom }}</h1>
+                <p class="lead">
+                    <i class="bi bi-geo-alt-fill"></i> {{ salle_de_sport.zone }}, {{ salle_de_sport.region }}
+                </p>
+                <div class="d-flex gap-2">
+                    <a href="{{ path('app_salle_de_sport_index') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Retour
+                    </a>
+                    <a href="{{ path('app_equipement_new_for_salle', {'id': salle_de_sport.id}) }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Ajouter un équipement
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-gear-fill me-2"></i>Équipements ({{ equipements|length }})</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if equipements|length > 0 %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom</th>
+                                            <th>État</th>
+                                            <th>Dernière vérification</th>
+                                            <th>Prochaine vérification</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for equipement in equipements %}
+                                            <tr>
+                                                <td>{{ equipement.nom }}</td>
+                                                <td>
+                                                    {% if equipement.fonctionnement %}
+                                                        <span class="badge bg-success">Bon état</span>
+                                                    {% else %}
+                                                        <span class="badge bg-danger">Hors service</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ equipement.derniereVerification|date('d/m/Y') }}</td>
+                                                <td>{{ equipement.prochaineVerification|date('d/m/Y') }}</td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm">
+                                                        <a href="{{ path('app_equipement_show', {'id': equipement.id}) }}" class="btn btn-info text-white">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                        <a href="{{ path('app_equipement_edit', {'id': equipement.id}) }}" class="btn btn-warning text-white">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle me-2"></i>Aucun équipement n'est disponible dans cette salle.
+                                <a href="{{ path('app_equipement_new_for_salle', {'id': salle_de_sport.id}) }}" class="alert-link">Ajouter un équipement</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Informations</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-building me-2"></i>Nom:</span>
+                                <span class="fw-bold">{{ salle_de_sport.nom }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-geo-alt me-2"></i>Zone:</span>
+                                <span class="fw-bold">{{ salle_de_sport.zone }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-map me-2"></i>Région:</span>
+                                <span class="fw-bold">{{ salle_de_sport.region }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><i class="bi bi-gear me-2"></i>Équipements:</span>
+                                <span class="fw-bold">{{ equipements|length }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ path('app_salle_de_sport_edit', {'id': salle_de_sport.id}) }}" class="btn btn-warning text-white w-100">
+                            <i class="bi bi-pencil me-2"></i>Modifier cette salle
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 

@@ -17,10 +17,22 @@ security:
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\AppAuthenticator
+            
+            # Permettre l'accès comme invité (Symfony 6+)
+            entry_point: App\Security\AppAuthenticator
+            
             logout:
                 path: app_logout
                 # where to redirect after logout
                 target: app_login
+                # Ajout pour résoudre le problème de déconnexion
+                csrf_parameter: _csrf_token
+                csrf_token_id: logout
+                # Nettoyer la session complètement
+                invalidate_session: true
+                # Supprimer les cookies de la session
+                clear_site_data:
+                    - cookies
 
             remember_me:
                 secret: '%kernel.secret%'
@@ -33,13 +45,22 @@ security:
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
+    enable_authenticator_manager: true
+    
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/$, roles: PUBLIC_ACCESS }
+        - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/logout$, roles: PUBLIC_ACCESS }
+        - { path: ^/register$, roles: PUBLIC_ACCESS }
+        - { path: ^/reset-password, roles: PUBLIC_ACCESS }
+        - { path: ^/verify, roles: PUBLIC_ACCESS }
         - { path: ^/user, roles: ROLE_ADMIN }
         - { path: ^/front, roles: ROLE_USER }
+        - { path: ^/api, roles: ROLE_USER }
+        - { path: ^/assets, roles: PUBLIC_ACCESS }
+        - { path: ^/public, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: PUBLIC_ACCESS }
 
 when@test:

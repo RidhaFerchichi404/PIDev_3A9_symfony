@@ -242,6 +242,30 @@
             transform: translateY(0);
         }
     }
+    
+    /* Styles pour le message d'erreur reCAPTCHA */
+    #recaptcha-error {
+        color: var(--error-color);
+        font-size: 0.9rem;
+        margin-top: 5px;
+        display: none;
+    }
+    
+    /* Style pour désactiver le bouton */
+    .btn-primary:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+    
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    .shake {
+        animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+    }
 </style>
 {% endblock %}
 
@@ -252,7 +276,7 @@
             <h1>Sign In</h1>
         </div>
         <div class="login-form-body">
-            <form method="post" action="{{ path('app_login') }}">
+            <form method="post" action="{{ path('app_login') }}" id="login-form" onsubmit="return validateRecaptcha()">
                 {% if error %}
                     <div class="alert alert-danger mb-4">
                         <i class="fas fa-exclamation-circle me-2"></i>
@@ -263,7 +287,11 @@
                 {% if app.user %}
                     <div class="alert alert-info mb-4">
                         <i class="fas fa-info-circle me-2"></i>
-                        You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}" class="fw-bold">Logout</a>
+                        You are logged in as {{ app.user.userIdentifier }},
+                        <form action="{{ path('app_logout') }}" method="post" style="display:inline;">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                            <button type="submit" class="fw-bold btn btn-link p-0">Logout</button>
+                        </form>
                     </div>
                 {% endif %}
 
@@ -302,10 +330,11 @@
                 </div>
 
                 <div class="mb-4">
-                    <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+                    <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" data-callback="recaptchaCallback"></div>
+                    <div id="recaptcha-error">Please verify that you are not a robot</div>
                 </div>
 
-                <button class="btn btn-primary w-100 py-3 mb-3" type="submit">
+                <button class="btn btn-primary w-100 py-3 mb-3" type="submit" id="login-btn">
                     <i class="fas fa-sign-in-alt me-2"></i> Sign in
                 </button>
                 
@@ -320,4 +349,49 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit" async defer></script>
+<script>
+    function onRecaptchaLoad() {
+        // Initialisation du reCAPTCHA terminée
+        console.log('reCAPTCHA loaded successfully');
+    }
+
+    function recaptchaCallback() {
+        // Callback quand le reCAPTCHA est validé
+        document.getElementById('recaptcha-error').style.display = 'none';
+    }
+    
+    function validateRecaptcha() {
+        var recaptchaResponse = grecaptcha.getResponse();
+        var recaptchaError = document.getElementById('recaptcha-error');
+        var loginForm = document.getElementById('login-form');
+        
+        if (recaptchaResponse.length === 0) {
+            // reCAPTCHA non complété
+            recaptchaError.style.display = 'block';
+            loginForm.classList.add('shake');
+            
+            // Retirer l'animation après un court délai
+            setTimeout(function() {
+                loginForm.classList.remove('shake');
+            }, 600);
+            
+            // Faire défiler jusqu'au reCAPTCHA
+            document.querySelector('.g-recaptcha').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+            
+            return false; // Empêcher l'envoi du formulaire
+        } else {
+            // reCAPTCHA complété
+            recaptchaError.style.display = 'none';
+            return true; // Autoriser l'envoi du formulaire
+        }
+    }
+</script>
 {% endblock %} 

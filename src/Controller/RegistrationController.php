@@ -4,17 +4,25 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationFormType;
+use App\Security\AppAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(
+        Request $request, 
+        UserPasswordHasherInterface $userPasswordHasher, 
+        EntityManagerInterface $entityManager,
+        UserAuthenticatorInterface $userAuthenticator,
+        AppAuthenticator $authenticator
+    ): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -32,15 +40,19 @@ class RegistrationController extends AbstractController
                 ]);
             }
             
-            // Hasher le mot de passe avant de l'enregistrer
-            $user->setPasswordHash(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $plainPassword
-                )
+            // Hasher le mot de passe avant de l'enregistrer (s'assurer qu'il n'est jamais null)
+            $hashedPassword = $userPasswordHasher->hashPassword(
+                $user,
+                $plainPassword
             );
             
-            // Set default role for regular users (ROLE_USER is already set by default in the entity)
+            if (empty($hashedPassword)) {
+                throw new \RuntimeException('Erreur lors du hashage du mot de passe.');
+            }
+            
+            $user->setPasswordHash($hashedPassword);
+            
+            // Set default role for regular users
             $user->setRole('ROLE_USER');
             
             // Set subscription end date to one month from now
@@ -66,9 +78,20 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.');
+            $this->addFlash('success', 'Votre compte a été créé avec succès.');
 
-            return $this->redirectToRoute('app_login');
+            // Connecter l'utilisateur et le rediriger vers la page d'accueil
+            try {
+                return $userAuthenticator->authenticateUser(
+                    $user,
+                    $authenticator,
+                    $request
+                );
+            } catch (\Exception $e) {
+                // Si l'authentification automatique échoue, redirige vers la page de connexion
+                $this->addFlash('info', 'Votre compte a été créé. Veuillez vous connecter.');
+                return $this->redirectToRoute('app_login');
+            }
         }
 
         return $this->render('registration/register.html.twig', [

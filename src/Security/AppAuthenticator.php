@@ -56,26 +56,29 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
         $csrfToken = $request->request->get('_csrf_token');
         $recaptchaToken = $request->request->get('g-recaptcha-response');
 
-        // Validate reCAPTCHA if token is present
-        if ($recaptchaToken) {
-            try {
-                $response = $this->httpClient->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
-                    'body' => [
-                        'secret' => '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe',
-                        'response' => $recaptchaToken
-                    ]
-                ]);
-                
-                $data = $response->toArray();
-                
-                if (!($data['success'] ?? false)) {
-                    throw new CustomUserMessageAuthenticationException('Vérification reCAPTCHA échouée. Veuillez réessayer.');
-                }
-            } catch (\Exception $e) {
-                // En production, il serait préférable de logger l'erreur plutôt que de bloquer l'authentification
-                error_log('Erreur lors de la vérification reCAPTCHA: ' . $e->getMessage());
-                // La vérification reCAPTCHA échoue silencieusement en cas d'erreur
+        // Vérifier que le token reCAPTCHA est présent
+        if (empty($recaptchaToken)) {
+            throw new CustomUserMessageAuthenticationException('Veuillez compléter le reCAPTCHA pour vous connecter.');
+        }
+
+        // Validate reCAPTCHA
+        try {
+            $response = $this->httpClient->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
+                'body' => [
+                    'secret' => '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe',
+                    'response' => $recaptchaToken
+                ]
+            ]);
+            
+            $data = $response->toArray();
+            
+            if (!($data['success'] ?? false)) {
+                throw new CustomUserMessageAuthenticationException('Vérification reCAPTCHA échouée. Veuillez réessayer.');
             }
+        } catch (\Exception $e) {
+            // Log l'erreur
+            error_log('Erreur lors de la vérification reCAPTCHA: ' . $e->getMessage());
+            throw new CustomUserMessageAuthenticationException('Erreur lors de la vérification reCAPTCHA. Veuillez réessayer.');
         }
 
         $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
@@ -140,8 +143,10 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
             $request->getSession()->set(SecurityRequestAttributes::AUTHENTICATION_ERROR, $exception);
         }
 
+        // Rediriger vers la page de login avec un message flash expliquant l'erreur
+        $request->getSession()->getFlashBag()->add('error', 'Accès refusé: ' . $exception->getMessage());
+        
         $url = $this->getLoginUrl($request);
-
         return new RedirectResponse($url);
     }
 

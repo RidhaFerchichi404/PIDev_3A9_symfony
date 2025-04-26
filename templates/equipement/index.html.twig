@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Equipment{% endblock %}
+
+{% block body %}
+
+<!-- Import QRCode script -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<h1>Equipment List</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Next Verification</th>
+            <th>Last Verification</th>
+            <th>QR Code</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for equipement in equipements %}
+            {% set status = equipement.fonctionnement ? 'Working' : 'Not Working' %}
+            {% set nextVerification = equipement.prochaineVerification ? equipement.prochaineVerification|date('Y-m-d') : 'Not Set' %}
+            {% set lastVerification = equipement.derniereVerification ? equipement.derniereVerification|date('Y-m-d') : 'Not Set' %}
+
+            {# ✅ Préparation des données QR #}
+            {% set qr_lines = [
+                'ID: ' ~ equipement.id,
+                'Name: ' ~ equipement.nom,
+                'Status: ' ~ status,
+                'Last Verification: ' ~ lastVerification,
+                'Next Verification: ' ~ nextVerification
+            ] %}
+            {% set qrdata = qr_lines | join('\n') %}
+
+            <tr>
+                <td>{{ equipement.id }}</td>
+                <td>{{ equipement.nom }}</td>
+                <td>
+                    <span class="{{ equipement.fonctionnement ? 'text-success' : 'text-danger' }}">
+                        {{ equipement.fonctionnement ? '✔️ Working' : '❌ Not Working' }}
+                    </span>
+                </td>
+                <td><span class="badge bg-info">{{ nextVerification }}</span></td>
+                <td><span class="badge bg-warning">{{ lastVerification }}</span></td>
+                <td>
+                    <div class="qr-container" style="margin-bottom: 5px;">
+                        {# ✅ Ici : pas d'encodage spécial |e('js') #}
+                        <div id="qrcode-{{ equipement.id }}" class="qrcode" data-text="{{ qrdata }}"></div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary download-btn" data-id="{{ equipement.id }}">Download</button>
+                </td>
+                <td>
+                    <div class="btn-group" role="group" aria-label="Actions">
+                        <a href="{{ path('app_equipement_show', {'id': equipement.id}) }}" class="btn btn-info btn-sm">
+                            <i class="ri-eye-line"></i> View
+                        </a>
+                        <a href="{{ path('app_equipement_edit', {'id': equipement.id}) }}" class="btn btn-warning btn-sm owner-action" data-owner="{{ equipement.idUser }}" data-current-user="{{ app.user ? app.user.id : 0 }}">
+                            <i class="ri-pencil-line"></i> Edit
+                        </a>
+                        <a href="{{ path('app_equipement_exercices', {'id': equipement.id}) }}" class="btn btn-secondary btn-sm">
+                            <i class="ri-shape-square-line"></i> Exercises
+                        </a>
+                        <form method="post" action="{{ path('app_equipement_delete', {'id': equipement.id}) }}" onsubmit="return confirmDelete(this, {{ equipement.idUser }});" style="display: inline-block;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ equipement.id) }}">
+                            <button type="submit" class="btn btn-danger btn-sm owner-action" data-owner="{{ equipement.idUser }}" data-current-user="{{ app.user ? app.user.id : 0 }}">
+                                <i class="ri-delete-bin-6-line"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7" class="text-center">No equipment found</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="card-footer d-flex justify-content-between">
+    {% if salle_de_sport is defined %}
+        <a href="{{ path('app_equipement_new_for_salle', {'id': salle_de_sport.id}) }}" class="btn btn-success btn-lg">
+            <i class="ri-add-line"></i> Add Equipment to {{ salle_de_sport.nom }}
+        </a>
+        <a href="{{ path('app_salle_de_sport_index') }}" class="btn btn-outline-secondary btn-sm">
+            ← Back to Gyms
+        </a>
+    {% else %}
+        <a href="{{ path('app_equipement_new') }}" class="btn btn-success btn-lg">
+            <i class="ri-add-line"></i> Create New Equipment
+        </a>
+        <a href="{{ path('app_equipement_ai_new') }}" class="btn btn-primary btn-lg">
+            <i class="ri-ai-generate"></i> Add with AI
+        </a>
+        <a href="{{ path('app_salle_de_sport_index') }}" class="btn btn-outline-secondary btn-sm">
+            ← Back to Gyms
+        </a>
+    {% endif %}
+</div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        // ✅ Génération des QR Codes
+        document.querySelectorAll('.qrcode').forEach(el => {
+            let text = el.dataset.text; // plus besoin de replace maintenant
+
+            new QRCode(el, {
+                text: text,
+                width: 180,
+                height: 180
+            });
+        });
+
+        // ✅ Téléchargement du QR code
+        document.querySelectorAll('.download-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const id = button.dataset.id;
+                const canvas = document.querySelector(`#qrcode-${id} canvas`);
+                if (canvas) {
+                    const link = document.createElement('a');
+                    link.href = canvas.toDataURL("image/png");
+                    link.download = `equipment-qr-${id}.png`;
+                    link.click();
+                } else {
+                    alert("QR code not found!");
+                }
+            });
+        });
+    });
+    document.querySelectorAll('.owner-action').forEach(button => {
+            button.addEventListener('click', function(event) {
+                const owner = parseInt(this.dataset.owner);
+                const currentUser = parseInt(this.dataset.currentUser);
+                
+                if (currentUser !== owner) {
+                    event.preventDefault();
+                    alert("Vous ne pouvez pas modifier ou supprimer un équipement dont vous n'êtes pas le propriétaire.");
+                }
+            });
+        });
+    
+
+    function confirmDelete(form, owner) {
+        const currentUser = form.querySelector('.owner-action')?.dataset.currentUser;
+        if (parseInt(currentUser) !== owner) {
+            alert("Vous ne pouvez pas supprimer un équipement dont vous n'êtes pas le propriétaire.");
+            return false;
+        }
+        return confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?');
+    }
+</script>
+
+{% endblock %}

@@ -238,14 +238,14 @@
             
             <div class="row">
                 <div class="col-md-6 form-group">
-                    {{ form_label(form.firstname, 'First Name', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.firstname, {'attr': {'class': 'form-control', 'placeholder': 'Enter first name'}}) }}
-                    {{ form_errors(form.firstname) }}
+                    {{ form_label(form.first_name, 'First Name', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.first_name, {'attr': {'class': 'form-control', 'placeholder': 'Enter first name'}}) }}
+                    {{ form_errors(form.first_name) }}
                 </div>
                 <div class="col-md-6 form-group">
-                    {{ form_label(form.lastname, 'Last Name', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.lastname, {'attr': {'class': 'form-control', 'placeholder': 'Enter last name'}}) }}
-                    {{ form_errors(form.lastname) }}
+                    {{ form_label(form.last_name, 'Last Name', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.last_name, {'attr': {'class': 'form-control', 'placeholder': 'Enter last name'}}) }}
+                    {{ form_errors(form.last_name) }}
                 </div>
             </div>
             
@@ -256,9 +256,9 @@
                     {{ form_errors(form.email) }}
                 </div>
                 <div class="col-md-6 form-group">
-                    {{ form_label(form.phonenumber, 'Phone Number', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.phonenumber, {'attr': {'class': 'form-control', 'placeholder': 'Enter phone number'}}) }}
-                    {{ form_errors(form.phonenumber) }}
+                    {{ form_label(form.phone_number, 'Phone Number', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.phone_number, {'attr': {'class': 'form-control', 'placeholder': 'Enter phone number'}}) }}
+                    {{ form_errors(form.phone_number) }}
                 </div>
             </div>
             
@@ -280,9 +280,9 @@
             
             <div class="row">
                 <div class="col-md-6 form-group">
-                    {{ form_label(form.passwordhash, 'Password', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.passwordhash, {'attr': {'class': 'form-control', 'placeholder': 'Enter new password'}}) }}
-                    {{ form_errors(form.passwordhash) }}
+                    {{ form_label(form.password_hash, 'Password', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.password_hash, {'attr': {'class': 'form-control', 'placeholder': 'Enter new password'}}) }}
+                    {{ form_errors(form.password_hash) }}
                     <small class="text-muted">Leave empty to keep current password</small>
                 </div>
             </div>

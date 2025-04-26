@@ -28,7 +28,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $email;
 
     #[ORM\Column(type: "string", length: 255)]
-    private string $password_hash;
+    private string $password_hash = '';
 
     #[ORM\Column(type: "string", length: 20, nullable: true)]
     private ?string $phone_number = null;
@@ -178,9 +178,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password_hash;
     }
 
-    public function setPasswordhash(string $value): self
+    public function setPasswordHash(string $value): self
     {
-        $this->password_hash = $value;
+        // Assurez-vous que le mot de passe n'est jamais null
+        $this->password_hash = $value ?: '';
         return $this;
     }
 

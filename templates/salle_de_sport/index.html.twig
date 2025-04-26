@@ -1,0 +1,584 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gym Dashboard{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .text-aqua {
+        color: #00CED1;
+    }
+
+    .bg-dark-blue {
+        background-color: #1E90FF !important;
+    }
+
+    .bg-gradient-aqua-orange {
+        background: linear-gradient(135deg, #00CED1, #FFA07A); /* Bleu clair et orange clair */
+    }
+
+    .card {
+        border-radius: 12px;
+        background-color: white;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .gym-card:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn {
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .stat-card {
+        background-color: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .stats-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #333;
+        margin: 5px 0;
+    }
+
+    .stats-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #666;
+    }
+
+    .equipment-chart-container, 
+    .equipment-types-chart-container {
+        position: relative;
+        margin: 0 auto;
+    }
+
+    .font-modern {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+    }
+
+    #calendar {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-summary .col-6:nth-child(1) .stat-card {
+        border-left: 5px solid #1E90FF;
+    }
+
+    .stats-summary .col-6:nth-child(2) .stat-card {
+        border-left: 5px solid #2ECC71;
+    }
+
+    .stats-summary .col-6:nth-child(3) .stat-card {
+        border-left: 5px solid #F1C40F;
+    }
+
+    .stats-summary .col-6:nth-child(4) .stat-card {
+        border-left: 5px solid #9B59B6;
+    }
+
+    .progress {
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        transition: width 1.5s ease;
+    }
+    
+    /* Nouveaux styles pour les actions des salles de sport */
+    .gym-actions-container {
+        background-color: rgba(248, 249, 250, 0.7);
+        border-radius: 10px;
+        padding: 12px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .gym-actions-container .badge {
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 8px 12px;
+        border-radius: 8px;
+        width: 120px;
+        text-align: left;
+    }
+    
+    .gym-actions-container .btn {
+        border-radius: 6px;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.2s;
+    }
+    
+    .gym-actions-container .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .gym-actions-container .col-12 {
+        padding: 6px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+    
+    .gym-actions-container .col-12:hover {
+        box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        background-color: #f8f9fa;
+    }
+
+    /* Styles pour les boutons d'action */
+    .gym-action-buttons {
+        margin-top: 20px;
+    }
+    
+    .btn-action {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 5px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: white;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        width: 31%;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .btn-action i {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        color: white;
+    }
+    
+    .btn-edit {
+        background-color: #F7AB3A;
+        background-image: linear-gradient(to bottom right, #F7AB3A, #F5820D);
+    }
+    
+    .btn-equipment {
+        background-color: #2B98F0;
+        background-image: linear-gradient(to bottom right, #2B98F0, #1D78C2);
+    }
+    
+    .btn-pdf {
+        background-color: #FF5A5A;
+        background-image: linear-gradient(to bottom right, #FF5A5A, #E43C3C);
+    }
+    
+    /* Animation pour les boutons */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .btn-action:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        animation: pulse 0.3s ease;
+    }
+</style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/chart-init.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                console.log('Initializing charts');
+                
+                // Créer le graphique de répartition des équipements
+                var labels = {{ data|json_encode|raw }};
+                var values = {{ data_values|json_encode|raw }};
+                
+                if (labels && values && labels.length > 0) {
+                    createDoughnutChart('equipmentChart', labels, values);
+                } else {
+                    console.warn('No data available for equipment chart');
+                    var element = document.getElementById('equipmentChart');
+                    if (element) {
+                        element.insertAdjacentHTML('afterend', '<div class="alert alert-warning">Aucune donnée disponible</div>');
+                    }
+                }
+                
+                // Créer le graphique des types d'équipements (si les données sont disponibles)
+                {% if equipmentTypes is defined %}
+                var typeLabels = [];
+                var typeValues = [];
+                
+                {% for type, value in equipmentTypes %}
+                typeLabels.push("{{ type }}");
+                typeValues.push({{ value }});
+                {% endfor %}
+                
+                if (typeLabels && typeValues && typeLabels.length > 0) {
+                    var typeColors = [
+                        '#E74C3C', // Red for Cardio
+                        '#3498DB', // Blue for Musculation
+                        '#2ECC71', // Green for Poids libres
+                        '#F39C12'  // Orange for Accessoires
+                    ];
+                    createPieChart('equipmentTypesChart', typeLabels, typeValues, typeColors);
+                }
+                {% else %}
+                console.warn('No data available for equipment types chart');
+                var typesElement = document.getElementById('equipmentTypesChart');
+                if (typesElement) {
+                    typesElement.insertAdjacentHTML('afterend', '<div class="alert alert-warning">Données des types d\'équipements non disponibles</div>');
+                }
+                {% endif %}
+                
+                // Initialiser le calendrier
+                var calendarEl = document.getElementById('calendar');
+                if (calendarEl) {
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth',
+                        headerToolbar: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,listMonth'
+                        },
+                        buttonText: {
+                            today: 'Aujourd\'hui',
+                            month: 'Mois',
+                            week: 'Semaine',
+                            list: 'Liste'
+                        },
+                        locale: 'fr',
+                        events: [
+                            {% for equipement in equipements_data %}
+                            {
+                                title: '{{ equipement.nom|escape('js') }} ({{ equipement.salle|escape('js') }})',
+                                start: '{{ equipement.derniere_verification|date('Y-m-d') }}',
+                                color: 'green',
+                                extendedProps: {
+                                    type: 'derniere',
+                                    salle: '{{ equipement.salle|escape('js') }}'
+                                }
+                            },
+                            {
+                                title: '{{ equipement.nom|escape('js') }} ({{ equipement.salle|escape('js') }})',
+                                start: '{{ equipement.prochaine_verification|date('Y-m-d') }}',
+                                color: 'red',
+                                extendedProps: {
+                                    type: 'prochaine',
+                                    salle: '{{ equipement.salle|escape('js') }}'
+                                }
+                            },
+                            {% endfor %}
+                        ],
+                        eventClick: function(info) {
+                            const event = info.event;
+                            const type = event.extendedProps.type === 'derniere' ? 'Dernière vérification' : 'Prochaine vérification';
+                            const salle = event.extendedProps.salle;
+                            
+                            alert(`${event.title}\nType: ${type}\nDate: ${event.start.toLocaleDateString()}`);
+                        },
+                        // Ajouter un filtre pour les événements
+                        eventDidMount: function (info) {
+                            // Appliquer des styles aux événements en fonction de leur type
+                            if (info.event.extendedProps.type === 'derniere') {
+                                info.el.style.borderLeft = '5px solid darkgreen';
+                            } else {
+                                info.el.style.borderLeft = '5px solid darkred';
+                            }
+                        }
+                    });
+                    calendar.render();
+                } else {
+                    console.error('Calendar element not found');
+                }
+                
+                // Vérification propriétaire pour les boutons de modification
+                document.querySelectorAll('.owner-action').forEach(button => {
+                    button.addEventListener('click', function(event) {
+                        const owner = parseInt(this.dataset.owner);
+                        const currentUser = parseInt(this.dataset.currentUser);
+                        
+                        if (currentUser !== owner) {
+                            event.preventDefault();
+                            alert("Vous ne pouvez pas modifier une salle dont vous n'êtes pas le propriétaire.");
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('Error initializing charts or calendar:', error);
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <head>
+        <!-- FullCalendar CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- FullCalendar JS -->
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    </body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4 text-aqua">Gym  Dashboard</h1>
+
+        <div class="row">
+            <!-- Gym Facilities -->
+            <div class="col-md-8">
+                <div class="card shadow-lg border-0 rounded-3 p-4">
+                    <div class="card-header bg-dark-blue text-white text-center">
+                        <h5 class="card-title mb-0">Gym Facilities</h5>
+                    </div>
+
+                    <!-- Grid for displaying gym cards -->
+                    <div class="row g-4">
+                        {% for salle_de_sport in salle_de_sports %}
+                            <div class="col-md-6">
+                                <div class="card shadow-sm border-0 rounded-3 h-100 gym-card">
+                                    <div class="card-body">
+                                        {% if salle_de_sport.image %}
+                                            {% set imagePath = salle_de_sport.image starts with '/' ? salle_de_sport.image : 'images/' ~ salle_de_sport.image %}
+                                            <img src="{{ asset(imagePath) }}" class="card-img-top rounded" alt="{{ salle_de_sport.nom }}" style="height: 160px; object-fit: cover;">
+                                        {% else %}
+                                            <img src="{{ asset('images/default.jpg') }}" class="card-img-top rounded" alt="No image" style="height: 160px; object-fit: cover;">
+                                        {% endif %}
+                                        <h5 class="card-title mt-3 text-center text-dark-blue font-modern">{{ salle_de_sport.nom }}</h5>
+                                        <div class="location-info mt-2">
+                                            <p class="card-text text-muted mb-1"><i class="ri-map-pin-line me-1"></i> <strong>Region:</strong> {{ salle_de_sport.region }}</p>
+                                            <p class="card-text text-muted mb-1"><i class="ri-community-line me-1"></i> <strong>City:</strong> {{ salle_de_sport.zone }}</p>
+                                            <p class="card-text text-muted"><i class="ri-user-line me-1"></i> <strong>Owner ID:</strong> {{ salle_de_sport.idUser }}</p>
+                                        </div>
+                                        
+                                        <div class="gym-action-buttons d-flex justify-content-between mt-3">
+                                            <a href="{{ path('app_salle_de_sport_edit', {'id': salle_de_sport.id}) }}" class="btn-action btn-edit owner-action" data-owner="{{ salle_de_sport.idUser }}" data-current-user="{{ app.user ? app.user.id : 0 }}">
+                                                <i class="fas fa-edit"></i>
+                                                <span>EDIT</span>
+                                            </a>
+                                            
+                                            <a href="{{ path('app_salle_de_sport_equipements', { 'id': salle_de_sport.id }) }}" class="btn-action btn-equipment">
+                                                <i class="fas fa-dumbbell"></i>
+                                                <span>EQUIPMENTS</span>
+                                            </a>
+                                            
+                                            <a href="{{ path('app_salle_de_sport_pdf', {'id': salle_de_sport.id}) }}" class="btn-action btn-pdf">
+                                                <i class="fas fa-file-pdf"></i>
+                                                <span>DOWNLOAD PDF</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="col-12">
+                                <p class="text-center text-muted">No gym facilities found.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-4">
+                        <a href="{{ path('app_salle_de_sport_new') }}" class="btn btn-success btn-lg w-100">
+                            <i class="ri-add-line"></i> Add New Gym
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="col-md-4">
+                <!-- Main Stats Card -->
+                <div class="card shadow-lg border-0 rounded-3 mb-4">
+                    <div class="card-header bg-dark-blue text-white text-center">
+                        <h5 class="card-title mb-0">Statistics</h5>
+                    </div>
+                    <div class="card-body px-2 py-3">
+                        <!-- Key Metrics -->
+                        <div class="row stats-summary mb-3">
+                            <div class="col-6 text-center mb-3">
+                                <div class="stat-card p-3 rounded-3">
+                                    <i class="fas fa-building fa-2x mb-2 text-info"></i>
+                                    <h3 class="stats-number">{{ statsData.totalGyms }}</h3>
+                                    <p class="stats-label mb-0">Gyms</p>
+                                </div>
+                            </div>
+                            <div class="col-6 text-center mb-3">
+                                <div class="stat-card p-3 rounded-3">
+                                    <i class="fas fa-dumbbell fa-2x mb-2 text-success"></i>
+                                    <h3 class="stats-number">{{ statsData.totalEquipments }}</h3>
+                                    <p class="stats-label mb-0">Équipements</p>
+                                </div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div class="stat-card p-3 rounded-3">
+                                    <i class="fas fa-clipboard-check fa-2x mb-2 text-warning"></i>
+                                    <h3 class="stats-number">{{ statsData.verificationsPending }}</h3>
+                                    <p class="stats-label mb-0">À vérifier</p>
+                                </div>
+                            </div>
+                            <div class="col-6 text-center">
+                                <div class="stat-card p-3 rounded-3">
+                                    <i class="fas fa-chart-line fa-2x mb-2 text-primary"></i>
+                                    <h3 class="stats-number">{{ statsData.averageEquipments }}</h3>
+                                    <p class="stats-label mb-0">Moy./Gym</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Equipment Distribution Chart -->
+                        <div class="mt-4">
+                            <h6 class="text-center fw-bold mb-3">Répartition des équipements</h6>
+                            <div class="equipment-chart-container" style="height: 250px;">
+                                <canvas id="equipmentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equipment Types Chart -->
+                <div class="card shadow-lg border-0 rounded-3">
+                    <div class="card-header bg-dark-blue text-white text-center">
+                        <h5 class="card-title mb-0">Types d'équipements</h5>
+                    </div>
+                    <div class="card-body px-2 py-3">
+                        <div class="equipment-types-chart-container" style="height: 200px;">
+                            <canvas id="equipmentTypesChart"></canvas>
+                        </div>
+
+                        <!-- Progress bars for equipment types -->
+                        <div class="mt-3">
+                            {% for type, percentage in equipmentTypes %}
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>{{ type }}</span>
+                                        <span>{{ percentage }}%</span>
+                                    </div>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar 
+                                            {% if type == 'Cardio' %}bg-danger
+                                            {% elseif type == 'Musculation' %}bg-primary
+                                            {% elseif type == 'Poids libres' %}bg-success
+                                            {% else %}bg-warning{% endif %}" 
+                                            role="progressbar" 
+                                            style="width: {{ percentage }}%;" 
+                                            aria-valuenow="{{ percentage }}" 
+                                            aria-valuemin="0" 
+                                            aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card shadow-lg border-0 rounded-3 p-4">
+                    <div class="card-header bg-dark-blue text-white text-center">
+                        <h5 class="card-title mb-0">Verification Calendar</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historique des Actions et Vérifications -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Historique des Actions et Vérifications</h1>
+
+        <div class="row">
+            <!-- To-Do Section -->
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 rounded-3 p-4">
+                    <div class="card-header bg-warning text-white text-center">
+                        <h5 class="card-title mb-0">To-Do</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            {% for item in to_do %}
+                                <li>{{ item.nom }} ({{ item.salle }}) - Vérification prévue : {{ item.prochaine_verification|date('d/m/Y') }}</li>
+                            {% else %}
+                                <li>Aucune tâche à venir.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- In Progress Section -->
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 rounded-3 p-4">
+                    <div class="card-header bg-info text-white text-center">
+                        <h5 class="card-title mb-0">In Progress</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            {% for item in in_progress %}
+                                <li>{{ item.nom }} ({{ item.salle }}) - Vérification aujourd'hui : {{ item.prochaine_verification|date('d/m/Y') }}</li>
+                            {% else %}
+                                <li>Aucune tâche en cours.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Done Section -->
+            <div class="col-md-4">
+                <div class="card shadow-lg border-0 rounded-3 p-4">
+                    <div class="card-header bg-success text-white text-center">
+                        <h5 class="card-title mb-0">Done</h5>
+                    </div>
+                    
+                    <div class="card-body">
+                        <ul>
+                            {% for entry in done %}
+                                <li>{{ entry.nom }} ({{ entry.salle }}) - Vérification passée : {{ entry.prochaine_verification|date('d/m/Y') }}</li>
+                            {% else %}
+                                <li>Aucune vérification passée.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

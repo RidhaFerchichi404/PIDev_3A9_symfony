@@ -200,7 +200,7 @@
                     <nav class="nav-menu">
                         <ul>
                             <li><a href="#">About Us</a></li>
-                            <li><a href="#salles-de-sport">Gym</a></li>
+                            <li><a href="{{ path('app_salle_de_sport_index1') }}">Gym</a></li>
                             <li><a href="#">Services</a></li>
                             <li><a href="#">Our Team</a></li>
                             <li><a href="#">Pages</a>
@@ -218,7 +218,12 @@
                             <ul class="d-flex" style="list-style: none; margin: 0; padding: 0; gap: 10px;">
                                 {% if app.user %}
                                     <li><a href="{{ path('app_profile_index') }}">Mon profil</a></li>
-                                    <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+                                    <li>
+                                        <form action="{{ path('app_logout') }}" method="post" id="logout-form-front" style="display:inline;">
+                                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                                            <a href="#" onclick="document.getElementById('logout-form-front').submit(); return false;">Déconnexion</a>
+                                        </form>
+                                    </li>
                                 {% else %}
                                     <li><a href="{{ path('app_login') }}">Connexion</a></li>
                                     <li><a href="{{ path('app_register') }}">S'inscrire</a></li>

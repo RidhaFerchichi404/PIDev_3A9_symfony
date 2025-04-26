@@ -46,8 +46,17 @@ class HashPasswordListener
     {
         $password = $entity->getPasswordHash();
         
-        // Vérifie si le mot de passe n'est pas déjà haché
-        if (!$password || empty($password) || strlen($password) < 20) {
+        // Si le mot de passe est null ou vide, ne rien faire
+        if (empty($password)) {
+            // Éviter de stocker null dans la base de données
+            if ($password === null) {
+                $entity->setPasswordHash(''); // Utiliser une chaîne vide par défaut plutôt que null
+            }
+            return;
+        }
+        
+        // Si le mot de passe est trop court (inférieur à 6 caractères), ne pas le hacher
+        if (strlen($password) < 6) {
             return;
         }
         
