@@ -1,0 +1,91 @@
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-light">
+                <h1 class="h3 mb-0">Add a Comment</h1>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <p class="mb-0"><strong>Note:</strong> Your comment will be added automatically with today's date and 0 likes initially.</p>
+                </div>
+                
+                {{ form_start(form) }}
+                    <div class="mb-3">
+                        {{ form_label(form.comment) }}
+                        
+                        <div class="emoji-picker mb-3">
+                            {% for shortcode, emoji in emojis %}
+                                <button 
+                                    type="button"
+                                    class="emoji-button btn btn-light"
+                                    data-emoji="{{ emoji }}"
+                                    title="{{ shortcode }}"
+                                    style="font-size: 1.5rem; padding: 0.5rem; margin: 0.25rem;"
+                                >
+                                    {{ emoji }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                        
+                        {{ form_widget(form.comment, {'attr': {
+                            'class': 'form-control',
+                            'rows': 5,
+                            'id': 'form_comment',
+                            'placeholder': 'Enter your comment here. You can use emoji shortcodes like :smile: :heart: :thumbsup:'
+                        }}) }}
+                        {{ form_errors(form.comment) }}
+                        
+                        <small class="text-muted">
+                            Click on an emoji above to insert it, or type shortcodes like :smile: :heart: :thumbsup:
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.emoji-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    border: 1px solid #dee2e6;
+}
+
+.emoji-button {
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.emoji-button:hover {
+    transform: scale(1.1);
+    background-color: #e9ecef;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const emojiShortcodes = document.querySelectorAll('.emoji-shortcode');
+    const commentTextarea = document.querySelector('#comment_comment');
+    
+    emojiShortcodes.forEach(emoji => {
+        emoji.addEventListener('click', function() {
+            const emojiText = this.textContent;
+            const start = commentTextarea.selectionStart;
+            const end = commentTextarea.selectionEnd;
+            const text = commentTextarea.value;
+            
+            commentTextarea.value = text.substring(0, start) + emojiText + text.substring(end);
+            commentTextarea.focus();
+            commentTextarea.selectionStart = commentTextarea.selectionEnd = start + emojiText.length;
+        });
+    });
+});
+</script> 

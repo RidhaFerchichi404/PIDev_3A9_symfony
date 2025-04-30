@@ -1,0 +1,29 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}Sportify | New Comment{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/stylefront.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Create new Comment</h1>
+
+        {{ include('postandcomment/front/comment/_form.html.twig') }}
+
+        <a href="{{ path('app_front_post_show', {'id': post.id}) }}" class="btn btn-secondary mt-3">Back to Post</a>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        console.log('Loading emoji picker script...');
+    </script>
+    <script src="{{ asset('js/emoji-picker.js') }}"></script>
+    <script>
+        console.log('Emoji picker script loaded');
+    </script>
+{% endblock %} 
