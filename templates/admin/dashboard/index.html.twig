@@ -3,6 +3,47 @@
 {% block title %}Admin Dashboard{% endblock %}
 {% block section %}Admin Panel{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .navbar {
+            margin-bottom: 20px;
+        }
+        main {
+            padding-top: 80px;
+        }
+        .chart-container {
+            width: 100%;
+            height: 400px;
+        }
+        .stats-chart-container {
+            width: 100%;
+            height: 300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #stats_chart_div {
+            width: 70% !important;
+            margin: 0 auto;
+        }
+    </style>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart', 'bar']});
+        google.charts.setOnLoadCallback(function() {
+            {{ gc_draw(pieChart, 'pie_chart_div') }}
+            {{ gc_draw(barChart, 'bar_chart_div') }}
+            {{ gc_draw(statsChart, 'stats_chart_div') }}
+        });
+    </script>
+{% endblock %}
+
 {% block body %}
     <div class="container-fluid py-4">
         <div class="jumbotron bg-light p-4 mb-4 rounded shadow-sm">
@@ -28,40 +69,54 @@
             </div>
         </div>
 
-        <!-- Statistics Cards -->
-        <h2 class="section-title mb-4">Blog Statistics</h2>
+        <!-- Google Charts -->
+        <h2 class="section-title mb-4">Data Visualization</h2>
         <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card bg-primary text-white shadow">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Posts</h5>
-                        <h2 class="card-text">{{ totalPosts }}</h2>
-                        <a href="{{ path('app_admin_post_index') }}" class="text-white">View all <i class="fas fa-arrow-right"></i></a>
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Posts by Type</h5>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card bg-success text-white shadow">
                     <div class="card-body">
-                        <h5 class="card-title">Total Comments</h5>
-                        <h2 class="card-text">{{ totalComments }}</h2>
-                        <a href="{{ path('app_admin_comment_index') }}" class="text-white">View all <i class="fas fa-arrow-right"></i></a>
+                        <div id="pie_chart_div" class="chart-container"></div>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="card shadow">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Most Commented Posts</h5>
+                    </div>
                     <div class="card-body">
-                        <h5 class="card-title">Posts by Type</h5>
+                        <div id="bar_chart_div" class="chart-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <h2 class="section-title mb-4 text-center">Blog Statistics</h2>
+        <div class="row mb-4">
+            <div class="col-md-10 mx-auto">
+                <div class="card shadow">
+                    <div class="card-header bg-light text-center">
+                        <h5 class="mb-0">Overview</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div id="stats_chart_div" class="stats-chart-container"></div>
+                    </div>
+                    <div class="card-footer bg-white">
                         <div class="row">
-                            {% for type in postsByType %}
-                                <div class="col-md-4">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <p class="mb-1">{{ type.type }}:</p>
-                                        <span class="badge bg-primary">{{ type.count }}</span>
-                                    </div>
-                                </div>
-                            {% endfor %}
+                            <div class="col-md-6">
+                                <a href="{{ path('app_admin_post_index') }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-list me-1"></i> View All Posts
+                                </a>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <a href="{{ path('app_admin_comment_index') }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-comments me-1"></i> View All Comments
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
