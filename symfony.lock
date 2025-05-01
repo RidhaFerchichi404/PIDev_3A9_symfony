@@ -29,6 +29,9 @@
             "./migrations/.gitignore"
         ]
     },
+    "endroid/qr-code-bundle": {
+        "version": "6.0.0"
+    },
     "google/recaptcha": {
         "version": "1.2",
         "recipe": {

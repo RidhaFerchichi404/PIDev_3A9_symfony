@@ -291,44 +291,34 @@ final class SalleDeSportController extends AbstractController
         ]);
     }
 
+  
+    
     #[Route('/{id}/pdf', name: 'app_salle_de_sport_pdf', methods: ['GET'])]
     public function generatePdf(SalleDeSport $salleDeSport): Response
     {
-        // Inclure TCPDF
-        require_once $this->getParameter('kernel.project_dir') . '/vendor/tcpdf/tcpdf.php';
-
-        // Créer une instance de TCPDF
-        $pdf = new \TCPDF();
-
-        // Configurer le document PDF
-        $pdf->SetCreator('Symfony');
-        $pdf->SetAuthor('Gym Dashboard');
-        $pdf->SetTitle($salleDeSport->getNom() . ' - Details');
-        $pdf->SetSubject('Gym Details');
-        $pdf->SetMargins(10, 10, 10);
-        $pdf->SetAutoPageBreak(true, 10);
-
-        // Ajouter une page
-        $pdf->AddPage();
-
-        // Contenu HTML pour le PDF
+        // Configure Dompdf
+        $options = new Options();
+        $options->set('defaultFont', 'Helvetica');
+        $dompdf = new Dompdf($options);
+    
+        // Récupérer le HTML
         $html = $this->renderView('salle_de_sport/pdf.html.twig', [
             'salle_de_sport' => $salleDeSport,
-            'equipements' => $salleDeSport->getEquipements(),
+            'equipements'    => $salleDeSport->getEquipements(),
         ]);
-
-        // Charger le contenu HTML dans TCPDF
-        $pdf->writeHTML($html, true, false, true, false, '');
-
+    
         // Générer le PDF
-        $pdfContent = $pdf->Output($salleDeSport->getNom() . '_details.pdf', 'S');
-
-        // Retourner le PDF en réponse
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        $pdfContent = $dompdf->output();
+    
         return new Response($pdfContent, 200, [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="' . $salleDeSport->getNom() . '_details.pdf"',
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="'. $salleDeSport->getNom() .'_details.pdf"',
         ]);
     }
+    
     #[Route('/ask-chatgpt', name: 'ask_chatgpt')]
     public function askChatGPT(Request $request): Response
     {

@@ -587,6 +587,15 @@
                             <i class="fas fa-shopping-cart me-2"></i> Manage Orders
                         </a>
                 </li>
+                <li class="nav-item mt-5">
+                    <form action="{{ path('app_logout') }}" method="post" id="logout-form">
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
+                        <a class="nav-link" href="#" onclick="document.getElementById('logout-form').submit(); return false;">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </form>
+                </li>
                 {% endif %}
             </ul>
         </div>

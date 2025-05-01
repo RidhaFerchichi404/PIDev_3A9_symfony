@@ -27,15 +27,30 @@
             {% set nextVerification = equipement.prochaineVerification ? equipement.prochaineVerification|date('Y-m-d') : 'Not Set' %}
             {% set lastVerification = equipement.derniereVerification ? equipement.derniereVerification|date('Y-m-d') : 'Not Set' %}
 
-            {# ✅ Préparation des données QR #}
+            {# ✅ Ajout de plus d'informations dans le QR code #}
             {% set qr_lines = [
+                'Equipment Information:',
+                '-------------------',
                 'ID: ' ~ equipement.id,
                 'Name: ' ~ equipement.nom,
                 'Status: ' ~ status,
+                '',
+                'Verification Details:',
+                '-------------------',
                 'Last Verification: ' ~ lastVerification,
-                'Next Verification: ' ~ nextVerification
+                'Next Verification: ' ~ nextVerification,
+                '',
+                'Gym Information:',
+                '-------------------',
+
+                '',
+                'Maintenance Info:',
+                '-------------------',
+               
+                
+                'Scan Date: ' ~ "now"|date('Y-m-d H:i:s')
             ] %}
-            {% set qrdata = qr_lines | join('\n') %}
+            {% set qrdata = qr_lines|join('\n') %}
 
             <tr>
                 <td>{{ equipement.id }}</td>
@@ -94,65 +109,66 @@
         <a href="{{ path('app_equipement_new') }}" class="btn btn-success btn-lg">
             <i class="ri-add-line"></i> Create New Equipment
         </a>
-        <a href="{{ path('app_equipement_ai_new') }}" class="btn btn-primary btn-lg">
-            <i class="ri-ai-generate"></i> Add with AI
-        </a>
+       
         <a href="{{ path('app_salle_de_sport_index') }}" class="btn btn-outline-secondary btn-sm">
             ← Back to Gyms
         </a>
     {% endif %}
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-    window.addEventListener('DOMContentLoaded', () => {
-        // ✅ Génération des QR Codes
-        document.querySelectorAll('.qrcode').forEach(el => {
-            let text = el.dataset.text; // plus besoin de replace maintenant
-
-            new QRCode(el, {
-                text: text,
-                width: 180,
-                height: 180
-            });
-        });
-
-        // ✅ Téléchargement du QR code
-        document.querySelectorAll('.download-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const id = button.dataset.id;
-                const canvas = document.querySelector(`#qrcode-${id} canvas`);
-                if (canvas) {
-                    const link = document.createElement('a');
-                    link.href = canvas.toDataURL("image/png");
-                    link.download = `equipment-qr-${id}.png`;
-                    link.click();
-                } else {
-                    alert("QR code not found!");
-                }
-            });
+window.addEventListener('DOMContentLoaded', function() {
+    // Génération des QR codes
+    document.querySelectorAll('.qrcode').forEach(function(el) {
+        var text = el.getAttribute('data-text');
+        el.innerHTML = ''; // on vide au cas où
+        new QRCode(el, {
+            text: text,
+            width: 180,
+            height: 180
         });
     });
-    document.querySelectorAll('.owner-action').forEach(button => {
-            button.addEventListener('click', function(event) {
-                const owner = parseInt(this.dataset.owner);
-                const currentUser = parseInt(this.dataset.currentUser);
-                
-                if (currentUser !== owner) {
-                    event.preventDefault();
-                    alert("Vous ne pouvez pas modifier ou supprimer un équipement dont vous n'êtes pas le propriétaire.");
-                }
-            });
-        });
-    
 
-    function confirmDelete(form, owner) {
-        const currentUser = form.querySelector('.owner-action')?.dataset.currentUser;
-        if (parseInt(currentUser) !== owner) {
+    // Téléchargement
+    document.querySelectorAll('.download-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var id = btn.dataset.id;
+            var canvas = document.querySelector('#qrcode-' + id + ' canvas');
+            if (!canvas) {
+                alert('QR code not found!');
+                return;
+            }
+            var link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'equipment-qr-' + id + '.png';
+            link.click();
+        });
+    });
+
+    // Protection propriétaire
+    document.querySelectorAll('.owner-action').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            var owner = parseInt(this.dataset.owner, 10);
+            var currentUser = parseInt(this.dataset.currentUser, 10);
+            if (currentUser !== owner) {
+                event.preventDefault();
+                alert("Vous ne pouvez pas modifier/supprimer un équipement dont vous n'êtes pas le propriétaire.");
+            }
+        });
+    });
+
+
+    // Confirmation de suppression
+    window.confirmDelete = function(form, owner) {
+        var currentUser = {{ app.user ? app.user.id : 0 }};
+        if (currentUser !== owner) {
             alert("Vous ne pouvez pas supprimer un équipement dont vous n'êtes pas le propriétaire.");
             return false;
         }
         return confirm('Êtes-vous sûr de vouloir supprimer cet équipement ?');
-    }
+    };
+});
 </script>
 
 {% endblock %}

@@ -1,88 +1,207 @@
+{# templates/salle_de_sport/pdf.html.twig #}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ salle_de_sport.nom }} - Details</title>
     <style>
+        /*** PAGE SETUP ***/
+        @page {
+            margin: 20mm 15mm;
+            header: html_header;
+            footer: html_footer;
+        }
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
+            font-family: "DejaVu Sans", sans-serif;
             color: #333;
-            margin: 20px;
+            font-size: 12px;
+            line-height: 1.4;
         }
 
-        h1, h2, h3 {
-            color: #1E90FF;
+        /*** ENTÊTE & PIED DE PAGE ***/
+        htmlpageheader { 
+            margin-bottom: 10mm; 
+        }
+        #header {
+            background: #1E90FF;
+            padding: 5px 15px;
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+        #header img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        #header .title {
+            font-size: 18px;
+            font-weight: bold;
         }
 
-        .header {
+        htmlpagefooter {
+            border-top: 1px solid #DDD;
+            padding-top: 4px;
+            font-size: 10px;
+            color: #666;
             text-align: center;
-            margin-bottom: 30px;
         }
 
-        .details {
-            margin-bottom: 20px;
+        /*** TITRES DE SECTION ***/
+        h1 {
+            font-size: 22px;
+            color: #1E90FF;
+            text-align: center;
+            margin: 0;
+        }
+        h2 {
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+            margin: 5px 0 15px;
+            font-style: italic;
+        }
+        .section-title {
+            font-size: 16px;
+            color: #FFA07A;
+            border-bottom: 2px solid #FFA07A;
+            padding-bottom: 3px;
+            margin: 20px 0 8px;
         }
 
-        .equipments {
-            margin-top: 20px;
+        /*** GREETING BOX ***/
+        .greeting {
+            background: #FFF4E6;
+            border: 1px solid #FFD8A8;
+            border-radius: 6px;
+            padding: 8px 12px;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #8B4000;
+        }
+        .greeting strong {
+            color: #D35400;
         }
 
+        /*** DETAIL BOX ***/
+        .detail-box {
+            background: #F7F9FC;
+            border: 1px solid #E1E8EE;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+        }
+        .detail-box p {
+            margin: 4px 0;
+        }
+        .detail-box p strong {
+            display: inline-block;
+            width: 110px;
+            color: #333;
+        }
+
+        /*** TABLEAU D’ÉQUIPEMENTS ***/
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 8px;
         }
-
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-
         th, td {
-            padding: 8px;
+            padding: 6px 8px;
+            border: 1px solid #DDD;
+        }
+        thead {
+            background: #FFA07A;
+            color: #FFF;
+        }
+        tbody tr:nth-child(even) {
+            background: #F9F9F9;
+        }
+        tbody tr:hover {
+            background: #FFFAF0;
+        }
+        th {
+            font-size: 12px;
             text-align: left;
         }
 
-        th {
-            background-color: #f4f4f4;
+        /*** AUCUNE DONNÉE ***/
+        .no-data {
+            text-align: center;
+            font-style: italic;
+            color: #999;
+            margin: 12px 0;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>{{ salle_de_sport.nom }}</h1>
-        <p>Details of the gym and its equipment</p>
+
+    {# ENTÊTE #}
+    <htmlpageheader name="header">
+        <div id="header">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo Gym">
+            <div class="title">Premium Fitness Clubs – Détail PDF</div>
+        </div>
+    </htmlpageheader>
+
+    {# PIED DE PAGE #}
+    <htmlpagefooter name="footer">
+        Généré par Premium Fitness Clubs • Page {PAGE_NUM} / {PAGE_COUNT}
+    </htmlpagefooter>
+
+    {# CONTENU #}
+    <h1>{{ salle_de_sport.nom|default('Gym sans nom') }}</h1>
+    <h2>Détails &amp; Équipements</h2>
+
+    {# Message de bienvenue #}
+    {% if app.user %}
+        <div class="greeting">
+            Bonjour <strong>{{ app.user.prenom|default(app.user.firstName|default('')) }}
+            {{ app.user.nom|default(app.user.lastName|default('')) }}</strong> — voici
+            le rapport de votre salle.
+        </div>
+    {% endif %}
+
+    {# Section « Gym Details » #}
+    <div class="section-title">Informations Générales</div>
+    <div class="detail-box">
+        <p><strong>Zone :</strong> {{ salle_de_sport.zone|default('–') }}</p>
+        <p><strong>Propriétaire ID :</strong> {{ salle_de_sport.idUser|default('–') }}</p>
+        <p><strong>Total équipements :</strong> {{ equipements|length }}</p>
     </div>
 
-    <div class="details">
-        <h2>Gym Details</h2>
-        <p><strong>Zone:</strong> {{ salle_de_sport.zone }}</p>
-        <p><strong>Owner:</strong> {{ salle_de_sport.idUser }}</p>
-        <p><strong>Total Equipments:</strong> {{ equipements|length }}</p>
-    </div>
+    {# Section « Equipments » #}
+    <div class="section-title">Liste des Équipements</div>
 
-    <div class="equipments">
-        <h2>Equipments</h2>
+    {% if equipements|length > 0 %}
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
-                   
-                    <th>Last Verification</th>
-                    <th>Next Verification</th>
+                    <th>Nom</th>
+                    <th>Dernière vérification</th>
+                    <th>Prochaine vérification</th>
                 </tr>
             </thead>
             <tbody>
-                {% for equipement in equipements %}
+                {% for equip in equipements %}
                     <tr>
-                        <td>{{ equipement.nom }}</td>
-                        <td>{{ equipement.derniereVerification|date('d/m/Y') }}</td>
-                        <td>{{ equipement.prochaineVerification|date('d/m/Y') }}</td>
+                        <td>{{ equip.nom|default('–') }}</td>
+                        <td>
+                            {{ equip.derniereVerification 
+                                ? equip.derniereVerification|date('d/m/Y') 
+                                : '–' }}
+                        </td>
+                        <td>
+                            {{ equip.prochaineVerification 
+                                ? equip.prochaineVerification|date('d/m/Y') 
+                                : '–' }}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>
+    {% else %}
+        <p class="no-data">Aucun équipement disponible.</p>
+    {% endif %}
+
 </body>
 </html>
