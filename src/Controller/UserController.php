@@ -83,10 +83,15 @@ final class UserController extends AbstractController{
         $form = $this->createForm(UserType::class, $user, [
             'is_new' => false
         ]);
+        
+        // Store the user data before the form is submitted
+        $originalData = clone $user;
+        
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (empty($user->getPasswordHash())) {
+            // Check if password is empty and restore the original password
+            if (empty($user->getPasswordHash()) || $user->getPasswordHash() === null) {
                 $user->setPasswordHash($currentPassword);
             } else if ($user->getPasswordHash() !== $currentPassword) {
                 // Hash the new password only if it has changed

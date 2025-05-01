@@ -184,10 +184,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password_hash;
     }
 
-    public function setPasswordHash(string $value): self
+    public function setPasswordHash(?string $value): self
     {
-        // Assurez-vous que le mot de passe n'est jamais null
-        $this->password_hash = $value ?: '';
+        // Ensure password_hash is never null
+        $this->password_hash = $value !== null ? $value : '';
         return $this;
     }
 

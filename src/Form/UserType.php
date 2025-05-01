@@ -38,6 +38,7 @@ class UserType extends AbstractType
                 'attr' => ['class' => 'form-control'],
                 'label' => 'Mot de passe',
                 'required' => $isNew,
+                'empty_data' => '',
                 'help' => $isNew ? 'Définissez un mot de passe pour ce nouvel utilisateur' : 'Laissez vide pour conserver le mot de passe actuel'
             ])
             ->add('phone_number', TextType::class, [

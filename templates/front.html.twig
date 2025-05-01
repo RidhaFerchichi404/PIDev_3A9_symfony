@@ -7,7 +7,7 @@
     <meta name="keywords" content="Sportify, Gym, Fitness, HTML Template">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{% block title %}Sportify | Accueil{% endblock %}</title>
+    <title>{% block title %}Sportify | Home{% endblock %}</title>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -177,6 +177,32 @@
         .hero-section .hi-text h1 strong {
             color: var(--accent-color) !important;
         }
+        
+        /* Cart styling */
+        .orders-link {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: rgba(255, 119, 0, 0.15);
+            border-radius: 50px;
+            color: var(--accent-color) !important;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .orders-link:hover {
+            background-color: var(--accent-color);
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 119, 0, 0.3);
+        }
+        
+        .orders-link i {
+            margin-right: 5px;
+        }
+        
+        /* Navigation buttons */
+        /* Removed button styles */
     </style>
     
     {% block stylesheets %}{% endblock %}
@@ -199,25 +225,22 @@
                 <div class="col-lg-6">
                     <nav class="nav-menu">
                         <ul>
-                            <li><a href="#">About Us</a></li>
                             <li><a href="{{ path('app_salle_de_sport_index1') }}">Gym</a></li>
                             <li><a href="{{ path('app_front_post_index') }}">Blog</a></li>
                             <li><a href="{{ path('app_produit_index') }}">Shop</a></li>
-                            <li><a href="#">Our Team</a></li>
-                            
                             <li>
                             <ul class="d-flex" style="list-style: none; margin: 0; padding: 0; gap: 10px;">
                                 {% if app.user %}
-                                    <li><a href="{{ path('app_profile_index') }}">Mon profil</a></li>
+                                    <li><a href="{{ path('app_profile_index') }}">My Profile</a></li>
                                     <li>
                                         <form action="{{ path('app_logout') }}" method="post" id="logout-form-front" style="display:inline;">
                                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
-                                            <a href="#" onclick="document.getElementById('logout-form-front').submit(); return false;">Déconnexion</a>
+                                            <a href="#" onclick="document.getElementById('logout-form-front').submit(); return false;">Logout</a>
                                         </form>
                                     </li>
                                 {% else %}
-                                    <li><a href="{{ path('app_login') }}">Connexion</a></li>
-                                    <li><a href="{{ path('app_register') }}">S'inscrire</a></li>
+                                    <li><a href="{{ path('app_login') }}">Login</a></li>
+                                    <li><a href="{{ path('app_register') }}">Register</a></li>
                                 {% endif %}
                             </ul>
                             </li>
@@ -226,12 +249,10 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="top-option d-flex align-items-center justify-content-end">
-                        <div class="to-search search-switch me-3">
-                            <i class="fa fa-search"></i>
-                        </div>
-                        <div class="to-cart me-3">
-                            <a href="{{ path('app_commande_index') }}" style="color: var(--text-color);">
-                                <i class="fa fa-shopping-cart"></i>
+                        <div class="to-cart">
+                            <a href="{{ path('app_commande_index') }}" class="orders-link">
+                                <i class="fa fa-file-text fa-2x"></i>
+                                <span class="ms-2">My Orders</span>
                             </a>
                         </div>
                     </div>
@@ -293,7 +314,7 @@
                         <div class="fa-logo">
                             <a href="#"><img src="{{ asset('img/logo.png') }}" alt=""></a>
                         </div>
-                        <p>Bienvenue chez Sportify, votre salle de sport moderne à Tunis. Remise en forme, coaching, équipements professionnels et plus encore.</p>
+                        <p>Welcome to Sportify, your modern gym in Tunis. Fitness, coaching, professional equipment and more.</p>
                         <div class="fa-social">
                             <a href="#"><i class="fa fa-facebook"></i></a>
                             <a href="#"><i class="fa fa-twitter"></i></a>
@@ -305,11 +326,11 @@
                 </div>
                 <div class="col-lg-2 col-md-3 col-sm-6">
                     <div class="fs-widget">
-                        <h4>Liens utiles</h4>
+                        <h4>Useful Links</h4>
                         <ul>
-                            <li><a href="#">À propos</a></li>
+                            <li><a href="#">About</a></li>
                             <li><a href="#">Blog</a></li>
-                            <li><a href="#">Cours</a></li>
+                            <li><a href="#">Classes</a></li>
                             <li><a href="#">Contact</a></li>
                         </ul>
                     </div>
@@ -318,28 +339,28 @@
                     <div class="fs-widget">
                         <h4>Support</h4>
                         <ul>
-                            <li><a href="#">Connexion</a></li>
-                            <li><a href="#">Mon compte</a></li>
-                            <li><a href="#">S'abonner</a></li>
+                            <li><a href="#">Login</a></li>
+                            <li><a href="#">My Account</a></li>
+                            <li><a href="#">Subscribe</a></li>
                             <li><a href="#">Contact</a></li>
                         </ul>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6">
                     <div class="fs-widget">
-                        <h4>Conseils & Guides</h4>
+                        <h4>Tips & Guides</h4>
                         <div class="fw-recent">
-                            <h6><a href="#">L'activité physique réduit le stress et l'anxiété</a></h6>
+                            <h6><a href="#">Physical activity reduces stress and anxiety</a></h6>
                             <ul>
-                                <li>3 min de lecture</li>
-                                <li>20 Commentaires</li>
+                                <li>3 min read</li>
+                                <li>20 Comments</li>
                             </ul>
                         </div>
                         <div class="fw-recent">
-                            <h6><a href="#">Exercices pour perdre du ventre efficacement</a></h6>
+                            <h6><a href="#">Effective exercises to lose belly fat</a></h6>
                             <ul>
-                                <li>4 min de lecture</li>
-                                <li>12 Commentaires</li>
+                                <li>4 min read</li>
+                                <li>12 Comments</li>
                             </ul>
                         </div>
                     </div>
@@ -349,7 +370,7 @@
                 <div class="col-lg-12 text-center">
                     <div class="copyright-text">
                         <p>
-                            Copyright &copy;{{ "now"|date("Y") }} Tous droits réservés | Ce template est fait avec <i class="fa fa-heart" aria-hidden="true"></i> par <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                            Copyright &copy;{{ "now"|date("Y") }} All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
                         </p>
                     </div>
                 </div>
