@@ -1,0 +1,101 @@
+{{ form_start(form, {'attr': {'class': 'row g-3 needs-validation', 'novalidate': 'novalidate'}}) }}
+    <div class="col-12">
+        <div class="form-group">
+            {{ form_label(form.produit, 'Product', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.produit, {
+                'attr': {
+                    'class': 'form-select' ~ (form.produit.vars.errors|length ? ' is-invalid' : ''),
+                    'data-placeholder': 'Select a product'
+                }
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.produit) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            {{ form_label(form.nomClient, 'Customer Name', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.nomClient, {
+                'attr': {
+                    'class': 'form-control' ~ (form.nomClient.vars.errors|length ? ' is-invalid' : ''),
+                    'placeholder': 'Enter customer name'
+                }
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.nomClient) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            {{ form_label(form.telephone, 'Phone Number', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.telephone, {
+                'attr': {
+                    'class': 'form-control' ~ (form.telephone.vars.errors|length ? ' is-invalid' : ''),
+                    'placeholder': 'Enter phone number'
+                }
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.telephone) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="form-group">
+            {{ form_label(form.adresseLivraison, 'Delivery Address', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.adresseLivraison, {
+                'attr': {
+                    'class': 'form-control' ~ (form.adresseLivraison.vars.errors|length ? ' is-invalid' : ''),
+                    'placeholder': 'Enter delivery address',
+                    'rows': 3
+                }
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.adresseLivraison) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            {{ form_label(form.quantite, 'Quantity', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.quantite, {
+                'attr': {
+                    'class': 'form-control' ~ (form.quantite.vars.errors|length ? ' is-invalid' : ''),
+                    'placeholder': 'Enter quantity',
+                    'min': 1
+                }
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.quantite) }}
+            </div>
+        </div>
+    </div>
+
+    {% if form.statutCommande is defined %}
+        <div class="col-md-6">
+            <div class="form-group">
+                {{ form_label(form.statutCommande, 'Order Status', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.statutCommande, {
+                    'attr': {
+                        'class': 'form-select' ~ (form.statutCommande.vars.errors|length ? ' is-invalid' : ''),
+                        'data-placeholder': 'Select order status'
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.statutCommande) }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save me-2"></i>{{ button_label|default('Save') }}
+        </button>
+    </div>
+{{ form_end(form) }} 

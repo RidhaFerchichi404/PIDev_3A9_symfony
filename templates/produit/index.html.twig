@@ -1,0 +1,275 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}Shop - Sportify{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .product-card {
+            background: #1a1a1a;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+            border: 1px solid #333;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-image {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+            background: #2a2a2a;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-details {
+            padding: 20px;
+        }
+
+        .product-title {
+            color: #f36100;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .product-description {
+            color: #c4c4c4;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .product-price {
+            font-size: 1.8rem;
+            color: #f36100;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stock-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stock-badge.in-stock {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        .stock-badge.out-stock {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-product {
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            flex: 1;
+            justify-content: center;
+            min-width: 120px;
+        }
+
+        .btn-order {
+            background: #f36100;
+            color: white;
+            border: none;
+        }
+
+        .btn-order:hover {
+            background: #e85900;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-details {
+            background: transparent;
+            color: #f36100;
+            border: 2px solid #f36100;
+        }
+
+        .btn-details:hover {
+            background: #f36100;
+            color: white;
+        }
+
+        .btn-chat {
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-chat:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .no-image-placeholder {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #2a2a2a, #333);
+            color: #666;
+        }
+
+        .section-title {
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: #f36100;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: #c4c4c4;
+            font-size: 1.1rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="{{ asset('img/breadcrumb-bg.jpg') }}">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb-text">
+                    <h2>Shop</h2>
+                    <div class="bt-option">
+                        <a href="{{ path('app_front_index') }}">Home</a>
+                        <span>Shop</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Shop Section Begin -->
+<section class="shop-section spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title text-center">
+                    <h2>Our Products</h2>
+                    <p>Choose from our selection of high-quality fitness equipment and supplements</p>
+                </div>
+        </div>
+    </div>
+
+        <div class="row">
+        {% for produit in produits %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="product-card">
+                        <div class="product-image">
+                    {% if produit.imagePath %}
+                                <img src="{{ asset('uploads/products/' ~ produit.imagePath) }}" alt="{{ produit.nom }}" loading="lazy">
+                            {% else %}
+                                <div class="no-image-placeholder">
+                                    <i class="fas fa-dumbbell fa-4x"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="product-details">
+                            <h3 class="product-title">{{ produit.nom }}</h3>
+                            <p class="product-description">{{ produit.description|slice(0, 100) ~ '...' }}</p>
+                            <div class="product-price">
+                                ${{ produit.prix }}
+                                {% if produit.quantiteStock > 0 %}
+                                    <span class="stock-badge in-stock">
+                                        <i class="fas fa-check-circle"></i> In Stock
+                                    </span>
+                            {% else %}
+                                    <span class="stock-badge out-stock">
+                                        <i class="fas fa-times-circle"></i> Out of Stock
+                                    </span>
+                            {% endif %}
+                        </div>
+                            <div class="product-actions">
+                        {% if produit.disponible and produit.quantiteStock > 0 %}
+                                    <a href="{{ path('app_commande_new', {'produit': produit.id}) }}" class="btn-product btn-order">
+                                        <i class="fas fa-shopping-cart"></i> Order Now
+                            </a>
+                        {% endif %}
+                                <a href="{{ path('app_produit_show', {'id': produit.id}) }}" class="btn-product btn-details">
+                                    <i class="fas fa-info-circle"></i> Details
+                            </a>
+                                {% if is_granted('ROLE_USER') %}
+                                    <button class="btn-product btn-chat" onclick="openChat({{ produit.id }})">
+                                        <i class="fas fa-robot"></i> Ask AI
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+                <div class="col-lg-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-box-open fa-3x mb-3"></i>
+                        <h4>No products found</h4>
+                        <p>Check back later for new products.</p>
+</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<!-- Shop Section End -->
+
+{# Include chat modals for each product #}
+{% for produit in produits %}
+    {% include 'produit/_chat_modal.html.twig' with {'produit': produit} %}
+{% endfor %}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    // Set background image for breadcrumb section
+    $('.set-bg').each(function() {
+        var bg = $(this).data('setbg');
+        $(this).css('background-image', 'url(' + bg + ')');
+    });
+</script>
+{% endblock %} 

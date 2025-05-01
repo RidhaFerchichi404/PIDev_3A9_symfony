@@ -202,6 +202,7 @@
                             <li><a href="#">About Us</a></li>
                             <li><a href="{{ path('app_salle_de_sport_index1') }}">Gym</a></li>
                             <li><a href="{{ path('app_front_post_index') }}">Blog</a></li>
+                            <li><a href="{{ path('app_produit_index') }}">Shop</a></li>
                             <li><a href="#">Our Team</a></li>
                             <li><a href="#">Pages</a>
                                 <ul class="dropdown">
@@ -238,8 +239,11 @@
                         <div class="to-search search-switch me-3">
                             <i class="fa fa-search"></i>
                         </div>
-                      
-                       
+                        <div class="to-cart me-3">
+                            <a href="{{ path('app_commande_index') }}" style="color: var(--text-color);">
+                                <i class="fa fa-shopping-cart"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

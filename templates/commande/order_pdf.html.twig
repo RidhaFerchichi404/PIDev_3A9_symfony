@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Order #{{ commande.id }} - Sportify</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f36100;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            color: #f36100;
+            margin: 0;
+            font-size: 24px;
+        }
+        .order-info {
+            margin-bottom: 30px;
+        }
+        .order-info p {
+            margin: 5px 0;
+        }
+        .product-info {
+            margin-bottom: 30px;
+        }
+        .product-details {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .total-section {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        .delivery-info {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status-pending { background-color: #ffeeba; color: #856404; }
+        .status-processing { background-color: #cce5ff; color: #004085; }
+        .status-delivered { background-color: #d4edda; color: #155724; }
+        .status-cancelled { background-color: #f8d7da; color: #721c24; }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Order Details #{{ commande.id }}</h1>
+        <p>{{ commande.dateCommande|date('F d, Y H:i') }}</p>
+    </div>
+
+    <div class="order-info">
+        <div class="status-badge status-{{ commande.statutCommande|lower }}">
+            {{ commande.statutCommande }}
+        </div>
+    </div>
+
+    <div class="product-info">
+        <h2>Product Information</h2>
+        <div class="product-details">
+            <h3>{{ commande.produit.nom }}</h3>
+            <p>Unit Price: ${{ commande.produit.prix|number_format(2, '.', ',') }}</p>
+            <p>Quantity: {{ commande.quantite }}</p>
+        </div>
+    </div>
+
+    <div class="total-section">
+        <div class="total-row">
+            <span>Subtotal:</span>
+            <span>${{ (commande.produit.prix * commande.quantite)|number_format(2, '.', ',') }}</span>
+        </div>
+        <div class="total-row">
+            <strong>Total:</strong>
+            <strong>${{ (commande.produit.prix * commande.quantite)|number_format(2, '.', ',') }}</strong>
+        </div>
+    </div>
+
+    <div class="delivery-info">
+        <h2>Delivery Information</h2>
+        <p><strong>Name:</strong> {{ commande.nomClient }}</p>
+        <p><strong>Phone:</strong> {{ commande.telephone }}</p>
+        <p><strong>Delivery Address:</strong><br>
+        {{ commande.adresseLivraison }}</p>
+    </div>
+
+    <div class="footer">
+        <p>Thank you for shopping with Sportify!</p>
+        <p>For any questions, please contact our support team.</p>
+    </div>
+</body>
+</html> 

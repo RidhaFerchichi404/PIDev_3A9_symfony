@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Orders Management{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Orders Management</h3>
+                    <div class="card-tools">
+                        <a href="{{ path('app_admin_commande_new') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> New Order
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="mb-4">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ search }}">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <select name="status" class="form-control">
+                                        <option value="">All Statuses</option>
+                                        {% for statusKey, statusLabel in statuses %}
+                                            <option value="{{ statusKey }}" {% if statusKey == status %}selected{% endif %}>
+                                                {{ statusLabel }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <input type="date" name="dateFrom" class="form-control" value="{{ dateFrom }}" placeholder="From Date">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <input type="date" name="dateTo" class="form-control" value="{{ dateTo }}" placeholder="To Date">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <select name="sort" class="form-control">
+                                        <option value="dateCommande" {% if sort == 'dateCommande' %}selected{% endif %}>Order Date</option>
+                                        <option value="nomClient" {% if sort == 'nomClient' %}selected{% endif %}>Client Name</option>
+                                        <option value="statutCommande" {% if sort == 'statutCommande' %}selected{% endif %}>Status</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Client</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for commande in commandes %}
+                                    <tr>
+                                        <td>{{ commande.id }}</td>
+                                        <td>{{ commande.nomClient }}</td>
+                                        <td>{{ commande.produit.nom }}</td>
+                                        <td>{{ commande.quantite }}</td>
+                                        <td>{{ commande.getTotal()|number_format(2, '.', ',') }} DT</td>
+                                        <td>
+                                            <span class="badge badge-{{ commande.statutCommande == constant('App\\Entity\\Commande::STATUS_PENDING') ? 'warning' : 
+                                                                        (commande.statutCommande == constant('App\\Entity\\Commande::STATUS_PROCESSING') ? 'info' : 
+                                                                        (commande.statutCommande == constant('App\\Entity\\Commande::STATUS_DELIVERED') ? 'success' : 'danger')) }}">
+                                                {{ commande.statutCommande }}
+                                            </span>
+                                        </td>
+                                        <td>{{ commande.dateCommande|date('Y-m-d H:i') }}</td>
+                                        <td>
+                                            <a href="{{ path('app_admin_commande_show', {'id': commande.id}) }}" class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ path('app_admin_commande_edit', {'id': commande.id}) }}" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="8" class="text-center">No orders found</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% if total > limit %}
+                        <div class="d-flex justify-content-center mt-4">
+                            <nav>
+                                <ul class="pagination">
+                                    {% for i in 1..((total + limit - 1) // limit) %}
+                                        <li class="page-item {% if i == currentPage %}active{% endif %}">
+                                            <a class="page-link" href="{{ path('app_admin_commande_index', {
+                                                'page': i,
+                                                'search': search,
+                                                'status': status,
+                                                'sort': sort,
+                                                'direction': direction,
+                                                'dateFrom': dateFrom,
+                                                'dateTo': dateTo
+                                            }) }}">{{ i }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </nav>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

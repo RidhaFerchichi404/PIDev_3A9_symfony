@@ -1,0 +1,108 @@
+{{ form_start(form, {'attr': {'class': 'row g-3 needs-validation', 'novalidate': 'novalidate'}}) }}
+    <div class="col-12">
+        <div class="form-group">
+            {{ form_label(form.nom, 'Product Name', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.nom, {
+                'attr': {
+                    'class': 'form-control' ~ (form.nom.vars.errors|length ? ' is-invalid' : ''),
+                    'placeholder': 'Enter product name'
+                }
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.nom) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="form-group">
+            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.description, {
+                'attr': {
+                    'class': 'form-control' ~ (form.description.vars.errors|length ? ' is-invalid' : ''),
+                    'placeholder': 'Enter product description',
+                    'rows': 4
+                }
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.description) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            {{ form_label(form.prix, 'Price', {'label_attr': {'class': 'form-label'}}) }}
+            <div class="input-group">
+                <span class="input-group-text">$</span>
+                {{ form_widget(form.prix, {
+                    'attr': {
+                        'class': 'form-control' ~ (form.prix.vars.errors|length ? ' is-invalid' : ''),
+                        'placeholder': 'Enter price'
+                    }
+                }) }}
+                <div class="invalid-feedback">
+                    {{ form_errors(form.prix) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group">
+            {{ form_label(form.quantiteStock, 'Stock Quantity', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.quantiteStock, {
+                'attr': {
+                    'class': 'form-control' ~ (form.quantiteStock.vars.errors|length ? ' is-invalid' : ''),
+                    'placeholder': 'Enter stock quantity',
+                    'min': 0
+                }
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.quantiteStock) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="form-group">
+            {{ form_label(form.imagePath, 'Product Image', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.imagePath, {
+                'attr': {
+                    'class': 'form-control' ~ (form.imagePath.vars.errors|length ? ' is-invalid' : ''),
+                    'accept': 'image/*'
+                }
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.imagePath) }}
+            </div>
+            <small class="form-text text-muted">
+                Recommended image size: 800x800px. Maximum file size: 2MB.
+            </small>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="form-check form-switch">
+            {{ form_widget(form.disponible, {
+                'attr': {
+                    'class': 'form-check-input' ~ (form.disponible.vars.errors|length ? ' is-invalid' : '')
+                }
+            }) }}
+            {{ form_label(form.disponible, 'Available for Purchase', {
+                'label_attr': {
+                    'class': 'form-check-label'
+                }
+            }) }}
+            <div class="invalid-feedback">
+                {{ form_errors(form.disponible) }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save me-2"></i>{{ button_label|default('Save') }}
+        </button>
+    </div>
+{{ form_end(form) }} 

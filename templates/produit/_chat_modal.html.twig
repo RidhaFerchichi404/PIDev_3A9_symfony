@@ -1,0 +1,347 @@
+<!-- Chat Modal -->
+<div class="chat-modal" id="chatModal-{{ produit.id }}" style="display: none;">
+    <div class="chat-modal-content">
+        <div class="chat-header">
+            <h4>Product Advisor</h4>
+            <span class="chat-close">&times;</span>
+        </div>
+        <div class="chat-body" id="chatBody-{{ produit.id }}">
+            <!-- Initial form for age and height -->
+            <div class="user-info-form" id="userInfoForm-{{ produit.id }}">
+                <p class="welcome-message">Welcome! To provide you with personalized advice about <strong>{{ produit.nom }}</strong>, please tell me a bit about yourself:</p>
+                <div class="form-group">
+                    <label for="age-{{ produit.id }}">Your Age:</label>
+                    <input type="number" id="age-{{ produit.id }}" class="form-control" min="1" max="120">
+                </div>
+                <div class="form-group">
+                    <label for="height-{{ produit.id }}">Your Height (cm):</label>
+                    <input type="number" id="height-{{ produit.id }}" class="form-control" min="50" max="250">
+                </div>
+                <button class="btn-start-chat" onclick="startChat({{ produit.id }})">Start Chat</button>
+            </div>
+            
+            <!-- Chat messages will be appended here -->
+            <div class="chat-messages" id="chatMessages-{{ produit.id }}" style="display: none;">
+            </div>
+        </div>
+        <div class="chat-footer" id="chatFooter-{{ produit.id }}" style="display: none;">
+            <div class="chat-input-container">
+                <input type="text" id="chatInput-{{ produit.id }}" class="chat-input" placeholder="Type your message...">
+                <button class="chat-send" onclick="sendMessage({{ produit.id }})">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.chat-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.chat-modal-content {
+    background-color: #1a1a1a;
+    margin: 5% auto;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+}
+
+.chat-header {
+    background-color: #f36100;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-header h4 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.chat-close {
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.chat-body {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #2a2a2a;
+}
+
+.user-info-form {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.welcome-message {
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    color: #f36100;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #2a2a2a;
+    color: #fff;
+}
+
+.btn-start-chat {
+    background-color: #f36100;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-start-chat:hover {
+    background-color: #e85900;
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.message {
+    padding: 10px 15px;
+    border-radius: 10px;
+    max-width: 80%;
+}
+
+.user-message {
+    background-color: #f36100;
+    color: white;
+    align-self: flex-end;
+    border-radius: 15px 15px 0 15px;
+}
+
+.bot-message {
+    background-color: #333;
+    color: white;
+    align-self: flex-start;
+    border-radius: 15px 15px 15px 0;
+}
+
+.chat-footer {
+    padding: 15px;
+    background-color: #1a1a1a;
+    border-radius: 0 0 10px 10px;
+}
+
+.chat-input-container {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 20px;
+    background-color: #2a2a2a;
+    color: #fff;
+}
+
+.chat-send {
+    background-color: #f36100;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-send:hover {
+    background-color: #e85900;
+}
+
+.typing-indicator {
+    color: #f36100;
+    font-style: italic;
+    margin-top: 10px;
+}
+</style>
+
+<script>
+function openChat(productId) {
+    document.getElementById('chatModal-' + productId).style.display = 'block';
+}
+
+function closeChat(productId) {
+    document.getElementById('chatModal-' + productId).style.display = 'none';
+}
+
+function startChat(productId) {
+    const age = document.getElementById('age-' + productId).value;
+    const height = document.getElementById('height-' + productId).value;
+
+    if (!age || !height) {
+        alert('Please provide both age and height.');
+        return;
+    }
+
+    // Hide user info form and show chat interface
+    document.getElementById('userInfoForm-' + productId).style.display = 'none';
+    document.getElementById('chatMessages-' + productId).style.display = 'flex';
+    document.getElementById('chatFooter-' + productId).style.display = 'block';
+
+    // Send initial message to get product advice
+    fetch(`/api/chat/product/${productId}/advice`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            age: age,
+            height: height
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        appendMessage(productId, data.message, 'bot');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        appendMessage(productId, 'Sorry, there was an error getting product advice.', 'bot');
+    });
+}
+
+function sendMessage(productId) {
+    const input = document.getElementById('chatInput-' + productId);
+    const message = input.value.trim();
+    
+    if (!message) return;
+    
+    // Clear input
+    input.value = '';
+    
+    // Add user message to chat
+    appendMessage(productId, message, 'user');
+    
+    // Show typing indicator
+    appendTypingIndicator(productId);
+    
+    // Send message to server
+    fetch(`/api/chat/product/${productId}/message`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            message: message
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Remove typing indicator
+        removeTypingIndicator(productId);
+        // Add bot response
+        appendMessage(productId, data.message, 'bot');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        removeTypingIndicator(productId);
+        appendMessage(productId, 'Sorry, there was an error processing your message.', 'bot');
+    });
+}
+
+function appendMessage(productId, message, sender) {
+    const chatMessages = document.getElementById('chatMessages-' + productId);
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}-message`;
+    messageDiv.textContent = message;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function appendTypingIndicator(productId) {
+    const chatMessages = document.getElementById('chatMessages-' + productId);
+    const indicator = document.createElement('div');
+    indicator.className = 'typing-indicator';
+    indicator.id = 'typingIndicator-' + productId;
+    indicator.textContent = 'Bot is typing...';
+    chatMessages.appendChild(indicator);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function removeTypingIndicator(productId) {
+    const indicator = document.getElementById('typingIndicator-' + productId);
+    if (indicator) {
+        indicator.remove();
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Close modal when clicking outside
+    const modals = document.querySelectorAll('.chat-modal');
+    modals.forEach(modal => {
+        modal.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+
+    // Close modal when clicking X
+    const closeButtons = document.querySelectorAll('.chat-close');
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const modal = button.closest('.chat-modal');
+            modal.style.display = 'none';
+        });
+    });
+
+    // Send message on Enter key
+    const chatInputs = document.querySelectorAll('.chat-input');
+    chatInputs.forEach(input => {
+        input.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                const productId = input.id.split('-')[1];
+                sendMessage(productId);
+            }
+        });
+    });
+});
+</script> 

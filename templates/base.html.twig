@@ -503,69 +503,44 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="logo">
-                <img src="{{ asset('img/logo.svg') }}" alt="Logo">
+                <img src="{{ asset('images/logo.png') }}" alt="Sportify Logo">
                 <span>Sportify</span>
             </div>
-            <ul class="nav flex-column mt-3">
+            <ul class="nav flex-column">
                 <li class="nav-item">
-                    <a class="nav-link {{ app.request.get('_route') == 'app_dashboard' ? 'active' : '' }}" href="{{ path('app_dashboard') }}">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
+                    <a class="nav-link {{ app.request.get('_route') starts with 'app_dashboard' ? 'active' }}" href="{{ path('app_dashboard') }}">
+                        <i class="fas fa-home me-2"></i> Dashboard
+                    </a>
+                </li>
+                {% if is_granted('ROLE_USER') %}
+                <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_shop_produit' ? 'active' }}" href="{{ path('app_produit_index') }}">
+                            <i class="fas fa-shopping-bag me-2"></i> Shop
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ app.request.get('_route') starts with 'app_user' ? 'active' : '' }}" href="{{ path('app_user_index') }}">
-                        <i class="fas fa-users"></i>
-                        <span>Users</span>
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_commande' ? 'active' }}" href="{{ path('app_commande_index') }}">
+                            <i class="fas fa-shopping-cart me-2"></i> My Orders
+                    </a>
+                </li>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                <li class="nav-item">
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_admin' ? 'active' }}" href="{{ path('app_admin_dashboard') }}">
+                            <i class="fas fa-cog me-2"></i> Admin Panel
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ app.request.get('_route') starts with 'app_event' ? 'active' : '' }}" href="#">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>Events</span>
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_admin_produit' ? 'active' }}" href="{{ path('app_admin_produit_index') }}">
+                            <i class="fas fa-box me-2"></i> Manage Products
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ app.request.get('_route') starts with 'app_subscription' ? 'active' : '' }}" href="#">
-                        <i class="fas fa-credit-card"></i>
-                        <span>Subscriptions</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ app.request.get('_route') starts with 'app_program' ? 'active' : '' }}" href="#">
-                        <i class="fas fa-dumbbell"></i>
-                        <span>Programs</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ app.request.get('_route') starts with 'app_salle_de_sport' ? 'active' : '' }}" href="{{ path('app_salle_de_sport_index') }}">
-                        <i class="fas fa-building"></i>
-                        <span>Gyms</span>
-                    </a>
-                </li>
-                
-                <li class="nav-item">
-                    <a class="nav-link {{ app.request.get('_route') starts with 'app_admin_post' or app.request.get('_route') starts with 'app_admin_comment' ? 'active' : '' }}" href="{{ path('app_admin_dashboard_index') }}">
-                        <i class="fas fa-blog"></i>
-                        <span>Blog</span>
-                    </a>
-                </li>
-            
-                <li class="nav-item">
-                    <a class="nav-link {{ app.request.get('_route') starts with 'app_settings' ? 'active' : '' }}" href="#">
-                        <i class="fas fa-cog"></i>
-                        <span>Settings</span>
-                    </a>
-                </li>
-                <li class="nav-item mt-5">
-                    <form action="{{ path('app_logout') }}" method="post" id="logout-form">
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('logout') }}">
-                        <a class="nav-link" href="#" onclick="document.getElementById('logout-form').submit(); return false;">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <span>Logout</span>
+                        <a class="nav-link {{ app.request.get('_route') starts with 'app_admin_commande' ? 'active' }}" href="{{ path('app_admin_commande_index') }}">
+                            <i class="fas fa-shopping-cart me-2"></i> Manage Orders
                         </a>
-                    </form>
                 </li>
+                {% endif %}
             </ul>
         </div>
 

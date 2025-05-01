@@ -9,6 +9,8 @@ parameters:
     recaptcha_secret_key: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
     # Directory for file uploads
     uploads_directory: '%kernel.project_dir%/public/uploads/posts'
+    locale: 'en'
+    products_directory: '%kernel.project_dir%/public/uploads/products'
 
 services:
     # default configuration for services in *this* file
@@ -24,6 +26,13 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Tests/'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -32,6 +41,10 @@ services:
     App\Service\FileUploader:
         arguments:
             $targetDirectory: '%uploads_directory%'
+
+    App\Service\ChatGPTService:
+        arguments:
+            $apiKey: '%env(OPENAI_API_KEY)%'
 
 imports:
     - { resource: sendgrid.yaml }

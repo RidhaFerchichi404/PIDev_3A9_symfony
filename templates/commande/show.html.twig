@@ -1,0 +1,252 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}Order Details #{{ commande.id }} - Sportify{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .order-details-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .order-details-card h3 {
+            color: #f36100;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .order-details-card h3 i {
+            font-size: 1.2em;
+        }
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .status-pending {
+            background-color: #ffc107;
+            color: #000;
+        }
+        .status-processing {
+            background-color: #17a2b8;
+            color: #fff;
+        }
+        .status-delivered {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .status-cancelled {
+            background-color: #dc3545;
+            color: #fff;
+        }
+        .product-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .order-summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+        .order-summary-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .order-total {
+            font-size: 1.25rem;
+            color: #f36100;
+            font-weight: bold;
+        }
+        .delivery-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .delivery-info-item {
+            background: #222;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .delivery-info-item h4 {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: #f36100;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .action-buttons a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 25px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .action-buttons a:hover {
+            transform: translateY(-2px);
+        }
+        .download-pdf {
+            background-color: #dc3545;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        .download-pdf:hover {
+            background-color: #c82333;
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="{{ asset('img/breadcrumb-bg.jpg') }}">
+    <div class="container">
+    <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb-text">
+                    <h2>Order Details #{{ commande.id }}</h2>
+                    <div class="bt-option">
+                        <a href="{{ path('app_front_index') }}">Home</a>
+                        <a href="{{ path('app_commande_index') }}">My Orders</a>
+                        <span>Order Details</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Order Details Section Begin -->
+<section class="class-details-section spad">
+    <div class="container">
+                    <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Order Status -->
+                <div class="order-details-card">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h3><i class="fas fa-info-circle"></i> Order Status</h3>
+                            <p class="text-muted mb-2">
+                                <i class="far fa-calendar-alt me-2"></i>
+                                Ordered on {{ commande.dateCommande|date('F d, Y') }} at {{ commande.dateCommande|date('H:i') }}
+                            </p>
+                        </div>
+                                        {% if commande.statutCommande == 'En attente' %}
+                            <span class="status-badge status-pending">
+                                                <i class="fas fa-clock"></i> Pending
+                                            </span>
+                                        {% elseif commande.statutCommande == 'En cours' %}
+                            <span class="status-badge status-processing">
+                                                <i class="fas fa-spinner fa-spin"></i> Processing
+                                            </span>
+                                        {% elseif commande.statutCommande == 'Livrée' %}
+                            <span class="status-badge status-delivered">
+                                                <i class="fas fa-check"></i> Delivered
+                                            </span>
+                        {% elseif commande.statutCommande == 'Annulée' %}
+                            <span class="status-badge status-cancelled">
+                                <i class="fas fa-times"></i> Cancelled
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Product Information -->
+                <div class="order-details-card">
+                    <h3><i class="fas fa-box"></i> Product Information</h3>
+                    <div class="d-flex align-items-start gap-4">
+                        {% if commande.produit.imagePath %}
+                            <img src="{{ asset('uploads/products/' ~ commande.produit.imagePath) }}" 
+                                 alt="{{ commande.produit.nom }}"
+                                 class="product-image">
+                                        {% endif %}
+                        <div class="flex-grow-1">
+                            <h4>{{ commande.produit.nom }}</h4>
+                            <div class="order-summary-item">
+                                <span>Unit Price</span>
+                                <span>${{ commande.produit.prix|number_format(2, '.', ',') }}</span>
+                            </div>
+                            <div class="order-summary-item">
+                                <span>Quantity</span>
+                                <span>{{ commande.quantite }}</span>
+                            </div>
+                            <div class="order-summary-item">
+                                <span class="order-total">Total</span>
+                                <span class="order-total">${{ (commande.produit.prix * commande.quantite)|number_format(2, '.', ',') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Information -->
+                <div class="order-details-card">
+                    <h3><i class="fas fa-shipping-fast"></i> Delivery Information</h3>
+                    <div class="delivery-info">
+                        <div class="delivery-info-item">
+                            <h4><i class="fas fa-user me-2"></i>Customer Name</h4>
+                            <p class="mb-0">{{ commande.nomClient }}</p>
+                        </div>
+                        <div class="delivery-info-item">
+                            <h4><i class="fas fa-phone me-2"></i>Phone Number</h4>
+                            <p class="mb-0">{{ commande.telephone }}</p>
+                        </div>
+                        <div class="delivery-info-item">
+                            <h4><i class="fas fa-map-marker-alt me-2"></i>Delivery Address</h4>
+                            <p class="mb-0">{{ commande.adresseLivraison }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="action-buttons">
+                    <a href="{{ path('app_commande_index') }}" class="btn-outline">
+                        <i class="fas fa-arrow-left"></i> Back to Orders
+                        </a>
+                        {% if commande.statutCommande == 'En attente' %}
+                        <a href="{{ path('app_commande_edit', {'id': commande.id}) }}" class="primary-btn">
+                            <i class="fas fa-edit"></i> Edit Order
+                            </a>
+                        {% endif %}
+                    <a href="{{ path('app_commande_pdf', {'id': commande.id}) }}" class="download-pdf" target="_blank">
+                        <i class="fas fa-file-pdf"></i> Download PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Order Details Section End -->
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    // Set background image for breadcrumb section
+    $('.set-bg').each(function() {
+        var bg = $(this).data('setbg');
+        $(this).css('background-image', 'url(' + bg + ')');
+    });
+</script>
+{% endblock %} 

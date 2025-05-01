@@ -1,0 +1,355 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}New Order - Sportify{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        .address-input-group {
+            position: relative;
+            display: flex;
+            align-items: stretch;
+        }
+        .map-button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #f36100;
+            cursor: pointer;
+            z-index: 10;
+            padding: 5px;
+            transition: color 0.3s;
+        }
+        .map-button:hover {
+            color: #e85900;
+        }
+        #map-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+        .map-modal-content {
+            background-color: #1a1a1a;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #f36100;
+            width: 90%;
+            max-width: 800px;
+            position: relative;
+            border-radius: 8px;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .close-modal {
+            color: #f36100;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-modal:hover {
+            color: #e85900;
+        }
+        .map-controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .map-controls button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .confirm-location {
+            background-color: #f36100;
+            color: white;
+        }
+        .confirm-location:hover {
+            background-color: #e85900;
+        }
+        .cancel-location {
+            background-color: #333;
+            color: white;
+        }
+        .cancel-location:hover {
+            background-color: #444;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="{{ asset('img/breadcrumb-bg.jpg') }}">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb-text">
+                    <h2>Place Your Order</h2>
+                    <div class="bt-option">
+                        <a href="{{ path('app_front_index') }}">Home</a>
+                        <a href="{{ path('app_produit_index') }}">Shop</a>
+                        <span>New Order</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Order Form Section Begin -->
+<section class="class-details-section spad">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="class-details-item">
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+
+                    {% if produit is defined %}
+                        <div class="selected-product mb-4">
+                            <h4>Selected Product</h4>
+                            <div class="d-flex align-items-center">
+                                {% if produit.imagePath %}
+                                    <img src="{{ asset('uploads/products/' ~ produit.imagePath) }}" 
+                                         alt="{{ produit.nom }}" 
+                                         class="img-fluid me-3" 
+                                         style="width: 100px; height: 100px; object-fit: cover;">
+                                {% endif %}
+                                <div>
+                                    <h5>{{ produit.nom }}</h5>
+                                    <p class="mb-0">${{ produit.prix }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.nomClient, 'Your Name', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.nomClient, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.nomClient.vars.errors|length ? ' is-invalid' : ''),
+                                        'placeholder': 'Enter your full name',
+                                        'value': app.user ? app.user.fullName : ''
+                                    }
+                                }) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.nomClient) }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                {{ form_label(form.telephone, 'Phone Number', {'label_attr': {'class': 'form-label'}}) }}
+                                {{ form_widget(form.telephone, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.telephone.vars.errors|length ? ' is-invalid' : ''),
+                                        'placeholder': 'Enter your phone number',
+                                        'value': app.user ? app.user.phonenumber : ''
+                                    }
+                                }) }}
+                                <div class="invalid-feedback">
+                                    {{ form_errors(form.telephone) }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.adresseLivraison, 'Delivery Address', {'label_attr': {'class': 'form-label'}}) }}
+                            <div class="address-input-group">
+                                {{ form_widget(form.adresseLivraison, {
+                                    'attr': {
+                                        'class': 'form-control' ~ (form.adresseLivraison.vars.errors|length ? ' is-invalid' : ''),
+                                        'placeholder': 'Enter your delivery address or use the map',
+                                        'rows': 3,
+                                        'value': app.user ? app.user.location : ''
+                                    }
+                                }) }}
+                                <button type="button" class="map-button" id="openMap" title="Choose location on map">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.adresseLivraison) }}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form_label(form.quantite, 'Quantity', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.quantite, {
+                                'attr': {
+                                    'class': 'form-control' ~ (form.quantite.vars.errors|length ? ' is-invalid' : ''),
+                                    'min': 1,
+                                    'max': produit is defined ? produit.quantiteStock : null,
+                                    'value': quantity is defined ? quantity : 1
+                                }
+                            }) }}
+                            <div class="invalid-feedback">
+                                {{ form_errors(form.quantite) }}
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="primary-btn">
+                                <i class="fas fa-check"></i> Place Order
+                            </button>
+                            <a href="{{ path('app_produit_index') }}" class="btn-outline">
+                                <i class="fas fa-arrow-left"></i> Back to Shop
+                            </a>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Order Form Section End -->
+
+<!-- Map Modal -->
+<div id="map-modal">
+    <div class="map-modal-content">
+        <span class="close-modal">&times;</span>
+        <h4 class="mb-3" style="color: #f36100;">Choose Delivery Location</h4>
+        <div id="map"></div>
+        <div class="map-controls">
+            <button type="button" class="cancel-location">Cancel</button>
+            <button type="button" class="confirm-location">Confirm Location</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // Set background image for breadcrumb section
+    $('.set-bg').each(function() {
+        var bg = $(this).data('setbg');
+        $(this).css('background-image', 'url(' + bg + ')');
+    });
+
+    // Form validation
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+})()
+
+    // Map functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        let map, marker;
+        const modal = document.getElementById('map-modal');
+        const openMapBtn = document.getElementById('openMap');
+        const closeBtn = document.querySelector('.close-modal');
+        const cancelBtn = document.querySelector('.cancel-location');
+        const confirmBtn = document.querySelector('.confirm-location');
+        const addressInput = document.querySelector('#{{ form.adresseLivraison.vars.id }}');
+        
+        // Initialize map with default location (Tunisia)
+        function initMap() {
+            if (!map) {
+                map = L.map('map').setView([36.8065, 10.1815], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+                
+                // Add marker on click
+                map.on('click', function(e) {
+                    if (marker) {
+                        marker.setLatLng(e.latlng);
+                    } else {
+                        marker = L.marker(e.latlng).addTo(map);
+                    }
+                });
+            }
+        }
+
+        // Open map modal
+        openMapBtn.addEventListener('click', function() {
+            modal.style.display = 'block';
+            setTimeout(() => {
+                initMap();
+                map.invalidateSize();
+            }, 100);
+        });
+
+        // Close modal handlers
+        [closeBtn, cancelBtn].forEach(btn => {
+            btn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+        });
+
+        // Confirm location
+        confirmBtn.addEventListener('click', function() {
+            if (marker) {
+                const lat = marker.getLatLng().lat.toFixed(6);
+                const lng = marker.getLatLng().lng.toFixed(6);
+                
+                // Reverse geocode using Nominatim
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const address = data.display_name;
+                        addressInput.value = address;
+                        modal.style.display = 'none';
+                    })
+                    .catch(error => {
+                        console.error('Error getting address:', error);
+                        addressInput.value = `${lat}, ${lng}`;
+                        modal.style.display = 'none';
+                    });
+            }
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Try to get user's current location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                if (map) {
+                    map.setView([lat, lng], 15);
+                    marker = L.marker([lat, lng]).addTo(map);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %} 

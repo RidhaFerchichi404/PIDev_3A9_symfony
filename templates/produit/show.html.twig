@@ -1,0 +1,385 @@
+{% extends 'front.html.twig' %}
+
+{% block title %}{{ produit.nom }} - Sportify{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .product-details-card {
+            background: #1a1a1a;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .product-gallery {
+            position: relative;
+            height: 500px;
+            background: #2a2a2a;
+            overflow: hidden;
+        }
+
+        .product-gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-gallery:hover img {
+            transform: scale(1.05);
+        }
+
+        .no-image-placeholder {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #2a2a2a, #333);
+            color: #666;
+            gap: 20px;
+        }
+
+        .product-info {
+            padding: 40px;
+        }
+
+        .product-title {
+            color: #f36100;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .product-category {
+            display: inline-block;
+            padding: 8px 16px;
+            background: rgba(243, 97, 0, 0.1);
+            color: #f36100;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            border: 1px solid rgba(243, 97, 0, 0.3);
+        }
+
+        .product-description {
+            color: #c4c4c4;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .product-price {
+            font-size: 3rem;
+            color: #f36100;
+            font-weight: bold;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .stock-info {
+            margin-bottom: 30px;
+        }
+
+        .stock-badge {
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stock-badge.in-stock {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
+        }
+
+        .stock-badge.out-stock {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        }
+
+        .stock-quantity {
+            color: #c4c4c4;
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+
+        .order-form {
+            margin-bottom: 30px;
+        }
+
+        .quantity-input {
+            background: #2a2a2a;
+            border: 2px solid #333;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 25px;
+            width: 150px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .quantity-input:focus {
+            border-color: #f36100;
+            outline: none;
+        }
+
+        .quantity-label {
+            display: block;
+            color: #c4c4c4;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-product {
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 1.1rem;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .btn-order {
+            background: #f36100;
+            color: white;
+            border: none;
+            flex: 2;
+        }
+
+        .btn-order:hover {
+            background: #e85900;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-back {
+            background: transparent;
+            color: #c4c4c4;
+            border: 2px solid #333;
+            flex: 1;
+        }
+
+        .btn-back:hover {
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+
+        .btn-chat {
+            background: #28a745;
+            color: white;
+            border: none;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .btn-chat:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .unavailable-alert {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .unavailable-alert i {
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .product-gallery {
+                height: 350px;
+            }
+
+            .product-info {
+                padding: 25px;
+            }
+
+            .product-title {
+                font-size: 2rem;
+            }
+
+            .product-price {
+                font-size: 2.5rem;
+            }
+
+            .btn-product {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="{{ asset('img/breadcrumb-bg.jpg') }}">
+    <div class="container">
+    <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb-text">
+                    <h2>{{ produit.nom }}</h2>
+                    <div class="bt-option">
+                        <a href="{{ path('app_front_index') }}">Home</a>
+                        <a href="{{ path('app_produit_index') }}">Shop</a>
+                        <span>Product Details</span>
+                        </div>
+                </div>
+            </div>
+        </div>
+                </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<!-- Product Details Section Begin -->
+<section class="class-details-section spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="product-details-card">
+                    <div class="row g-0">
+                        <div class="col-lg-6">
+                            <div class="product-gallery">
+                                {% if produit.imagePath %}
+                                    <img src="{{ asset('uploads/products/' ~ produit.imagePath) }}" alt="{{ produit.nom }}">
+                                {% else %}
+                                    <div class="no-image-placeholder">
+                                        <i class="fas fa-dumbbell fa-5x"></i>
+                                        <span>No image available</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="product-info">
+                                <h1 class="product-title">{{ produit.nom }}</h1>
+                                <div class="product-category">
+                                    <i class="fas fa-tag"></i> {{ produit.categorie }}
+                                </div>
+                                <p class="product-description">{{ produit.description }}</p>
+                                <div class="product-price">
+                                    ${{ produit.prix }}
+                                </div>
+                                
+                                <div class="stock-info">
+                                    {% if produit.disponible and produit.quantiteStock > 0 %}
+                                        <div class="stock-badge in-stock">
+                                            <i class="fas fa-check-circle"></i> In Stock
+                                        </div>
+                                        <div class="stock-quantity">
+                                            {{ produit.quantiteStock }} units available
+                                        </div>
+                                    {% else %}
+                                        <div class="stock-badge out-stock">
+                                            <i class="fas fa-times-circle"></i> Out of Stock
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                {% if not produit.disponible or produit.quantiteStock <= 0 %}
+                                    <div class="unavailable-alert">
+                                        <i class="fas fa-exclamation-circle"></i>
+                                        <span>
+                                            {% if not produit.disponible %}
+                                                This product is currently unavailable
+                                            {% else %}
+                                                This product is out of stock
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                {% endif %}
+
+                                {% if produit.disponible and produit.quantiteStock > 0 %}
+                                    <form action="{{ path('app_commande_new', {'produit': produit.id}) }}" method="get" class="order-form">
+                                        <label for="quantity" class="quantity-label">Quantity</label>
+                                        <input type="number" id="quantity" name="quantity" class="quantity-input" 
+                                               min="1" max="{{ produit.quantiteStock }}" value="1" required>
+                                        <div class="action-buttons">
+                                            <button type="submit" class="btn-product btn-order">
+                                                <i class="fas fa-shopping-cart"></i> Order Now
+                                            </button>
+                                            {% if is_granted('ROLE_USER') %}
+                                                <button type="button" class="btn-product btn-chat" onclick="openChat({{ produit.id }})">
+                                                    <i class="fas fa-robot"></i> Ask AI
+                                                </button>
+                                            {% endif %}
+                                            <a href="{{ path('app_produit_index') }}" class="btn-product btn-back">
+                                                <i class="fas fa-arrow-left"></i> Back
+                                            </a>
+                                        </div>
+                                    </form>
+                                {% else %}
+                                    <div class="action-buttons">
+                                        {% if is_granted('ROLE_USER') %}
+                                            <button type="button" class="btn-product btn-chat" onclick="openChat({{ produit.id }})">
+                                                <i class="fas fa-robot"></i> Ask AI
+                                            </button>
+                                        {% endif %}
+                                        <a href="{{ path('app_produit_index') }}" class="btn-product btn-back">
+                                            <i class="fas fa-arrow-left"></i> Back to Shop
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Product Details Section End -->
+
+{# Include chat modal #}
+{% include 'produit/_chat_modal.html.twig' with {'produit': produit} %}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    // Set background image for breadcrumb section
+    $('.set-bg').each(function() {
+        var bg = $(this).data('setbg');
+        $(this).css('background-image', 'url(' + bg + ')');
+    });
+
+    // Quantity input validation
+    $('.quantity-input').on('input', function() {
+        var max = parseInt($(this).attr('max'));
+        var value = parseInt($(this).val());
+        if (value > max) {
+            $(this).val(max);
+        }
+    });
+</script>
+{% endblock %} 

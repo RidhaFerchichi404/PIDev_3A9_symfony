@@ -1,0 +1,37 @@
+{{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': true}}) }}
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            {{ form_row(form.produit) }}
+        </div>
+        <div class="col-md-6 mb-3">
+            {{ form_row(form.quantite) }}
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            {{ form_row(form.nomClient) }}
+        </div>
+        <div class="col-md-6 mb-3">
+            {{ form_row(form.telephone) }}
+        </div>
+    </div>
+
+    {% if form.statutCommande is defined %}
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            {{ form_row(form.statutCommande) }}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="mb-3">
+        {{ form_row(form.adresseLivraison) }}
+    </div>
+    
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button class="btn btn-success">
+            <i class="fas fa-save me-1"></i>{{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+{{ form_end(form) }} 

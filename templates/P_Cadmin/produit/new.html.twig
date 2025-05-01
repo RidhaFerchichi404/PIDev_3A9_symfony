@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Product - Sportify Admin{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Create New Product</h1>
+                <p class="text-muted">Add a new product to your store</p>
+            </div>
+            <div>
+                <a href="{{ path('app_admin_produit_index') }}" class="btn btn-outline">
+                    <i class="fas fa-arrow-left me-2"></i>Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-xl-8 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Product Information</h5>
+                </div>
+                <div class="card-body">
+                    {{ include('P_Cadmin/produit/_form.html.twig', {'button_label': 'Create Product'}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %} 
