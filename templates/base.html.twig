@@ -110,6 +110,33 @@
                 font-size: 18px;
             }
             
+            /* Submenu styles */
+            .sidebar ul ul {
+                padding-left: 0;
+            }
+            
+            .sidebar ul ul .nav-link {
+                padding: 10px 10px 10px 35px;
+                font-size: 0.9rem;
+            }
+            
+            .sidebar ul ul .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+            
+            .sidebar ul ul .nav-link.active {
+                background-color: rgba(255, 255, 255, 0.15);
+            }
+            
+            /* Dropdown icon */
+            .fa-chevron-down {
+                transition: transform 0.3s ease;
+            }
+            
+            .fa-rotate-180 {
+                transform: rotate(180deg);
+            }
+            
             .main-content {
                 flex: 1;
                 margin-left: 280px;
@@ -507,11 +534,36 @@
                 <span>Sportify</span>
             </div>
             <ul class="nav flex-column">
+                {% if is_granted('ROLE_ADMIN') %}
                 <li class="nav-item">
-                    <a class="nav-link {{ app.request.get('_route') starts with 'app_dashboard' ? 'active' }}" href="{{ path('app_dashboard') }}">
-                        <i class="fas fa-home me-2"></i> Dashboard
+                    <a class="nav-link {{ app.request.get('_route') starts with 'app_user' ? 'active' }}" href="{{ path('app_user_index') }}">
+                        <i class="fas fa-users me-2"></i> Users
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.get('_route') starts with 'app_admin_dashboard' or app.request.get('_route') starts with 'app_admin_post' or app.request.get('_route') starts with 'app_admin_comment' ? 'active' }}" href="{{ path('app_admin_dashboard') }}">
+                        <i class="fas fa-blog me-2"></i> Blog
+                        <i class="fas fa-chevron-down float-end mt-1" style="font-size: 12px;"></i>
+                    </a>
+                    <ul class="nav flex-column ms-4" style="{{ app.request.get('_route') starts with 'app_admin_dashboard' or app.request.get('_route') starts with 'app_admin_post' or app.request.get('_route') starts with 'app_admin_comment' ? '' : 'display: none;' }}">
+                        <li class="nav-item">
+                            <a class="nav-link {{ app.request.get('_route') starts with 'app_admin_post' ? 'active' }}" href="{{ path('app_admin_post_index') }}">
+                                <i class="fas fa-file-alt me-2"></i> Posts
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ app.request.get('_route') starts with 'app_admin_comment' ? 'active' }}" href="{{ path('app_admin_comment_index') }}">
+                                <i class="fas fa-comments me-2"></i> Comments
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ app.request.get('_route') starts with 'app_salle_de_sport' ? 'active' }}" href="{{ path('app_salle_de_sport_index') }}">
+                        <i class="fas fa-dumbbell me-2"></i> Gyms
+                    </a>
+                </li>
+                {% endif %}
                 {% if is_granted('ROLE_USER') %}
                 <li class="nav-item">
                         <a class="nav-link {{ app.request.get('_route') starts with 'app_shop_produit' ? 'active' }}" href="{{ path('app_produit_index') }}">
@@ -525,11 +577,6 @@
                 </li>
                 {% endif %}
                 {% if is_granted('ROLE_ADMIN') %}
-                <li class="nav-item">
-                        <a class="nav-link {{ app.request.get('_route') starts with 'app_admin' ? 'active' }}" href="{{ path('app_admin_dashboard') }}">
-                            <i class="fas fa-cog me-2"></i> Admin Panel
-                    </a>
-                </li>
                 <li class="nav-item">
                         <a class="nav-link {{ app.request.get('_route') starts with 'app_admin_produit' ? 'active' }}" href="{{ path('app_admin_produit_index') }}">
                             <i class="fas fa-box me-2"></i> Manage Products
@@ -586,6 +633,32 @@
             // Toggle sidebar on mobile
             document.getElementById('menu-toggle').addEventListener('click', function() {
                 document.querySelector('.sidebar').classList.toggle('show');
+            });
+            
+            // Toggle Blog submenu
+            document.addEventListener('DOMContentLoaded', function() {
+                const blogLink = document.querySelector('.nav-link[href="{{ path('app_admin_dashboard') }}"]');
+                const blogSubmenu = blogLink.nextElementSibling;
+                const dropdownIcon = blogLink.querySelector('.fa-chevron-down');
+                
+                // Add click event to the dropdown icon to toggle submenu
+                dropdownIcon.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    blogSubmenu.style.display = blogSubmenu.style.display === 'none' ? 'block' : 'none';
+                    this.classList.toggle('fa-rotate-180');
+                });
+                
+                // Show submenu if any of its items are active
+                if (
+                    (window.location.pathname.includes('admin/post') ||
+                    window.location.pathname.includes('admin/comment') ||
+                    window.location.pathname.includes('admin/dashboard'))
+                ) {
+                    blogSubmenu.style.display = 'block';
+                    dropdownIcon.classList.add('fa-rotate-180');
+                }
             });
         </script>
         {% block javascripts %}{% endblock %}
